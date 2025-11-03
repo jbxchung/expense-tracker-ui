@@ -6,14 +6,14 @@ export interface Account {
 };
 
 export const AccountTypes = {
-  CHECKING: 'CHECKING',
-  SAVINGS: 'SAVINGS',
-  CREDIT_CARD: 'CC'
+  CHECKING: 'Checking',
+  SAVINGS: 'Savings',
+  CREDIT_CARD: 'Credit Card'
 } as const;
 export type AccountType = typeof AccountTypes[keyof typeof AccountTypes];
 
 // todo - actually get from api
-const accounts: Account[] = [
+let accounts: Account[] = [
   { id: 'account1', name: 'Example CC 1', type: AccountTypes.CREDIT_CARD },
   { id: 'account2', name: 'Example CC 2', type: AccountTypes.CREDIT_CARD},
   { id: 'account3', name: 'Example Checking', type: AccountTypes.CHECKING},
@@ -48,5 +48,20 @@ export async function createAccount(account: Omit<Account, 'id'>): Promise<Accou
   // });
 
   // if (!response.ok) throw new Error('Failed to create account');
+  // return response.json();
+}
+
+export async function deleteAccount(accountId: string): Promise<Account> {
+  const targetIndex = accounts.findIndex(acc => acc.id === accountId);
+  const deletedAccount = accounts.splice(targetIndex, 1);
+  return deletedAccount[0];
+  // const response = await fetch(`${ACCOUNTS_PATH}/${accountId}`, {
+  //   method: 'DELETE',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  // });
+
+  // if (!response.ok) throw new Error('Failed to delete account');
   // return response.json();
 }

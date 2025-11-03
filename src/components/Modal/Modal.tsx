@@ -3,6 +3,7 @@ import React from 'react';
 
 import styles from './Modal.module.scss';
 import Card from 'components/Card/Card';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface ModalProps {
 export default function Modal({ isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className={styles.modalWrapper}
       onClick={onClose} // close on click outside
@@ -26,6 +27,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
           {children}
         </Card>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

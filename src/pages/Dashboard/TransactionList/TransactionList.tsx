@@ -15,7 +15,7 @@ const TransactionList: FC<TransactionListProps> = ({
     <Card title="Transactions">
       {
         selectedAccounts.map(account => (
-          <div>TODO: show transactions for account: {account.name}</div>
+          <div key={account.id}>TODO: show transactions for account: {account.name}</div>
         ))
       }
     </Card>

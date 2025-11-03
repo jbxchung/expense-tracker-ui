@@ -16,9 +16,26 @@
   .account-name {
     font-size: 1rem;
 
+    .account-type {
+      margin-left: 1rem;
+      font-size: 0.8rem;
+      color: colors.$page-default-text-disabled;
+    }
   }
 
   .account-actions {
     display: block;
+  }
+}
+
+.add-new-button {
+  background-color: colors.$button-primary-background;
+  cursor: pointer;
+
+  &:hover {
+    background-color: colors.$button-primary-background-hover;
+  }
+  &:active {
+    background-color: colors.$button-primary-background-active;
   }
 }

@@ -48,21 +48,21 @@ const AccountSelector: FC<AccountSelectorProps> = ({
             <div key={account.id} title={account.id} className={`${styles.accountListItem} ${selected ? styles.selected : ''}`} onClick={() => onToggle(account.id)}>
               <span className={styles.accountName}>
                 {account.name}
+                <span className={styles.accountType}>
+                  {account.type}
+                </span>
               </span>
               <div className={styles.accountActions}>
                 <span className="edit-icon">
                   Edit
-                </span>
-                <span className="delete-icon">
-                  Delete
                 </span>
               </div>
             </div>
           );
         })
       }
-      <button onClick={() => setIsModalOpen(true)}>
-        Add Account
+      <button className={`${styles.accountListItem} ${styles.addNewButton}`} onClick={() => setIsModalOpen(true)}>
+        + Add New
       </button>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h3>Create New Account</h3>
