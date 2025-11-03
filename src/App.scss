@@ -1,0 +1,36 @@
+@use './styles/variables.scss' as variables;
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+}
+
+.container {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: Calibri, Helvetica, Arial, sans-serif;
+
+  .main-content {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    background: variables.$main-content-background-color;
+    color: variables.$page-default-font-color;
+    overflow: auto;
+    z-index: 1;
+
+    .bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      // background: url('./img/home_source_screenshot2.png'); 
+      filter: blur(8px);
+      z-index: -1;
+    }
+  }
+}

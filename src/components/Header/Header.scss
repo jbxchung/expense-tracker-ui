@@ -1,0 +1,105 @@
+@import '../../styles/variables.scss';
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  background: $header-background-color;
+  color: $page-default-font-color;
+  z-index: 2;
+
+  .header-left {
+    padding: 0.5rem;
+    flex: 1;
+
+    .home-logo {
+      height: 6rem;
+      width: 6rem;
+      cursor: pointer;
+    }
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    background: inherit;
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      background: inherit;
+
+      .header-link {
+        position: relative;
+        flex: 1;
+        font-size: 1.2rem;
+        color: $page-default-font-color;
+        text-align: center;
+        cursor: pointer;
+
+        a {
+          padding: 1rem;
+          display: block;
+          color: inherit;
+          text-decoration: inherit;
+        }
+
+        &.active::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 4px;
+          background: $header-link-hover-text-color;
+        }
+
+        &:hover {
+          color: $header-link-hover-text-color;
+          background: $header-link-hover-background-color;
+        }
+      }
+    }
+
+    svg {
+      float: right;
+      margin: 1rem;
+      display: none;
+      cursor: pointer;
+      width: 2rem;
+      height: 2rem;
+      fill: $page-default-font-color;
+      
+      &:hover {
+        fill: $header-link-hover-text-color;
+      };
+    }
+  }
+
+  @media screen and (max-width: $screen-breakpoint-small) {
+    .header-content {
+      display: block;
+
+      .header-links {
+        position: absolute;
+        top: 100%;  // display under the header
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+
+        &.open {
+          display: flex;
+        }
+
+        .header-link {
+          width: 100%;
+        }
+      }
+
+      svg {
+        display: block;
+      }
+    }
+  }
+}
