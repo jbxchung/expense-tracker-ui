@@ -1,11 +1,12 @@
-@import '../../styles/variables.scss';
+@use '../../styles/colors.scss' as colors;
+@use '../../styles/spacing.scss' as spacing;
 
 .header {
   position: relative;
   display: flex;
   align-items: flex-end;
-  background: $header-background-color;
-  color: $page-default-font-color;
+  background: colors.$header-background;
+  color: colors.$page-default-text;
   z-index: 2;
 
   .header-left {
@@ -33,7 +34,7 @@
         position: relative;
         flex: 1;
         font-size: 1.2rem;
-        color: $page-default-font-color;
+        color: colors.$page-default-text;
         text-align: center;
         cursor: pointer;
 
@@ -51,12 +52,12 @@
           right: 0;
           bottom: 0;
           height: 4px;
-          background: $header-link-hover-text-color;
+          background: colors.$header-link-hover-text;
         }
 
         &:hover {
-          color: $header-link-hover-text-color;
-          background: $header-link-hover-background-color;
+          color: colors.$header-link-hover-text;
+          background: colors.$header-link-hover-background;
         }
       }
     }
@@ -68,15 +69,15 @@
       cursor: pointer;
       width: 2rem;
       height: 2rem;
-      fill: $page-default-font-color;
+      fill: colors.$page-default-text;
       
       &:hover {
-        fill: $header-link-hover-text-color;
+        fill: colors.$header-link-hover-text;
       };
     }
   }
 
-  @media screen and (max-width: $screen-breakpoint-small) {
+  @media screen and (max-width: spacing.$screen-breakpoint-small) {
     .header-content {
       display: block;
 

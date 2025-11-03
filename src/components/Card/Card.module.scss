@@ -1,0 +1,21 @@
+@use '../../styles/colors.scss' as colors;
+
+.card {
+  margin: 2rem;
+  padding: 1rem;
+  background: colors.$card-background;
+  border: 1px solid colors.$card-border;
+  border-radius: 0.5rem;
+
+  .header {
+    font-size: 1.5rem;
+  }
+
+  .body {
+    position: relative;
+  }
+
+  .footer {
+    color: colors.$page-default-text-disabled
+  }
+}

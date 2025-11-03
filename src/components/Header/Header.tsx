@@ -2,7 +2,7 @@ import type { FC } from 'react';
 
 import logo from '../../assets/logo_white_transparent.png';
 
-import './Header.scss';
+import styles from './Header.module.scss';
 
 interface HeaderProps {
 
@@ -10,9 +10,9 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = () => {
   return (
-    <div className="header">
-      <div className="header-left">
-        <img src={logo} alt="logo" className="home-logo" onClick={() => window.location.href = '/'} />
+    <div className={styles.header}>
+      <div className={styles.headerLeft}>
+        <img src={logo} alt="logo" className={styles.homeLogo} onClick={() => window.location.href = '/'} />
       </div>
     </div>
   );

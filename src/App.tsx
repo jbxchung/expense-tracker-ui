@@ -4,6 +4,7 @@ import { BrowserRouter, Router } from 'react-router-dom';
 import Header from './components/Header/Header';
 
 import './App.scss';
+import Card from './components/Card/Card';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +18,9 @@ function App() {
 
         <div className="main-content">
           <div className="bg" />
+          <Card title="test header" footer="test footer">
+            <span>test content</span>
+          </Card>
           {/* <Routes>
             {
               this.state.pages.map(page => (
