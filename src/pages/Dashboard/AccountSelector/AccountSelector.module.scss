@@ -1,0 +1,24 @@
+@use '../../../styles/colors.scss' as colors;
+
+.account-list-item {
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid colors.$card-border;
+  border-radius: 0.5rem;
+ 
+  &.selected {
+    border-color: colors.$card-border-active;
+  }
+
+  .account-name {
+    font-size: 1rem;
+
+  }
+
+  .account-actions {
+    display: block;
+  }
+}

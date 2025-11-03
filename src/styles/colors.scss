@@ -1,3 +1,13 @@
+// backgrounds and borders
+$main-content-background: #222629;
+
+$card-background: #474b4f;
+$card-border: #686e74;
+$card-border-active: #86c232;
+
+$modal-background: rgba(0,0,0,0.5);
+
+// text colors
 $page-default-text: #fff;
 $page-default-text-hover: #ccc;
 $page-default-text-disabled: #9d9d9d;
@@ -6,16 +16,11 @@ $header-background: #474b4f;
 $header-link-hover-text: #86c232;
 $header-link-hover-background: #6b6e70;
 
-$main-content-background: #222629;
-
-$card-background: #474b4f;
-$card-border: #686e74;
-
 $text-accent-green: #86c232;
 $text-accent-orange: #ffbf00;
 $text-accent-red: #b60000;
 
+$link-hover-text: #86c232;
+
 $button-primary-background: #86c232;
 $button-primary-background-active: #72a629;
-
-$link-hover-text: #86c232;

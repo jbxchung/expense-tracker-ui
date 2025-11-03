@@ -22,7 +22,12 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    // map all imports under src
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["*"]
+    }
   },
   "include": ["src"]
 }
