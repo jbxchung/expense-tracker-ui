@@ -17,7 +17,13 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
   return createPortal(
     <div
       className={styles.modalWrapper}
-      onClick={onClose} // close on click outside
+      onClick={(e) => {
+        console.log(e.target, e.currentTarget);
+        // close when clicking on the modal background
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div
         className={styles.modal}

@@ -1,0 +1,47 @@
+@use '../../styles/colors.scss' as colors;
+
+.input-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .label {
+    color: colors.$page-default-text-hover;
+    font-size: 0.875rem;
+  }
+  
+  .input {
+    background: #333;
+    color: colors.$page-default-text;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+    &::placeholder {
+      color: #888;
+    }
+  
+    &:hover {
+      border-color: colors.$button-primary-background;
+    }
+  
+    &:focus {
+      outline: none;
+      border-color: colors.$button-primary-background-hover;
+      box-shadow: 0 0 0 2px rgba(159, 255, 106, 0.2);
+    }
+  }
+  
+  .input-error {
+    border-color: colors.$text-accent-red;
+  }
+  
+  .error-text {
+    color: #ff5f5f;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  

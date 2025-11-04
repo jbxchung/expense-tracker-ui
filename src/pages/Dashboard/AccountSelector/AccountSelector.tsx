@@ -9,6 +9,7 @@ import Card from 'components/Card/Card';
 import Modal from 'components/Modal/Modal';
 
 import styles from './AccountSelector.module.scss';
+import CreateAccountForm from './CreateAccountForm/CreateAccountForm';
 
 interface AccountSelectorProps {
   accounts: Account[];
@@ -21,23 +22,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
   selectedIds,
   onToggle,
 }) => {
-  const { create, loading: creating, error: createError } = useCreateAccount();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAccountName, setNewAccountName] = useState("");
-  const [newAccountType, setNewAccountType] = useState<AccountType>(AccountTypes.CHECKING);
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await create({ name: newAccountName, type: newAccountType });
-      setNewAccountName("");
-      setNewAccountType(AccountTypes.CHECKING);
-      setIsModalOpen(false);
-    } catch(e) {
-      console.error('Error during create operation', e);
-    }
-  };
 
   return (
     <Card title="Accounts">
@@ -65,34 +50,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
         + Add New
       </button>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h3>Create New Account</h3>
-        <form onSubmit={handleCreate}>
-          <input
-            value={newAccountName}
-            onChange={e => setNewAccountName(e.target.value)}
-            placeholder="Account Name"
-            required
-            style={{ display: "block", width: "100%", marginBottom: "0.5rem" }}
-          />
-          <select
-            value={newAccountType}
-            onChange={e => setNewAccountType(e.target.value as AccountType)}
-            style={{ display: "block", width: "100%", marginBottom: "0.5rem" }}
-          >
-            <option value="CHECKING">Checking</option>
-            <option value="SAVINGS">Savings</option>
-            <option value="BUSINESS">Business</option>
-          </select>
-
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <button type="submit" disabled={creating}>
-              {creating ? "Creating..." : "Create"}
-            </button>
-            <button type="button" onClick={() => setIsModalOpen(false)}>Cancel</button>
-          </div>
-
-          {createError && <p style={{ color: "red" }}>{createError.message}</p>}
-        </form>
+        <CreateAccountForm onSubmit={() => setIsModalOpen(false)} onCancel={() => setIsModalOpen(false)} />
       </Modal>
     </Card>
   );

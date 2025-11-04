@@ -24,6 +24,7 @@ let tmpCount = 0;
 export const ACCOUNTS_PATH = '/accounts';
 
 export async function getAccounts(): Promise<Account[]> {
+  await new Promise(resolve => setTimeout(resolve, 500));
   return accounts;
 
   // const response = await fetch(ACCOUNTS_PATH);
@@ -36,7 +37,9 @@ export async function getAccounts(): Promise<Account[]> {
 
 export async function createAccount(account: Omit<Account, 'id'>): Promise<Account> {
   const newAccount = { ...account, id: `non-persistent-account-${tmpCount++}` };
-  accounts.push(newAccount);
+  const newAccounts = [...accounts, newAccount];
+  accounts = newAccounts;
+  await new Promise(resolve => setTimeout(resolve, 500));
   return newAccount;
 
   // const response = await fetch(ACCOUNTS_PATH, {
