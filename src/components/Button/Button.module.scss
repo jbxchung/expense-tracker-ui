@@ -1,0 +1,56 @@
+.button {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    border: 1px solid transparent;
+  
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+  
+  .primary {
+    background-color: var(--color-primary);
+    color: #fff;
+    border: 1px solid var(--color-primary);
+  
+    &:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+  
+    &:active:not(:disabled) {
+      background-color: var(--color-primary-active);
+      border-color: var(--color-primary-active);
+    }
+  
+    &:disabled {
+      background-color: var(--color-primary-disabled);
+      border-color: var(--color-primary-disabled);
+    }
+  }
+  
+  .secondary {
+    background-color: var(--color-secondary);
+    color: #fff;
+    border: 1px solid var(--color-secondary);
+  
+    &:hover:not(:disabled) {
+      background-color: var(--color-secondary-hover);
+      border-color: var(--color-secondary-hover);
+    }
+  
+    &:active:not(:disabled) {
+      background-color: var(--color-secondary-active);
+      border-color: var(--color-secondary-active);
+    }
+  
+    &:disabled {
+      background-color: var(--color-secondary-disabled);
+      border-color: var(--color-secondary-disabled);
+    }
+  }
+  

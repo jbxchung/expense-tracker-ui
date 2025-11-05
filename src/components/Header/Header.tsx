@@ -1,22 +1,24 @@
 import type { FC } from 'react';
 
-import { useTheme } from 'contexts/themeContext';
+import { Themes, useTheme } from 'contexts/themeContext';
 
-import logo from '../../assets/logo_white_transparent.png';
+import logoBlack from '../../assets/logo_black_transparent.png';
+import logoWhite from '../../assets/logo_white_transparent.png';
 
 import styles from './Header.module.scss';
 
-interface HeaderProps {
+const THEME_LOGO_MAP = {
+  [Themes.DARK]: logoWhite,
+  [Themes.LIGHT]: logoBlack,
+};
 
-}
-
-const Header: FC<HeaderProps> = () => {
+const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
-        <img src={logo} alt="logo" className={styles.homeLogo} onClick={() => window.location.href = '/'} />
+        <img src={THEME_LOGO_MAP[theme]} alt="logo" className={styles.homeLogo} onClick={() => window.location.href = '/'} />
       </div>
       <div className={styles.headerRight}>
         <span className={styles.themeToggleIcon} onClick={toggleTheme}>
