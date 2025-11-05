@@ -7,6 +7,7 @@ import { Dropdown } from 'components/Dropdown/Dropdown';
 import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './CreateAccountForm.module.scss';
+import Button, { ButtonVariants } from "components/Button/Button";
 
 interface CreateAccountFormProps {
   onSubmit: () => void;
@@ -63,12 +64,12 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
       />
 
       <div className={styles.formButtons}>
-        <button type="button" className={`${styles.btn} ${styles.cancelBtn}`} onClick={onCancel}>
+        <Button variant={ButtonVariants.SECONDARY} onClick={onCancel}>
           Cancel
-        </button>
-        <button type="submit" className={`${styles.btn} ${styles.saveBtn}`} onClick={handleSubmit} disabled={creating}>
+        </Button>
+        <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={creating}>
           Save
-        </button>
+        </Button>
       </div>
     </div>
   </>);

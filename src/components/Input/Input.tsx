@@ -45,7 +45,7 @@ const Input = forwardRef<InputHandle, InputProps>(
 
   return (
     <div className={`${styles.inputContainer} ${className}`}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && <span className={styles.label}>{label}</span>}
       <input
         className={`${styles.input} ${error ? styles.inputError : ""}`}
         onBlur={handleBlur}
