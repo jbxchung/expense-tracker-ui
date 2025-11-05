@@ -1,4 +1,4 @@
-@use '../../../../styles/colors.scss' as colors;
+@use '../../../../styles/theme.scss';
 
 .new-account-form-title {
   margin-top: 0;
@@ -9,20 +9,6 @@
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-}
-
-.input-field {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #555;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: #333;
-  color: #fff;
-
-  &:focus {
-    outline: none;
-    border-color: colors.$button-primary-background;
-  }
 }
 
 .form-buttons {
@@ -40,11 +26,11 @@
 }
 
 .cancel-btn {
-  background-color: #555;
-  color: #ccc;
+  background-color: var(--color-secondary);
+  // color: var(--color-text-secondary);
 }
 
 .save-btn {
-  background-color: #8bc34a;
+  background-color: var(--color-primary);
   color: #000;
 }

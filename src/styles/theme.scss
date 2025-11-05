@@ -1,0 +1,7 @@
+@use 'themes/light' as light;
+@use 'themes/dark' as dark;
+@use 'themes/tools' as *;
+
+// Output both theme variable sets:
+@include generate-theme(light.$theme-name, light.$colors);
+@include generate-theme(dark.$theme-name, dark.$colors);

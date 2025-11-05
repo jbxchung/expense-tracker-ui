@@ -1,12 +1,11 @@
-@use '../../styles/colors.scss' as colors;
-@use '../../styles/spacing.scss' as spacing;
+@use '../../styles/theme.scss';
 
 .header {
   position: relative;
   display: flex;
   align-items: flex-end;
-  background: colors.$header-background;
-  color: colors.$page-default-text;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   z-index: 2;
 
   .header-left {
@@ -34,7 +33,7 @@
         position: relative;
         flex: 1;
         font-size: 1.2rem;
-        color: colors.$page-default-text;
+        color: var(--color-text-primary);
         text-align: center;
         cursor: pointer;
 
@@ -52,12 +51,12 @@
           right: 0;
           bottom: 0;
           height: 4px;
-          background: colors.$header-link-hover-text;
+          background: var(--color-link-active);
         }
 
         &:hover {
-          color: colors.$header-link-hover-text;
-          background: colors.$header-link-hover-background;
+          color: var(--color-link-hover);
+          background: var(--color-bg);
         }
       }
     }
@@ -69,15 +68,15 @@
       cursor: pointer;
       width: 2rem;
       height: 2rem;
-      fill: colors.$page-default-text;
+      fill: var(--color-text-primary);
       
       &:hover {
-        fill: colors.$header-link-hover-text;
+        fill: var(--color-link-hover);
       };
     }
   }
 
-  @media screen and (max-width: spacing.$screen-breakpoint-small) {
+  @media screen and (max-width: 800px) {
     .header-content {
       display: block;
 

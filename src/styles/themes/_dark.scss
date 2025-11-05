@@ -1,0 +1,49 @@
+$theme-name: 'dark';
+
+$colors: (
+  // general
+  primary: #60A5FA,
+  primary-hover: #3B82F6,
+  primary-active: #2563EB,
+  primary-disabled: #93C5FD,
+  
+  secondary: #9CA3AF,
+  secondary-hover: #6B7280,
+  secondary-active: #4B5563,
+  secondary-disabled: #2F3338,
+
+  // links
+  link: #60A5FA,
+  link-hover: #3B82F6,
+  link-active: #2563EB,
+  link-visited: #9CA3AF,
+  link-disabled: #2F3338,
+
+  // inputs
+  input-bg: #1A1C20,
+  input-border: #2F3338,
+  input-border-hover: #475569,
+  input-border-focus: #60A5FA,
+  input-placeholder: #9CA3AF,
+  input-disabled-bg: #23262B,
+  input-disabled-border: #2F3338,
+
+  dropdown-shadow: rgba(0, 0, 0, 0.7),
+  
+  // backgrounds and surfaces
+  bg: #0F1115,
+  surface: #1A1C20,
+  surface-hover: #23262B,
+  border: #2F3338,
+  modal-bg: rgba(0,0,0,0.7),
+
+  // text
+  text-primary: #F3F4F6,
+  text-secondary: #9CA3AF,
+  
+  // status
+  success: #4ADE80,
+  warning: #FBBF24,
+  error: #F87171,
+  info: #38BDF8,
+);

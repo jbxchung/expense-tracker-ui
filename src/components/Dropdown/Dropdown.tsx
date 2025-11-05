@@ -92,7 +92,7 @@ export function Dropdown<T extends string | number>({
           e.preventDefault(); // do not submit a form if we're in one
           setOpen(prev => !prev);
         }}
-        className={`${styles.button} ${open ? styles.buttonOpen : ""}`}
+        className={`${styles.button}`}
       >
         <span className={selectedOption ? styles.text : styles.placeholder}>
           {selectedOption ? selectedOption.label : placeholder}

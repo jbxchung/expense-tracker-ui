@@ -4,7 +4,7 @@ import { AccountTypes, type AccountType } from 'api/accounts';
 
 import { useCreateAccount } from 'hooks/useCreateAccount';
 import { Dropdown } from 'components/Dropdown/Dropdown';
-import Input, { InputHandle } from 'components/Input/Input';
+import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './CreateAccountForm.module.scss';
 

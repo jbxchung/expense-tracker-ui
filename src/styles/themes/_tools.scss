@@ -1,0 +1,12 @@
+@function color($key, $theme) {
+  @return map-get($theme, $key);
+}
+
+@mixin generate-theme($theme-name, $theme-map) {
+  [data-theme='#{$theme-name}'] {
+    @each $name, $value in $theme-map {
+      --color-#{$name}: #{$value};
+    }
+  }
+}
+  
