@@ -115,9 +115,7 @@ export function Dropdown<T extends string | number>({
             {options.map((opt, i) => (
               <li
                 key={opt.value}
-                className={`${styles.option} 
-                  ${i === highlightIndex ? styles.highlight : ""} 
-                  ${opt.value === value ? styles.selected : ""}`}
+                className={`${styles.option} ${i === highlightIndex ? styles.highlight : ''}`}
                 onMouseEnter={() => setHighlightIndex(i)}
                 onClick={() => {
                   onChange?.(opt.value);
