@@ -27,15 +27,3 @@
     display: block;
   }
 }
-
-.add-new-button {
-  background-color: var(--color-primary);
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--color-primary-hover);
-  }
-  &:active {
-    background-color: var(--color-primary-active);
-  }
-}

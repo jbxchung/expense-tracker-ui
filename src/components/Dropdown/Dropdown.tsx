@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import styles from './Dropdown.module.scss';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface DropdownOption<T extends string | number> {
   label: string;
@@ -86,7 +87,9 @@ export function Dropdown<T extends string | number>({
     <div className={`${styles.dropdownContainer} ${className}`}>
       {label && <label className={styles.label}>{label}</label>}
 
-      <button
+      <Button
+        variant={ButtonVariants.SECONDARY}
+        outline
         ref={buttonRef}
         onClick={(e) => {
           e.preventDefault(); // do not submit a form if we're in one
@@ -98,7 +101,7 @@ export function Dropdown<T extends string | number>({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <span className={styles.icon}>{open ? "▲" : "▼"}</span>
-      </button>
+      </Button>
 
       {open &&
         createPortal(

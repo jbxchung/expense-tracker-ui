@@ -1,30 +1,27 @@
-import React, { type ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type FC } from 'react';
+
 import styles from './Button.module.scss';
 
-type ButtonType = 'primary' | 'secondary';
+export const ButtonVariants = {
+  PRIMARY: 'primary',
+  SECONDARY: 'secondary',
+  GHOST: 'ghost',
+} as const;
+export type ButtonVariant = typeof ButtonVariants[keyof typeof ButtonVariants];
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  type?: ButtonType;
+  variant?: ButtonVariant;
+  outline?: boolean;
 }
 
-/**
- * Custom Button component
- * - Uses theme CSS variables
- * - Supports primary/secondary variants
- * - Automatically handles disabled state styling
- */
-const Button: React.FC<ButtonProps> = ({
-  children,
-  type = "primary",
-  className = "",
-  ...props
-}) => {
-  const classes = `${styles.button} ${styles[variant]} ${className}`;
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, variant = ButtonVariants.PRIMARY, outline = false, className = '', ...props}, ref) => {
+  const classes = `${styles.button} ${styles[variant as keyof typeof styles]} ${outline ? styles.outline : ''} ${className}`;
   return (
-    <button className={classes} {...props}>
+    <button className={classes} ref={ref} {...props}>
       {children}
     </button>
   );
-};
+});
 
 export default Button;

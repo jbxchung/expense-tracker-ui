@@ -7,6 +7,7 @@ import Modal from 'components/Modal/Modal';
 
 import styles from './AccountSelector.module.scss';
 import CreateAccountForm from './CreateAccountForm/CreateAccountForm';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface AccountSelectorProps {
   accounts: Account[];
@@ -43,9 +44,13 @@ const AccountSelector: FC<AccountSelectorProps> = ({
           );
         })
       }
-      <button className={`${styles.accountListItem} ${styles.addNewButton}`} onClick={() => setIsModalOpen(true)}>
+      <Button
+        variant={ButtonVariants.PRIMARY}
+        className={styles.accountListItem}
+        onClick={() => setIsModalOpen(true)}
+      >
         + Add New
-      </button>
+      </Button>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <CreateAccountForm onSubmit={() => setIsModalOpen(false)} onCancel={() => setIsModalOpen(false)} />
       </Modal>

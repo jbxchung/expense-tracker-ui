@@ -2,10 +2,10 @@ $theme-name: 'dark';
 
 $colors: (
   // general
-  primary: #60A5FA,
-  primary-hover: #3B82F6,
-  primary-active: #2563EB,
-  primary-disabled: #93C5FD,
+  primary: #3B82F6,
+  primary-hover: #2563EB,
+  primary-active: #1D4ED8,
+  primary-disabled: #1F2937,
   
   secondary: #9CA3AF,
   secondary-hover: #6B7280,
@@ -21,7 +21,7 @@ $colors: (
 
   // inputs
   input-bg: #1A1C20,
-  input-border: #2F3338,
+  input-border: #9CA3AF,
   input-border-hover: #475569,
   input-border-focus: #60A5FA,
   input-placeholder: #9CA3AF,
