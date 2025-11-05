@@ -1,9 +1,6 @@
 import { useState, type FC } from 'react';
 
-import type {  Account, AccountType } from 'api/accounts';
-import { AccountTypes } from 'api/accounts';
-
-import { useCreateAccount } from 'hooks/useCreateAccount';
+import type { Account } from 'api/accounts';
 
 import Card from 'components/Card/Card';
 import Modal from 'components/Modal/Modal';

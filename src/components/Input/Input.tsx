@@ -1,27 +1,35 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import styles from './Input.module.scss';
 
+export interface InputHandle {
+  validate: () => boolean;
+}
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  error?: string;
   validate?: (value: string) => string | null; // custom validation function
 }
 
-const Input: React.FC<InputProps> = ({
-  label,
-  error,
-  className = "",
-  validate,
-  onChange,
-  ...props
-}) => {
-  const [validationError, setValidationError] = useState<string | null>(null);
+const Input = forwardRef<InputHandle, InputProps>(
+  ({ label, className = "", validate, onChange, ...props}, ref) => {
+  const [error, setError] = useState<string | null>(null);
+  
+  useImperativeHandle(ref, () => ({
+    validate: () => {
+      if (validate) {
+        const errorMessage = validate((props.value as string) || "");
+        setError(errorMessage);
+        return !errorMessage;
+      }
+      return true;
+    },
+  }));
 
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (validate) {
       const errorMessage = validate(event.target.value);
-      setValidationError(errorMessage);
+      setError(errorMessage);
     }
   };
   
@@ -29,11 +37,12 @@ const Input: React.FC<InputProps> = ({
     if (onChange) {
       onChange(event);
     }
-    if (validationError) {
+    if (error) {
       // Revalidate on change
       handleBlur(event as unknown as React.FocusEvent<HTMLInputElement>);
     }
   };
+
   return (
     <div className={`${styles.inputContainer} ${className}`}>
       {label && <label className={styles.label}>{label}</label>}
@@ -43,11 +52,11 @@ const Input: React.FC<InputProps> = ({
         onChange={handleChange}
         {...props}
       />
-      {(validationError || error) && (
-        <div className={styles.errorText}>{validationError || error}</div>
+      {error && (
+        <div className={styles.errorText}>{error}</div>
       )}
     </div>
   );
-};
+});
 
 export default Input;

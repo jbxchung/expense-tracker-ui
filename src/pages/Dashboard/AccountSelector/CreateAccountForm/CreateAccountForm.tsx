@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { AccountTypes, type AccountType } from 'api/accounts';
 
 import { useCreateAccount } from 'hooks/useCreateAccount';
 import { Dropdown } from 'components/Dropdown/Dropdown';
-import Input from 'components/Input/Input';
+import Input, { InputHandle } from 'components/Input/Input';
 
 import styles from './CreateAccountForm.module.scss';
 
@@ -19,10 +19,17 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
   const [newAccountName, setNewAccountName] = useState("");
   const [newAccountType, setNewAccountType] = useState<AccountType>(AccountTypes.CHECKING);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const nameInputRef = useRef<InputHandle | null>(null);
+
+  const handleSubmit = async () => {
+    const nameValid = nameInputRef.current?.validate() ?? false;
+    if (!nameValid) {
+      console.log('todo - name validation failed, display error');
+      return;
+    }
+
     try {
-      await createAccount({ name: newAccountName, type: newAccountType });
+      await createAccount({ name: newAccountName.trim(), type: newAccountType });
       setNewAccountName("");
       setNewAccountType(AccountTypes.CHECKING);
       onSubmit();
@@ -33,8 +40,9 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
 
   return (<>
     <h3 className={styles.newAccountFormTitle}>Create New Account</h3>
-    <form className={styles.newAccountForm} onSubmit={handleSubmit}>
+    <div className={styles.newAccountForm}>
       <Input
+        ref={nameInputRef}
         label="Account Name"
         placeholder="Enter account name"
         value={newAccountName}
@@ -58,11 +66,11 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
         <button type="button" className={`${styles.btn} ${styles.cancelBtn}`} onClick={onCancel}>
           Cancel
         </button>
-        <button type="submit" className={`${styles.btn} ${styles.saveBtn}`}>
+        <button type="submit" className={`${styles.btn} ${styles.saveBtn}`} onClick={handleSubmit} disabled={creating}>
           Save
         </button>
       </div>
-    </form>
+    </div>
   </>);
 };
 
