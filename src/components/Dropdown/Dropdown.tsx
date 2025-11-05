@@ -85,7 +85,7 @@ export function Dropdown<T extends string | number>({
 
   return (
     <div className={`${styles.dropdownContainer} ${className}`}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && <span className={styles.label}>{label}</span>}
 
       <Button
         variant={ButtonVariants.SECONDARY}
