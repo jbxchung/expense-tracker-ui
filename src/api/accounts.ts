@@ -1,3 +1,5 @@
+import { getServiceUrl } from "utils/hostUtils";
+
 // todo - share this DTO from the backend
 export interface Account {
   id: string;
@@ -20,6 +22,7 @@ let accounts: Account[] = [
   { id: 'account4', name: 'Example Savings', type: AccountTypes.SAVINGS},
 ];
 let tmpCount = 0;
+
 
 export const ACCOUNTS_PATH = '/accounts';
 
