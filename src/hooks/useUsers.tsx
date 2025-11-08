@@ -1,14 +1,9 @@
 import { useEffect } from 'react';
 import useSWR from 'swr';
 
+import type { User } from 'types/user';
 import { getUsers, USERS_API_PATH } from 'api/users';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-
-export interface User {
-  id: string;
-  name: string;
-  email?: string;
-}
 
 export const useUsers = () => {
   const { data: users, error, isLoading, isValidating } = useSWR<User[]>(USERS_API_PATH, getUsers);

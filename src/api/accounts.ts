@@ -1,5 +1,5 @@
-import { type Account, AccountTypeValueToKey } from 'types/account';
 import type { ApiResponse } from 'types/api-response';
+import { type Account, AccountTypeValueToKey } from 'types/account';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const ACCOUNTS_API_PATH = '/accounts';

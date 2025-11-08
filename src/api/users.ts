@@ -1,5 +1,5 @@
-import type { User } from 'hooks/useUsers';
 import type { ApiResponse } from 'types/api-response';
+import type { User } from 'types/user';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const USERS_API_PATH = '/users';
