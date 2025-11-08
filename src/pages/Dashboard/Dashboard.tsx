@@ -12,13 +12,13 @@ import Card from 'components/Card/Card';
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
 
 const Dashboard: FC = () => {
-  const { accounts, isLoading, error } = useAccounts();
-  const [selectedIds, setSelectedIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
+  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts();
+  const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
   
   useEffect(() => {
     if (accounts.length === 0) return;
 
-    setSelectedIds(prev => {
+    setSelectedAccountIds(prev => {
       // handle deletion
       const filtered = prev.filter(id => accounts.some(a => a.id === id));
       // default to select all
@@ -27,31 +27,16 @@ const Dashboard: FC = () => {
   }, [accounts]);
 
   const toggleAccount = (id: string) => {
-    setSelectedIds((prev) => (
+    setSelectedAccountIds((prev) => (
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     ));
   };
 
-  const selectedAccounts = accounts.filter((a) => selectedIds.includes(a.id));
-
-  if (isLoading) {
-    return (
-      <Card title="Loading accounts...">
-        loading spinner placeholder
-      </Card>
-    );
-  }
-  if (error) {
-    return (
-      <Card title="Error loading accounts">
-        {error.message}
-      </Card>
-    );
-  }
+  const selectedAccounts = accounts.filter((a) => selectedAccountIds.includes(a.id));
 
   return (<>
-    <AccountSelector accounts={accounts} selectedIds={selectedIds} onToggle={toggleAccount} />
-    <TransactionList selectedAccounts={selectedAccounts} />
+    <AccountSelector accounts={accounts} isLoading={accountsLoading} error={accountsError}  selectedIds={selectedAccountIds} onToggle={toggleAccount} />
+    <TransactionList accountsLoading={accountsLoading} selectedAccounts={selectedAccounts} />
   </>);
 };
 

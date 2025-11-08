@@ -5,10 +5,12 @@ import type { Account } from 'types/account';
 import Card from 'components/Card/Card';
 
 interface TransactionListProps {
+  accountsLoading: boolean;
   selectedAccounts: Account[];
 }
 
 const TransactionList: FC<TransactionListProps> = ({
+  accountsLoading,
   selectedAccounts,
 }) => {
   return (

@@ -11,17 +11,36 @@ import CreateAccountForm from './CreateAccountForm/CreateAccountForm';
 import styles from './AccountSelector.module.scss';
 
 interface AccountSelectorProps {
+  isLoading: boolean;
+  error?: Error;
   accounts: Account[];
   selectedIds: string[],
   onToggle: (id: string) => void;
 }
 
 const AccountSelector: FC<AccountSelectorProps> = ({
+  isLoading,
+  error,
   accounts,
   selectedIds,
   onToggle,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (isLoading) {
+    return (
+      <Card title="Loading accounts...">
+        loading spinner placeholder
+      </Card>
+    );
+  }
+  if (error) {
+    return (
+      <Card title="Error loading accounts">
+        {error.message}
+      </Card>
+    );
+  }
 
   return (
     <Card title="Accounts">
