@@ -2,12 +2,13 @@ import { useState, type FC } from 'react';
 
 import type { Account } from 'types/account';
 
+import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
 import Modal from 'components/Modal/Modal';
 
-import styles from './AccountSelector.module.scss';
 import CreateAccountForm from './CreateAccountForm/CreateAccountForm';
-import Button, { ButtonVariants } from 'components/Button/Button';
+
+import styles from './AccountSelector.module.scss';
 
 interface AccountSelectorProps {
   accounts: Account[];

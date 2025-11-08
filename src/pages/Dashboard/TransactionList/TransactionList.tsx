@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import type { Account } from '../../../api/accounts';
+import type { Account } from 'types/account';
 
 import Card from 'components/Card/Card';
 

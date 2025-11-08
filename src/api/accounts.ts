@@ -1,5 +1,5 @@
 import type { ApiResponse } from 'types/api-response';
-import { type Account, AccountTypeValueToKey } from 'types/account';
+import { type Account, type AccountTypeKey, AccountTypes, AccountTypeValueToKey } from 'types/account';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const ACCOUNTS_API_PATH = '/accounts';
@@ -7,7 +7,13 @@ export const ACCOUNTS_API_PATH = '/accounts';
 export async function getAccounts(): Promise<Account[]> {
   const response: ApiResponse<Account[]> = await fetchApi(ACCOUNTS_API_PATH);
   
-  return unwrapApiResponse<Account[]>(response);
+  // map backend AccountType to frontend for display
+  const accounts: Account[] = (await unwrapApiResponse<Account[]>(response)).map(account => ({
+    ...account,
+    type: AccountTypes[account.type as AccountTypeKey],
+  }));
+
+  return accounts;
 }
 
 export async function createAccount(account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>): Promise<Account> {
