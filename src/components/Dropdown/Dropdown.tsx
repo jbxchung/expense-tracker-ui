@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import styles from './Dropdown.module.scss';
-import Button, { ButtonVariants } from 'components/Button/Button';
+import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Button';
 
 interface DropdownOption<T extends string | number> {
   label: string;
@@ -15,6 +15,8 @@ interface DropdownProps<T extends string | number> {
   value?: T;
   onChange?: (value: T) => void;
   placeholder?: string;
+  buttonStyleVariant?: ButtonVariant;
+  suppressArrow?: boolean;
   className?: string;
 }
 
@@ -24,6 +26,8 @@ export function Dropdown<T extends string | number>({
   value,
   onChange,
   placeholder = "Select an option",
+  buttonStyleVariant = ButtonVariants.SECONDARY,
+  suppressArrow = false,
   className = "",
 }: DropdownProps<T>) {
   const [open, setOpen] = useState(false);
@@ -88,7 +92,7 @@ export function Dropdown<T extends string | number>({
       {label && <span className={styles.label}>{label}</span>}
 
       <Button
-        variant={ButtonVariants.SECONDARY}
+        variant={buttonStyleVariant}
         outline
         ref={buttonRef}
         onClick={(e) => {
@@ -100,7 +104,9 @@ export function Dropdown<T extends string | number>({
         <span className={selectedOption ? styles.text : styles.placeholder}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className={styles.icon}>{open ? "▲" : "▼"}</span>
+        {!suppressArrow &&
+          <span className={styles.icon}>{open ? "▲" : "▼"}</span>
+        }
       </Button>
 
       {open &&

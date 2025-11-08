@@ -61,21 +61,21 @@
 .ghost {
   background-color: transparent;
   color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: 1px solid transparent;
 
   &:hover:not(:disabled) {
-    background-color: var(--color-primary-hover);
+    background-color: var(--color-secondary-hover);
     color: #fff;
   }
 
   &:active:not(:disabled) {
-    background-color: var(--color-primary-active);
+    background-color: var(--color-secondary-active);
     color: #fff;
   }
 
   &:disabled {
-    color: var(--color-primary-disabled);
-    border-color: var(--color-primary-disabled);
+    color: var(--color-secondary-disabled);
+    border-color: var(--color-secondary-disabled);
     cursor: not-allowed;
     opacity: 0.6;
   }

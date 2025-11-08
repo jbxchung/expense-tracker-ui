@@ -1,5 +1,3 @@
-import { getServiceUrl } from "utils/hostUtils";
-
 // todo - share this DTO from the backend
 export interface Account {
   id: string;

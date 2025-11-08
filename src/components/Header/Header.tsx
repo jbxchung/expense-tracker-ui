@@ -2,30 +2,43 @@ import type { FC } from 'react';
 
 import { Themes, useTheme } from 'contexts/themeContext';
 
-import logoBlack from '../../assets/logo_black_transparent.png';
-import logoWhite from '../../assets/logo_white_transparent.png';
-
 import styles from './Header.module.scss';
-import UserMenu from './UserMenu';
-
-const THEME_LOGO_MAP = {
-  [Themes.DARK]: logoWhite,
-  [Themes.LIGHT]: logoBlack,
-};
+import { Dropdown } from 'components/Dropdown/Dropdown';
+import { useUsers } from 'hooks/useUsers';
+import { ButtonVariants } from 'components/Button/Button';
+import { SunIcon } from 'icons/SunIcon';
+import { MoonIcon } from 'icons/MoonIcon';
 
 const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const {users, selectedUser, selectUser, loading, error } = useUsers();
+
+  const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
 
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
-        <img src={THEME_LOGO_MAP[theme]} alt="logo" className={styles.homeLogo} onClick={() => window.location.href = '/'} />
+        {loading && <span>Loading users...</span>}
+        {error && <span>Error loading users</span>}
+        {!loading && !error && userOptions.length > 0 && (
+          <Dropdown
+            options={userOptions}
+            value={selectedUser?.id}
+            onChange={id => {
+              const newUser = users.find(u => u.id === id);
+              if (newUser) selectUser(newUser);
+            }}
+            placeholder='Select user'
+            buttonStyleVariant={ButtonVariants.GHOST}
+            suppressArrow
+            className={styles.userDropdown}
+          />
+        )}
       </div>
       <div className={styles.headerRight}>
-        <UserMenu username="JohnDoe" onChangeSettings={() => alert('Change User Settings clicked')} />
-        {/* <span className={styles.themeToggleIcon} onClick={toggleTheme}>
-          click to toggle {theme} theme (todo: add icons)
-        </span> */}
+        <span className={styles.themeToggleIcon} title={`Switch to ${theme === Themes.LIGHT ? 'Dark' : 'Light'} theme`} onClick={toggleTheme}>
+          {theme === Themes.LIGHT ? <MoonIcon/> : <SunIcon/>}
+        </span>
       </div>
     </div>
   );
