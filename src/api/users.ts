@@ -1,18 +1,11 @@
-import { API_BASE_URL } from 'utils/hostUtils';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-};
+import type { User } from 'hooks/useUsers';
+import type { ApiResponse } from 'types/api-response';
+import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const USERS_API_PATH = '/users';
 
 export async function getUsers(): Promise<User[]> {
-  const response = await fetch(`${API_BASE_URL}${USERS_API_PATH}`);
-  if (!response.ok) {
-    throw new Error('Failed to get users');
-  }
+  const response: ApiResponse<User[]> = await fetchApi(USERS_API_PATH);
 
-  return response.json();
+  return unwrapApiResponse<User[]>(response);
 }

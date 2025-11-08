@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { AccountTypes, type AccountType } from 'api/accounts';
+import { AccountTypes, type AccountType } from 'types/account';
 
 import { useCreateAccount } from 'hooks/useCreateAccount';
 import { Dropdown } from 'components/Dropdown/Dropdown';
@@ -8,6 +8,8 @@ import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './CreateAccountForm.module.scss';
 import Button, { ButtonVariants } from "components/Button/Button";
+import { useUsers } from "hooks/useUsers";
+import type { User } from "types/user";
 
 interface CreateAccountFormProps {
   onSubmit: () => void;
@@ -15,6 +17,7 @@ interface CreateAccountFormProps {
 }
 
 const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
+  const { selectedUser } = useUsers();
   const { create: createAccount, loading: creating, error: createError } = useCreateAccount();
 
   const [newAccountName, setNewAccountName] = useState("");
@@ -30,7 +33,7 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
     }
 
     try {
-      await createAccount({ name: newAccountName.trim(), type: newAccountType });
+      await createAccount({ userId: (selectedUser as User).id, name: newAccountName.trim(), type: newAccountType });
       setNewAccountName("");
       setNewAccountType(AccountTypes.CHECKING);
       onSubmit();

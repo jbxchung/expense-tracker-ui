@@ -1,8 +1,8 @@
-import useSWR from 'swr';
 import { useEffect } from 'react';
+import useSWR from 'swr';
 
 import { getUsers, USERS_API_PATH } from 'api/users';
-import { useLocalStorage } from './useLocalStorage';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 export interface User {
   id: string;

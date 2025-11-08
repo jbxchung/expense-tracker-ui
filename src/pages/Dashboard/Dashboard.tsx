@@ -1,12 +1,11 @@
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 
-import type { Account } from '../../api/accounts';
-import { useAccounts } from '../../hooks/useAccounts';
+import { useAccounts } from 'hooks/useAccounts';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import AccountSelector from './AccountSelector/AccountSelector';
 import TransactionList from './TransactionList/TransactionList';
 import Card from 'components/Card/Card';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 
 // import styles from './Dashboard.scss';
 
