@@ -1,13 +1,14 @@
 import type { FC } from 'react';
 
 import { Themes, useTheme } from 'contexts/themeContext';
+import { useUsers } from 'hooks/useUsers';
+
+import { Dropdown } from 'components/Dropdown/Dropdown';
+import { ButtonVariants } from 'components/Button/Button';
+import { MoonIcon } from 'icons/MoonIcon';
+import { SunIcon } from 'icons/SunIcon';
 
 import styles from './Header.module.scss';
-import { Dropdown } from 'components/Dropdown/Dropdown';
-import { useUsers } from 'hooks/useUsers';
-import { ButtonVariants } from 'components/Button/Button';
-import { SunIcon } from 'icons/SunIcon';
-import { MoonIcon } from 'icons/MoonIcon';
 
 const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();

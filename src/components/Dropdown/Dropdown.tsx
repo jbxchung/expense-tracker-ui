@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-import styles from './Dropdown.module.scss';
 import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Button';
+
+import styles from './Dropdown.module.scss';
 
 interface DropdownOption<T extends string | number> {
   label: string;

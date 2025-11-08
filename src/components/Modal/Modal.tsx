@@ -1,9 +1,10 @@
 // src/components/Modal.tsx
 import React from 'react';
+import { createPortal } from 'react-dom';
+
+import Card from 'components/Card/Card';
 
 import styles from './Modal.module.scss';
-import Card from 'components/Card/Card';
-import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;

@@ -1,15 +1,16 @@
 import { useRef, useState } from "react";
 
 import { AccountTypes, type AccountType } from 'types/account';
+import type { User } from 'types/user';
 
 import { useCreateAccount } from 'hooks/useCreateAccount';
+import { useUsers } from 'hooks/useUsers';
+
+import Button, { ButtonVariants } from 'components/Button/Button';
 import { Dropdown } from 'components/Dropdown/Dropdown';
 import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './CreateAccountForm.module.scss';
-import Button, { ButtonVariants } from "components/Button/Button";
-import { useUsers } from "hooks/useUsers";
-import type { User } from "types/user";
 
 interface CreateAccountFormProps {
   onSubmit: () => void;
