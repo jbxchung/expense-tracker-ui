@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 
-import type { Account } from 'api/accounts';
+import type { Account } from 'types/account';
 
 import Card from 'components/Card/Card';
 import Modal from 'components/Modal/Modal';
@@ -24,7 +24,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
 
   return (
     <Card title="Accounts">
-      {
+      {accounts.length ? (
         accounts.map(account => {
           const selected = selectedIds.includes(account.id);
           return (
@@ -43,7 +43,11 @@ const AccountSelector: FC<AccountSelectorProps> = ({
             </div>
           );
         })
-      }
+      ) : (
+        <div>
+          No accounts found. Please add a new account.
+        </div>
+      )}
       <Button
         variant={ButtonVariants.PRIMARY}
         className={styles.accountListItem}
