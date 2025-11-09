@@ -5,8 +5,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+    } catch (e) {
+      console.warn(`Error reading localStorage key "${key}":`, e);
       return initialValue;
     }
   });
@@ -14,8 +14,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {
-      console.warn(`Error writing localStorage key "${key}":`, error);
+    } catch (e) {
+      console.warn(`Error writing localStorage key "${key}":`, e);
     }
   }, [key, storedValue]);
 

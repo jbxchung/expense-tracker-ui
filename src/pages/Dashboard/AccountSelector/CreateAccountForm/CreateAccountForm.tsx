@@ -38,7 +38,7 @@ const CreateAccountForm = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
       setNewAccountName("");
       setNewAccountType(AccountTypes.CHECKING);
       onSubmit();
-    } catch(e) {
+    } catch (e) {
       console.error('Error during create operation', e);
     }
   };

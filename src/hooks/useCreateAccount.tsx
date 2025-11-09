@@ -20,9 +20,9 @@ export function useCreateAccount() {
       mutate(selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null, (accounts: Account[] = []) => [...accounts, newAccount], false);
 
       return newAccount;
-    } catch (err: any) {
-      setError(err);
-      throw err;
+    } catch (e) {
+      setError(e as Error);
+      throw e;
     } finally {
       setLoading(false);
     }
