@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { mutate } from 'swr';
 
-import type { Account } from 'types/account';
+import { AccountTypes, type Account } from 'types/account';
 import { ACCOUNTS_API_PATH, createAccount } from 'api/accounts';
 import { useUsers } from 'hooks/useUsers';
 
@@ -16,6 +16,9 @@ export function useCreateAccount() {
     try {
       const newAccount = await createAccount(account);
 
+      // enum fix
+      newAccount.type = AccountTypes[newAccount.type as keyof typeof AccountTypes];
+      
       // update SWR cache manually
       mutate(selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null, (accounts: Account[] = []) => [...accounts, newAccount], false);
 
