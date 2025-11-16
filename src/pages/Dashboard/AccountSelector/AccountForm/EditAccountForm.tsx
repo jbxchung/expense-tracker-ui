@@ -14,8 +14,8 @@ interface EditAccountFormProps {
 }
 
 const EditAccountForm: FC<EditAccountFormProps> = ({ account, onSubmit, onCancel }: EditAccountFormProps) => {
-  const { update: updateAccount, loading: updatingAccount } = useUpdateAccount();
-  const { remove: deleteAccount, loading: deletingAccount } = useDeleteAccount();
+  const { update: updateAccount, loading: updatingAccount, error: updateError } = useUpdateAccount();
+  const { remove: deleteAccount, loading: deletingAccount, error: deleteError } = useDeleteAccount();
 
   const handleUpdate = async (data: { name: string; type: AccountType }) => {
     await updateAccount({
@@ -31,7 +31,7 @@ const EditAccountForm: FC<EditAccountFormProps> = ({ account, onSubmit, onCancel
       `Are you sure you want to delete account "${account.name}"? This cannot be undone.`
     );
     if (!confirmed) return;
-    
+
     await deleteAccount(account.id);
     onSubmit();
   }
@@ -45,6 +45,7 @@ const EditAccountForm: FC<EditAccountFormProps> = ({ account, onSubmit, onCancel
       onSubmit={handleUpdate}
       onCancel={onCancel}
       onDelete={handleDelete}
+      errorMessage={updateError?.message || deleteError?.message}
     />
   );
 };

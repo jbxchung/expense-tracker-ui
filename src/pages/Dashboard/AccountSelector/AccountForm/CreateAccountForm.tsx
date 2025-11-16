@@ -14,7 +14,7 @@ interface CreateAccountFormProps {
 
 const CreateAccountForm: FC<CreateAccountFormProps> = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
   const { selectedUser } = useUsers();
-  const { create: createAccount, loading } = useCreateAccount();
+  const { create: createAccount, loading, error: createError } = useCreateAccount();
 
   const handleCreate = async (data: { name: string; type: AccountType }) => {
     await createAccount({
@@ -33,6 +33,7 @@ const CreateAccountForm: FC<CreateAccountFormProps> = ({ onSubmit, onCancel }: C
       onSubmit={handleCreate}
       onCancel={onCancel}
       submitting={loading}
+      errorMessage={createError?.message}
     />
   );
 };

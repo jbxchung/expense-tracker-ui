@@ -20,6 +20,7 @@ interface AccountFormProps {
   onCancel: () => void;
   onDelete?: () => void;
   submitting?: boolean;
+  errorMessage?: string;
 }
 
 const AccountForm = ({
@@ -30,6 +31,7 @@ const AccountForm = ({
   onCancel,
   onDelete,
   submitting = false,
+  errorMessage,
 }: AccountFormProps) => {
   const [name, setName] = useState(initialName);
   const [type, setType] = useState<AccountType>(initialType);
@@ -68,21 +70,20 @@ const AccountForm = ({
         />
 
         <div className={styles.formButtons}>
-          <Button variant={ButtonVariants.SECONDARY} onClick={onCancel}>
+          {onDelete && (
+            <Button variant={ButtonVariants.DANGER} onClick={onDelete} disabled={submitting}>
+              Delete
+            </Button>
+          )}
+          <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
             Cancel
           </Button>
-          {onDelete && (
-            <Button
-              variant={ButtonVariants.DANGER}
-              onClick={onDelete}
-            >
-              Delete
-          </Button>
-          )}
           <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={submitting}>
             Save
           </Button>
         </div>
+
+        {errorMessage && <div className={styles.formError}>{errorMessage}</div>}
       </div>
     </>
   );
