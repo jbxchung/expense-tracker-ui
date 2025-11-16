@@ -31,6 +31,23 @@ export async function createAccount(account: Omit<Account, 'id' | 'createdAt' | 
   return unwrapApiResponse<Account>(response);
 }
 
+export async function updateAccount(account: Partial<Omit<Account, 'createdAt' | 'updatedAt'>> & { id: string }): Promise<Account> {
+  const response: ApiResponse<Account> = await fetchApi(`${ACCOUNTS_API_PATH}/${account.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      ...account,
+      type: account.type
+        ? AccountTypeValueToKey[account.type]
+        : undefined,
+    }),
+  });
+
+  return unwrapApiResponse<Account>(response);
+}
+
 export async function deleteAccount(accountId: string): Promise<Account> {
   const response: ApiResponse<Account> = await fetchApi(`${ACCOUNTS_API_PATH}/${accountId}`, {
     method: 'DELETE',

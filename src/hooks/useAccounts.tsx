@@ -5,6 +5,7 @@ import { ACCOUNTS_API_PATH, getAccounts } from 'api/accounts';
 import { useUsers } from 'hooks/useUsers';
 
 export const useAccounts = () => {
+  // available accounts depends on the current user
   const { selectedUser, loading: usersLoading } = useUsers();
 
   const swrKey = selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null;

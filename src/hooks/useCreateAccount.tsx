@@ -13,6 +13,7 @@ export function useCreateAccount() {
   const create = useCallback(async (account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>) => {
     setLoading(true);
     setError(null);
+
     try {
       const newAccount = await createAccount(account);
 
@@ -29,7 +30,7 @@ export function useCreateAccount() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedUser]);
 
   return { create, loading, error };
 };

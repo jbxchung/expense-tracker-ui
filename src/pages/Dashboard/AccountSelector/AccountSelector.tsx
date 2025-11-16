@@ -6,9 +6,10 @@ import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
 import Modal from 'components/Modal/Modal';
 
-import CreateAccountForm from './CreateAccountForm/CreateAccountForm';
+import CreateAccountForm from './AccountForm/CreateAccountForm';
 
 import styles from './AccountSelector.module.scss';
+import EditAccountForm from './AccountForm/EditAccountForm';
 
 interface AccountSelectorProps {
   isLoading: boolean;
@@ -25,7 +26,8 @@ const AccountSelector: FC<AccountSelectorProps> = ({
   selectedIds,
   onToggle,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewAccountModalOpen, setIsNewAccountModalOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
   if (isLoading) {
     return (
@@ -56,9 +58,12 @@ const AccountSelector: FC<AccountSelectorProps> = ({
                 </span>
               </span>
               <div className={styles.accountActions}>
-                <span className="edit-icon">
+                <Button variant={ButtonVariants.GHOST} onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingAccount(account);
+                }}>
                   Edit
-                </span>
+                </Button>
               </div>
             </div>
           );
@@ -71,12 +76,24 @@ const AccountSelector: FC<AccountSelectorProps> = ({
       <Button
         variant={ButtonVariants.PRIMARY}
         className={styles.accountListItem}
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setIsNewAccountModalOpen(true)}
       >
         + Add New
       </Button>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <CreateAccountForm onSubmit={() => setIsModalOpen(false)} onCancel={() => setIsModalOpen(false)} />
+      <Modal isOpen={isNewAccountModalOpen} onClose={() => setIsNewAccountModalOpen(false)}>
+        <CreateAccountForm onSubmit={() => setIsNewAccountModalOpen(false)} onCancel={() => setIsNewAccountModalOpen(false)} />
+      </Modal>
+      <Modal
+        isOpen={!!editingAccount}
+        onClose={() => setEditingAccount(null)}
+      >
+        {editingAccount && (
+          <EditAccountForm
+            account={editingAccount}
+            onSubmit={() => setEditingAccount(null)}
+            onCancel={() => setEditingAccount(null)}
+          />
+        )}
       </Modal>
     </Card>
   );
