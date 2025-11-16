@@ -20,3 +20,7 @@ export interface Category {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface CategoryTree extends Omit<Category, 'parentId'> {
+  children: CategoryTree[];
+}

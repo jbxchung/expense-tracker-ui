@@ -5,9 +5,6 @@ import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import AccountSelector from './AccountSelector/AccountSelector';
 import TransactionList from './TransactionList/TransactionList';
-import Card from 'components/Card/Card';
-
-// import styles from './Dashboard.scss';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
 
@@ -35,7 +32,7 @@ const Dashboard: FC = () => {
   const selectedAccounts = accounts.filter((a) => selectedAccountIds.includes(a.id));
 
   return (<>
-    <AccountSelector accounts={accounts} isLoading={accountsLoading} error={accountsError}  selectedIds={selectedAccountIds} onToggle={toggleAccount} />
+    <AccountSelector accounts={accounts} isLoading={accountsLoading} error={accountsError} selectedIds={selectedAccountIds} onToggle={toggleAccount} />
     <TransactionList accountsLoading={accountsLoading} selectedAccounts={selectedAccounts} />
   </>);
 };
