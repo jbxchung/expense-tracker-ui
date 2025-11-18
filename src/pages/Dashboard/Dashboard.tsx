@@ -1,17 +1,37 @@
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 
 import { useAccounts } from 'hooks/useAccounts';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import AccountSelector from './AccountSelector/AccountSelector';
 import TransactionList from './TransactionList/TransactionList';
+import Card from 'components/Card/Card';
+import DatePicker, { DatePickerModes, type DateRange } from 'components/DatePicker/Datepicker';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
+
+const DATEPICKER_PRESETS = [
+  { label: "Last 7 Days", getRange: () => ({ from: new Date(Date.now() - 7 * 24*60*60*1000), to: new Date() }) },
+  { label: "This Month", getRange: () => {
+      const now = new Date();
+      return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: new Date() };
+    } 
+  },
+  { label: "YTD", getRange: () => {
+      const now = new Date();
+      return { from: new Date(now.getFullYear(), 0, 1), to: new Date() };
+    } 
+  },
+];
 
 const Dashboard: FC = () => {
   const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts();
   const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
   
+  // Track date range for transactions
+  const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
+
+
   useEffect(() => {
     if (accounts.length === 0) return;
 
@@ -33,7 +53,15 @@ const Dashboard: FC = () => {
 
   return (<>
     <AccountSelector accounts={accounts} isLoading={accountsLoading} error={accountsError} selectedIds={selectedAccountIds} onToggle={toggleAccount} />
-    <TransactionList accountsLoading={accountsLoading} selectedAccounts={selectedAccounts} />
+    <Card title="Transactions">
+      <DatePicker
+        mode={DatePickerModes.RANGE}
+        range={dateRange}
+        onChange={(range) => setDateRange(range as DateRange)}
+        presets={DATEPICKER_PRESETS}
+      />
+      <TransactionList accountsLoading={accountsLoading} selectedAccounts={selectedAccounts} dateRange={dateRange} />
+    </Card>
   </>);
 };
 

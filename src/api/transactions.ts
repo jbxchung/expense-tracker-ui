@@ -29,8 +29,8 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
   if (accountsToFetch.length > 0) {
     const queryParams = new URLSearchParams();
     queryParams.append('accountIds', accountsToFetch.map(encodeURIComponent).join(','));
-    if (from) queryParams.append('from', from.toISOString());
-    if (to) queryParams.append('to', to.toISOString());
+    if (from) queryParams.append('from', from.getTime().toString());
+    if (to) queryParams.append('to', to.getTime().toString());
 
     const response: ApiResponse<Transaction[]> = await fetchApi(`${TRANSACTIONS_API_PATH}?${queryParams.toString()}`);
     const fetchedTransactions = await unwrapApiResponse(response);
