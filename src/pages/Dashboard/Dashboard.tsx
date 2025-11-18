@@ -40,7 +40,7 @@ const Dashboard: FC = () => {
   const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
   const [selectedDatePresetIndex, setSelectedDatePresetIndex] = useLocalStorage<number>(STORED_SELECTED_DATE_PRESET_INDEX_KEY, 0);
   // memoize the default date range
-  const initialDateRange = useMemo(() => DATEPICKER_PRESETS[selectedDatePresetIndex].getRange(), []);
+  const initialDateRange = useMemo(() => DATEPICKER_PRESETS[selectedDatePresetIndex].getRange(), [selectedDatePresetIndex]);
   const [dateRange, setDateRange] = useState<DateRange>(initialDateRange);
 
   useEffect(() => {
@@ -77,7 +77,9 @@ const Dashboard: FC = () => {
         onChange={range => onDateRangeChanged(range as DateRange)}
         presets={DATEPICKER_PRESETS}
         selectedPresetIndex={selectedDatePresetIndex}
-        onPresetSelected={preset => {setSelectedDatePresetIndex(DATEPICKER_PRESETS.findIndex(p => p.label === preset?.label));}}
+        onPresetSelected={preset => {
+          setSelectedDatePresetIndex(preset ? DATEPICKER_PRESETS.findIndex(p => p.label === preset.label) : 0);
+        }}
       />
       <TransactionList
         accountsLoading={accountsLoading}
