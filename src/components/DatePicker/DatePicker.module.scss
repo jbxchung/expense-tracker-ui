@@ -2,7 +2,6 @@
 
 .datePickerWrapper {
   display: flex;
-  flex-direction: column;
   gap: 8px;
   font-family: sans-serif;
   width: 100%;
@@ -41,12 +40,10 @@
 .presets {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
 }
 
 .presetButton {
   padding: 4px 8px;
-  border-radius: 4px;
   cursor: pointer;
   background-color: var(--color-surface-hover);
   color: var(--color-text-primary);
@@ -63,6 +60,14 @@
     background-color: var(--color-primary);
     color: #fff;
     font-weight: bold;
+  }
+
+  &:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+
+  &:last-child {
+    border-radius: 0 4px 4px 0;
   }
 }
 

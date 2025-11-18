@@ -17,9 +17,19 @@ const DATEPICKER_PRESETS = [
       return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: new Date() };
     } 
   },
+  { label: "Last Month", getRange: () => {
+      const now = new Date();
+      return { from: new Date(now.getFullYear(), now.getMonth() - 1, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
+    }
+  },
+  { label: "Last 3 Months", getRange: () => {
+      const now = new Date();
+      return { from: new Date(now.getFullYear(), now.getMonth() - 3, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
+    }
+  },
   { label: "YTD", getRange: () => {
       const now = new Date();
-      return { from: new Date(now.getFullYear(), 0, 1), to: new Date() };
+      return { from: new Date(now.getFullYear(), 0, 1), to: now };
     } 
   },
 ];

@@ -83,7 +83,7 @@ const DatePicker: FC<DatePickerProps> = ({
   };
 
   return (
-    <div>
+    <div className={styles.datePickerWrapper}>
       {mode === DatePickerModes.SINGLE ? (
         <ReactDatePicker
           customInput={<Input placeholder='Select a date' />}
