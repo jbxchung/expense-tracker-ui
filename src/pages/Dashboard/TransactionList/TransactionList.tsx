@@ -32,11 +32,11 @@ const TransactionList: FC<TransactionListProps> = ({
 
   return (
     <div>
-      {
-        selectedAccounts.map(account => (
-          <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
-        ))
-      }
+    {
+      selectedAccounts.map(account => (
+        <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
+      ))
+    }
     </div>
   );
 };

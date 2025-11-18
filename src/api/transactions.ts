@@ -28,7 +28,9 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
   // fetch from backend if needed
   if (accountsToFetch.length > 0) {
     const queryParams = new URLSearchParams();
-    queryParams.append('accountIds', accountsToFetch.map(encodeURIComponent).join(','));
+    accountsToFetch.forEach(accountId => {
+      queryParams.append('accountId', encodeURIComponent(accountId));
+    });
     if (from) queryParams.append('from', from.getTime().toString());
     if (to) queryParams.append('to', to.getTime().toString());
 
