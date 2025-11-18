@@ -15,7 +15,6 @@ export const useTransactions = ({ accountIds, from, to }: UseTransactionsOptions
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-
   const fetchAndSet = useCallback(async (skipCache = false) => {
     if (!accountIds.length) {
       setTransactions([]);

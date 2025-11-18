@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 
 import { useAccounts } from 'hooks/useAccounts';
 import { useLocalStorage } from 'hooks/useLocalStorage';
@@ -6,9 +6,10 @@ import { useLocalStorage } from 'hooks/useLocalStorage';
 import AccountSelector from './AccountSelector/AccountSelector';
 import TransactionList from './TransactionList/TransactionList';
 import Card from 'components/Card/Card';
-import DatePicker, { DatePickerModes, type DateRange } from 'components/DatePicker/Datepicker';
+import DatePicker, { DatePickerModes, type DateRange } from 'components/DatePicker/DatePicker';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
+const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
 
 const DATEPICKER_PRESETS = [
   { label: "Last 7 Days", getRange: () => ({ from: new Date(Date.now() - 7 * 24*60*60*1000), to: new Date() }) },
@@ -37,10 +38,10 @@ const DATEPICKER_PRESETS = [
 const Dashboard: FC = () => {
   const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts();
   const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
-  
-  // Track date range for transactions
-  const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
-
+  const [selectedDatePresetIndex, setSelectedDatePresetIndex] = useLocalStorage<number>(STORED_SELECTED_DATE_PRESET_INDEX_KEY, 0);
+  // memoize the default date range
+  const initialDateRange = useMemo(() => DATEPICKER_PRESETS[selectedDatePresetIndex].getRange(), []);
+  const [dateRange, setDateRange] = useState<DateRange>(initialDateRange);
 
   useEffect(() => {
     if (accounts.length === 0) return;
@@ -59,6 +60,12 @@ const Dashboard: FC = () => {
     ));
   };
 
+  const onDateRangeChanged = useCallback((range: DateRange) => {
+    if (range.from && range.to) {
+      setDateRange(range);
+    }
+  }, []);
+
   const selectedAccounts = accounts.filter((a) => selectedAccountIds.includes(a.id));
 
   return (<>
@@ -67,10 +74,16 @@ const Dashboard: FC = () => {
       <DatePicker
         mode={DatePickerModes.RANGE}
         range={dateRange}
-        onChange={(range) => setDateRange(range as DateRange)}
+        onChange={range => onDateRangeChanged(range as DateRange)}
         presets={DATEPICKER_PRESETS}
+        selectedPresetIndex={selectedDatePresetIndex}
+        onPresetSelected={preset => {setSelectedDatePresetIndex(DATEPICKER_PRESETS.findIndex(p => p.label === preset?.label));}}
       />
-      <TransactionList accountsLoading={accountsLoading} selectedAccounts={selectedAccounts} dateRange={dateRange} />
+      <TransactionList
+        accountsLoading={accountsLoading}
+        selectedAccounts={selectedAccounts}
+        dateRange={dateRange}
+      />
     </Card>
   </>);
 };

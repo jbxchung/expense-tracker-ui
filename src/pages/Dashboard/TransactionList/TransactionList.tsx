@@ -1,10 +1,9 @@
-import { useState, type FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 
 import type { Account } from 'types/account';
+import { type DateRange } from 'components/DatePicker/DatePicker';
 
-import Card from 'components/Card/Card';
 import { useTransactions } from 'hooks/useTransactions';
-import { type DateRange } from 'components/DatePicker/Datepicker';
 
 interface TransactionListProps {
   accountsLoading: boolean;
@@ -17,7 +16,19 @@ const TransactionList: FC<TransactionListProps> = ({
   selectedAccounts,
   dateRange,
 }) => {
-  // const { transactions, isLoading, error } = useTransactions({ accountIds: selectedAccounts.map(acc => acc.id), from, to });
+  // memoize account ids so that useTransactions doesn't refetch on every render
+  const accountIds = useMemo(() => (
+    selectedAccounts.map(acc => acc.id)
+  ), [selectedAccounts]);
+
+  const { transactions, isLoading, error } = useTransactions({
+    accountIds,
+    from: dateRange.from!, to: dateRange.to! });
+
+  if (accountsLoading) return <div>Loading accounts...</div>;
+  if (isLoading) return <div>Loading transactions...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!transactions.length) return <div>No transactions found</div>;
 
   return (
     <div>
