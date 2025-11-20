@@ -38,7 +38,7 @@ const Header: FC = () => {
       </div>
       <div className={styles.headerRight}>
         <span className={styles.themeToggleIcon} title={`Switch to ${theme === Themes.LIGHT ? 'Dark' : 'Light'} theme`} onClick={toggleTheme}>
-          {theme === Themes.LIGHT ? <MoonIcon/> : <SunIcon/>}
+          {theme === Themes.LIGHT ? <MoonIcon /> : <SunIcon />}
         </span>
       </div>
     </div>

@@ -28,8 +28,12 @@
     text-align: right;
 
     .theme-toggle-icon {
-      fill: var(--color-text-primary);
+      color: var(--color-text-primary);
       cursor: pointer;
+
+      &:hover {
+        color: var(--color-link-hover);
+      }
 
       svg {
         height: 1.5rem;

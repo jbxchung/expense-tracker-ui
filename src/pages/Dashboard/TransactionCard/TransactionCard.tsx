@@ -11,6 +11,7 @@ import { DatePickerModes, type DateRange } from 'components/DatePicker/DatePicke
 
 import styles from './TransactionCard.module.scss';
 import Button, { ButtonVariants } from 'components/Button/Button';
+import { UploadIcon } from 'icons/UploadIcon';
 
 const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
 
@@ -87,12 +88,14 @@ const TransactionList: FC<TransactionListProps> = ({
           }}
         />
         <Button
+          className={styles.importButton}
+          title="Import Transactions"
           variant={ButtonVariants.GHOST}
           onClick={() => {
             alert('todo - open modal');
           }}
         >
-          Import (todo: replace with icon)
+          <UploadIcon />
         </Button>
       </div>
       {statusText ? <div>{statusText}</div>

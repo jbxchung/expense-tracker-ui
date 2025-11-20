@@ -2,4 +2,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .import-button {
+    display: flex;
+    padding: 0;
+    color: var(--color-text-primary);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-link-hover);
+    }
+
+    svg {
+      height: 2rem;
+      width: 2rem;
+    }
+  }
 }
