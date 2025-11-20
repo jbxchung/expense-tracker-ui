@@ -69,18 +69,22 @@ const AccountForm = ({
           ]}
         />
 
-        <div className={styles.formButtons}>
+        <div className={styles.formButtonsContainer}>
+          <div className={styles.formButtonsLeft}>
           {onDelete && (
             <Button variant={ButtonVariants.DANGER} onClick={onDelete} disabled={submitting}>
               Delete
             </Button>
           )}
-          <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
-            Cancel
-          </Button>
-          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={submitting}>
-            Save
-          </Button>
+          </div>
+          <div className={styles.formButtonsRight}>
+            <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
+              Cancel
+            </Button>
+            <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={submitting}>
+              Save
+            </Button>
+          </div>
         </div>
 
         {errorMessage && <div className={styles.formError}>{errorMessage}</div>}

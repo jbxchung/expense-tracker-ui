@@ -9,10 +9,21 @@
   width: 100%;
 }
 
-.form-buttons {
+.form-buttons-container {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  justify-content: space-between;
+
+  .form-buttons-left {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .form-buttons-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
 }
 
 .form-error {
