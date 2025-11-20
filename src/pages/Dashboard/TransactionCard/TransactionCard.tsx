@@ -5,13 +5,17 @@ import type { Account } from 'types/account';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTransactions } from 'hooks/useTransactions';
 
+import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
 import DatePicker from 'components/DatePicker/DatePicker';
 import { DatePickerModes, type DateRange } from 'components/DatePicker/DatePicker';
+import Modal from 'components/Modal/Modal';
+
+import TransactionForm from './TransactionForm/TransactionForm';
+
+import { UploadIcon } from 'icons/UploadIcon';
 
 import styles from './TransactionCard.module.scss';
-import Button, { ButtonVariants } from 'components/Button/Button';
-import { UploadIcon } from 'icons/UploadIcon';
 
 const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
 
@@ -66,7 +70,10 @@ const TransactionList: FC<TransactionListProps> = ({
 
   const { transactions, isLoading, error } = useTransactions({
     accountIds,
-    from: dateRange.from!, to: dateRange.to! });
+    from: dateRange.from!, to: dateRange.to!
+  });
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   let statusText = null;
   if (accountsLoading) statusText = 'Loading accounts...';
@@ -91,9 +98,7 @@ const TransactionList: FC<TransactionListProps> = ({
           className={styles.importButton}
           title="Import Transactions"
           variant={ButtonVariants.GHOST}
-          onClick={() => {
-            alert('todo - open modal');
-          }}
+          onClick={() => setImportModalOpen(true)}
         >
           <UploadIcon />
         </Button>
@@ -105,6 +110,9 @@ const TransactionList: FC<TransactionListProps> = ({
           <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
         ))
       }
+      <Modal isOpen={importModalOpen} onClose={() => setImportModalOpen(false)}>
+        <TransactionForm />
+      </Modal>
     </Card>
   );
 };
