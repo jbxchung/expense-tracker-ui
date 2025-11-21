@@ -1,0 +1,12 @@
+.upload-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+}
