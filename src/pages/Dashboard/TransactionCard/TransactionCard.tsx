@@ -110,7 +110,7 @@ const TransactionList: FC<TransactionListProps> = ({
           <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
         ))
       }
-      <Modal isOpen={importModalOpen} onClose={() => setImportModalOpen(false)}>
+      <Modal title="Import Transactions" isOpen={importModalOpen} onClose={() => setImportModalOpen(false)}>
         <TransactionForm />
       </Modal>
     </Card>

@@ -80,10 +80,15 @@ const AccountSelector: FC<AccountSelectorProps> = ({
       >
         + Add New
       </Button>
-      <Modal isOpen={isNewAccountModalOpen} onClose={() => setIsNewAccountModalOpen(false)}>
+      <Modal
+        title="Create New Account"
+        isOpen={isNewAccountModalOpen}
+        onClose={() => setIsNewAccountModalOpen(false)}
+      >
         <CreateAccountForm onSubmit={() => setIsNewAccountModalOpen(false)} onCancel={() => setIsNewAccountModalOpen(false)} />
       </Modal>
       <Modal
+        title="Edit Account"
         isOpen={!!editingAccount}
         onClose={() => setEditingAccount(null)}
       >

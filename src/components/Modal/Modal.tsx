@@ -7,12 +7,13 @@ import Card from 'components/Card/Card';
 import styles from './Modal.module.scss';
 
 interface ModalProps {
+  title?: string;
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, children }: ModalProps) {
+export default function Modal({ title, isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
@@ -31,6 +32,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
         onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
       >
         <Card>
+          {title && <h3 className={styles.modalTitle}>{title}</h3>}
           {children}
         </Card>
       </div>

@@ -13,5 +13,9 @@
   .modal {
     min-width: 450px;
     z-index: 10000;
+
+    .modal-title {
+      margin-top: 0;
+    }
   }
 }

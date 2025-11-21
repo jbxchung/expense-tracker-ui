@@ -1,10 +1,6 @@
 import { useRef, useState } from "react";
 
 import { AccountTypes, type AccountType } from 'types/account';
-import type { User } from 'types/user';
-
-import { useCreateAccount } from 'hooks/useCreateAccount';
-import { useUsers } from 'hooks/useUsers';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
 import { Dropdown } from 'components/Dropdown/Dropdown';
@@ -13,7 +9,6 @@ import Input, { type InputHandle } from 'components/Input/Input';
 import styles from './AccountForm.module.scss';
 
 interface AccountFormProps {
-  title: string;
   initialName: string;
   initialType: AccountType;
   onSubmit: (data: { name: string; type: AccountType }) => Promise<void>;
@@ -24,7 +19,6 @@ interface AccountFormProps {
 }
 
 const AccountForm = ({
-  title,
   initialName,
   initialType,
   onSubmit,
@@ -46,7 +40,6 @@ const AccountForm = ({
 
   return (
     <>
-      <h3 className={styles.accountFormTitle}>{title}</h3>
       <div className={styles.accountForm}>
         <Input
           ref={nameInputRef}

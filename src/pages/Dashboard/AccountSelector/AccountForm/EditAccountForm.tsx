@@ -38,7 +38,6 @@ const EditAccountForm: FC<EditAccountFormProps> = ({ account, onSubmit, onCancel
 
   return (
     <AccountForm
-      title="Edit Account"
       initialName={account.name}
       initialType={account.type}
       submitting={updatingAccount || deletingAccount}

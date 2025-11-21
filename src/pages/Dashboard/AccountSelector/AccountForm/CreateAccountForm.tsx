@@ -27,7 +27,6 @@ const CreateAccountForm: FC<CreateAccountFormProps> = ({ onSubmit, onCancel }: C
 
   return (
     <AccountForm
-      title="Create New Account"
       initialName=""
       initialType={AccountTypes.CHECKING}
       onSubmit={handleCreate}
