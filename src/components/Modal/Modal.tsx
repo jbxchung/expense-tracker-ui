@@ -20,7 +20,6 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
     <div
       className={styles.modalWrapper}
       onClick={(e) => {
-        console.log(e.target, e.currentTarget);
         // close when clicking on the modal background
         if (e.target === e.currentTarget) {
           onClose();
