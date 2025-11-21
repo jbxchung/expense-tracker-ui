@@ -10,10 +10,11 @@ interface ModalProps {
   title?: string;
   isOpen: boolean;
   onClose: () => void;
+  closeOnOutsideClick?: boolean;
   children: React.ReactNode;
 }
 
-export default function Modal({ title, isOpen, onClose, children }: ModalProps) {
+export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = true, children }: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
@@ -21,7 +22,7 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
       className={styles.modalWrapper}
       onClick={(e) => {
         // close when clicking on the modal background
-        if (e.target === e.currentTarget) {
+        if (closeOnOutsideClick && e.target === e.currentTarget) {
           onClose();
         }
       }}
@@ -31,7 +32,12 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
         onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
       >
         <Card>
-          {title && <h3 className={styles.modalTitle}>{title}</h3>}
+          <div className={styles.modalHeader}>
+            {title && <h3 className={styles.modalTitle}>{title}</h3>}
+            <span className={styles.closeIcon} title="Close" onClick={onClose}>
+              &times;
+            </span>
+          </div>
           {children}
         </Card>
       </div>

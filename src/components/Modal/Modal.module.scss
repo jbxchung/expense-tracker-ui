@@ -14,8 +14,24 @@
     min-width: 450px;
     z-index: 10000;
 
-    .modal-title {
-      margin-top: 0;
+    .modal-header {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .modal-title {
+        margin: 0;
+      }
+
+      .close-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--color-danger);
+        }
+      }
     }
   }
 }

@@ -102,13 +102,30 @@
     .react-datepicker__day-name,
     .react-datepicker__day {
       color: var(--color-text-primary);
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
     }
 
     .react-datepicker__day--selected,
     .react-datepicker__day--keyboard-selected {
-      background-color: var(--color-primary);
+      background-color: var(--color-primary-active);
       color: #fff;
       border-radius: 4px;
+    }
+
+    .react-datepicker__day--in-selecting-range {
+      background-color: var(--color-primary);
+    }
+
+    .react-datepicker__day--in-range {
+      background-color: var(--color-primary);
+      // color: var(--color-text-primary);
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
     }
 
     .react-datepicker__day--today {
