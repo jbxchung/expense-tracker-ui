@@ -27,9 +27,7 @@ const EditAccountForm: FC<EditAccountFormProps> = ({ account, onSubmit, onCancel
   };
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete account "${account.name}"? This cannot be undone.`
-    );
+    const confirmed = window.confirm(`Are you sure you want to delete account "${account.name}"? This cannot be undone.`);
     if (!confirmed) return;
 
     await deleteAccount(account.id);

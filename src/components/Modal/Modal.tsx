@@ -11,11 +11,20 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   closeOnOutsideClick?: boolean;
+  confirmOnClose?: boolean;
   children: React.ReactNode;
 }
 
-export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = true, children }: ModalProps) {
+export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = true, confirmOnClose = false, children }: ModalProps) {
   if (!isOpen) return null;
+
+  const close = () => {
+    if (confirmOnClose) {
+      const confirmed = window.confirm('Are you sure you want to close this window? Unsaved changes may be lost.');
+      if (!confirmed) return;
+    }
+    onClose();
+  }
 
   return createPortal(
     <div
@@ -23,7 +32,7 @@ export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = tr
       onClick={(e) => {
         // close when clicking on the modal background
         if (closeOnOutsideClick && e.target === e.currentTarget) {
-          onClose();
+          close();
         }
       }}
     >
@@ -34,7 +43,7 @@ export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = tr
         <Card>
           <div className={styles.modalHeader}>
             {title && <h3 className={styles.modalTitle}>{title}</h3>}
-            <span className={styles.closeIcon} title="Close" onClick={onClose}>
+            <span className={styles.closeIcon} title="Close" onClick={close}>
               &times;
             </span>
           </div>

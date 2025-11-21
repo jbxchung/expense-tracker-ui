@@ -115,6 +115,7 @@ const TransactionList: FC<TransactionListProps> = ({
         isOpen={importModalOpen}
         onClose={() => setImportModalOpen(false)}
         closeOnOutsideClick={false}
+        confirmOnClose
       >
         <TransactionForm />
       </Modal>
