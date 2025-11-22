@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 
 import type { Category } from 'types/category';
-import { CATEGORY_TREE_API_PATH, getCategories } from 'api/categories';
+import { CATEGORY_TREE_API_PATH, getCategoryTree } from 'api/categories';
 import { useUsers } from 'hooks/useUsers';
 
 export const useCategoryTree = () => {
@@ -9,7 +9,7 @@ export const useCategoryTree = () => {
   const { selectedUser, loading: usersLoading } = useUsers();
 
   const swrKey = selectedUser ? `${selectedUser}_${CATEGORY_TREE_API_PATH}` : null;
-  const { data, error, mutate, isLoading: categoryTreeLoading } = useSWR<Category[], Error>(swrKey, getCategories);
+  const { data, error, mutate, isLoading: categoryTreeLoading } = useSWR<Category[], Error>(swrKey, getCategoryTree);
 
   const isLoading = categoryTreeLoading || usersLoading;
 

@@ -12,3 +12,5 @@ export type Transaction = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type StagedTransaction = Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>;
