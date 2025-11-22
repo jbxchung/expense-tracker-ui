@@ -64,18 +64,18 @@
   border: 1px solid transparent;
 
   &:hover:not(:disabled) {
-    background-color: var(--color-secondary-hover);
+    background-color: var(--color-ghost-hover);
     color: #fff;
   }
 
   &:active:not(:disabled) {
-    background-color: var(--color-secondary-active);
+    background-color: var(--color-ghost-active);
     color: #fff;
   }
 
   &:disabled {
-    color: var(--color-secondary-disabled);
-    border-color: var(--color-secondary-disabled);
+    color: var(--color-ghost-disabled);
+    border-color: var(--color-ghost-disabled);
     cursor: not-allowed;
     opacity: 0.6;
   }

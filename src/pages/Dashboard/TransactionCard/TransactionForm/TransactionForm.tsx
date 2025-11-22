@@ -55,6 +55,7 @@ const TransactionForm: FC = () => {
           label="Importer"
           value={selectedImporterId}
           onChange={setSelectedImporterId}
+          buttonStyleVariant={ButtonVariants.GHOST}
           options={[
             { label: 'Example Importer 0', value: 'example_importer_0_id' },
             { label: 'Example Importer 1', value: 'example_importer_1_id' },
