@@ -1,4 +1,4 @@
-export function readFirstLines(
+export async function readFirstLines(
     file: File,
     maxLines = 5,
     maxBytes = 200_000
@@ -23,4 +23,12 @@ export function readFirstLines(
     reader.onerror = reject;
     reader.readAsText(slice);
   });
+}
+
+export async function getHeadersFromCSV(file: File, delimiter = ','): Promise<string[]> {
+  const firstLine = await readFirstLines(file, 1);
+  if (firstLine.length === 0) {
+    return [];
+  }
+  return firstLine[0].split(delimiter).map(header => header.trim());
 }

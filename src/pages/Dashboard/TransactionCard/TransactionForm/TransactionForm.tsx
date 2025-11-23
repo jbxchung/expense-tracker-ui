@@ -1,6 +1,6 @@
 import { useRef, useState, type FC } from 'react';
 
-import { readFirstLines } from 'utils/fileUtils';
+import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
 import { Dropdown } from 'components/Dropdown/Dropdown';
@@ -14,6 +14,7 @@ const TransactionForm: FC = () => {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [previewLines, setPreviewLines] = useState<string[]>([]);
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
 
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
 
@@ -30,6 +31,10 @@ const TransactionForm: FC = () => {
 
     const preview = await readFirstLines(file, 4);
     setPreviewLines(preview);
+
+    const availableFields = await getHeadersFromCSV(file, ',');
+    console.log('available fields:', availableFields);
+    setAvailableFields(availableFields);
   }
 
   return (
@@ -64,7 +69,7 @@ const TransactionForm: FC = () => {
         />
       </div>
       {selectedImporterId &&
-        <ImporterConfigurator importerId={selectedImporterId} isEditable={selectedImporterId === 'CREATE_NEW'} />
+        <ImporterConfigurator importerId={selectedImporterId} availableFields={availableFields} isEditable={selectedImporterId === 'CREATE_NEW'} />
       }
     </div>
   );
