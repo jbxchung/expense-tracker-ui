@@ -1,0 +1,36 @@
+.tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .tabs-buttons {
+    display: flex;
+
+    .tab-button {
+      // padding: 8px 14px;
+      // border-bottom: 2px solid transparent;
+      opacity: 0.6;
+      border-radius: 0;
+
+      &.active {
+        background-color: var(--color-surface-hover);
+        border-bottom: 2px solid var(--color-primary);
+        opacity: 1;
+        font-weight: 600;
+      }
+
+      &:first-child {
+        border-radius: 4px 0 0 0;
+      }
+    
+      &:last-child {
+        border-radius: 0 4px 0 0;
+      }
+    }
+  }
+
+  .tab-content {
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+  }
+}
