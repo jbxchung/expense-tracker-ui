@@ -43,6 +43,13 @@ const TransactionForm: FC = () => {
     setAvailableFields(availableFields);
   }
 
+  const importerSelectionChanged = (importerId: string) => {
+    setSelectedImporterId(importerId);
+    if (importerId === DEFAULT_IMPORTER.id) {
+      setIsEditing(true);
+    }
+  };
+
   return (
     <div className={styles.transactionForm}>
       <div className={styles.uploadFile}>
@@ -65,7 +72,7 @@ const TransactionForm: FC = () => {
         <Dropdown
           label="Importer"
           value={selectedImporterId}
-          onChange={setSelectedImporterId}
+          onChange={importerSelectionChanged}
           buttonStyleVariant={ButtonVariants.GHOST}
           options={[
             ...importers.map((importer) => ({
@@ -86,7 +93,7 @@ const TransactionForm: FC = () => {
       </div>
       {isEditing && 
       <div className={styles.importerEditor}>
-        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} isEditable={true} />
+        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} />
       </div>
       }
     </div>

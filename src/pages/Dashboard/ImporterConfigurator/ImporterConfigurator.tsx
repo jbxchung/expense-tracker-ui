@@ -9,11 +9,11 @@ import ImportFieldEditor from './ImportFieldEditor';
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
 import Input, { type InputHandle } from 'components/Input/Input';
 import Button, { ButtonVariants } from 'components/Button/Button';
+import { useCreateImporter } from 'hooks/useCreateImporter';
 
 interface ImportConfiguratorProps {
   importer?: Importer;
   availableFields: string[];
-  isEditable: boolean;
   onChange?: (config: Importer) => void;
 }
 
@@ -22,10 +22,10 @@ interface ImportConfiguratorProps {
 const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   importer = DEFAULT_IMPORTER,
   availableFields,
-  isEditable,
   onChange,
 }) => {
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
+  const { create: createImporter, loading: creating, error } = useCreateImporter();
 
   const nameInputRef = useRef<InputHandle | null>(null);
 
@@ -83,15 +83,15 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
             Delete
           </Button>
         )}
-        </div>
+        </div> */}
         <div className={styles.formButtonsRight}>
-          <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
+          {/* <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
             Cancel
-          </Button>
-          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={submitting}>
+          </Button> */}
+          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={creating}>
             Save
           </Button>
-        </div> */}
+        </div>
       </div>
     </div>
   );
