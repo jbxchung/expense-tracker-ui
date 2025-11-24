@@ -18,7 +18,6 @@ interface ImportConfiguratorProps {
 }
 
 
-// todo 2025.11.23 - make this similar to AccountForm and its variants
 const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   importer = DEFAULT_IMPORTER,
   availableFields,

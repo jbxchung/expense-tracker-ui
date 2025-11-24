@@ -42,7 +42,7 @@ export interface Importer {
   };
 }
 
-// todo - make this empty; for testing it's set to parse the test csv file
+// default empty importer configuration
 export const DEFAULT_IMPORTER: Importer = {
   id: 'NEW_IMPORTER',
   name: 'New Importer',
