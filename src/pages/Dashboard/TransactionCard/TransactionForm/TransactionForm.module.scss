@@ -27,4 +27,18 @@
       border: 1px solid var(--color-border);
     }
   }
+
+  .importer-selector {
+    display: flex;
+    gap: 0.5rem;
+
+    .edit-importer-button {
+      align-self: flex-end;
+    }
+  }
+
+  .importer-editor {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+  }
 }

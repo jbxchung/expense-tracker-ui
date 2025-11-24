@@ -44,7 +44,7 @@ export interface Importer {
 
 // todo - make this empty; for testing it's set to parse the test csv file
 export const DEFAULT_IMPORTER: Importer = {
-  id: '',
+  id: 'NEW_IMPORTER',
   name: 'New Importer',
   type: 'csv',
   description: 'New Importer Description',

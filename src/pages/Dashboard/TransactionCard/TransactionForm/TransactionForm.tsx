@@ -4,12 +4,14 @@ import { useImporters } from 'hooks/useImporters';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { Dropdown } from 'components/Dropdown/Dropdown';
+import { Dropdown, type DropdownOption } from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
 
 import styles from './TransactionForm.module.scss';
 import Accordion from 'components/Accordion/Accordion';
+import Modal from 'components/Modal/Modal';
+import { DEFAULT_IMPORTER } from 'types/importer';
 
 const TransactionForm: FC = () => {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -20,6 +22,7 @@ const TransactionForm: FC = () => {
 
   const { importers, isLoading, error } = useImporters();
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleFileUpload = async (e: any) => {
     const files = e.target.files;
@@ -58,7 +61,7 @@ const TransactionForm: FC = () => {
           </pre>
         </div>
       )}
-      <div>
+      <div className={styles.importerSelector}>
         <Dropdown
           label="Importer"
           value={selectedImporterId}
@@ -69,14 +72,22 @@ const TransactionForm: FC = () => {
               label: importer.name,
               value: importer.id,
             })),
-            { label: 'Create New', value: 'CREATE_NEW'},
+            { label: 'Create New', value: DEFAULT_IMPORTER.id},
           ]}
         />
+        <Button
+          className={styles.editImporterButton}
+          variant={ButtonVariants.SECONDARY}
+          disabled={!selectedImporterId}
+          onClick={() => setIsEditing(!isEditing)}
+        >
+          {isEditing ? 'Hide' : 'Show' } Editor
+        </Button>
       </div>
-      {!!selectedImporterId &&
-      <Accordion title={`Importer Configuration: ${selectedImporterId}`} defaultOpen={true}>
-        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} isEditable={selectedImporterId === 'CREATE_NEW'} />
-      </Accordion>
+      {isEditing && 
+      <div className={styles.importerEditor}>
+        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} isEditable={true} />
+      </div>
       }
     </div>
   );
