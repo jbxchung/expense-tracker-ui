@@ -5,32 +5,34 @@ import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Bu
 
 import styles from './Dropdown.module.scss';
 
-interface DropdownOption<T extends string | number> {
+export interface DropdownOption {
   label: string;
-  value: T;
+  value: string;
 }
 
-interface DropdownProps<T extends string | number> {
+interface DropdownProps {
   label?: string;
-  options: DropdownOption<T>[];
-  value?: T;
-  onChange?: (value: T) => void;
+  options: DropdownOption[];
+  renderOption?: (option: DropdownOption) => React.ReactNode;
+  value?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
   buttonStyleVariant?: ButtonVariant;
   suppressArrow?: boolean;
   className?: string;
 }
 
-export function Dropdown<T extends string | number>({
+export function Dropdown({
   label,
   options,
+  renderOption,
   value,
   onChange,
   placeholder = "Select an option",
   buttonStyleVariant = ButtonVariants.SECONDARY,
   suppressArrow = false,
   className = "",
-}: DropdownProps<T>) {
+}: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
@@ -122,17 +124,17 @@ export function Dropdown<T extends string | number>({
             }}
             onClick={e => e.stopPropagation()} // dont bubble up on selection
           >
-            {options.map((opt, i) => (
+            {options.map((option, i) => (
               <li
-                key={opt.value}
+                key={option.value}
                 className={`${styles.option} ${i === highlightIndex ? styles.highlight : ''}`}
                 onMouseEnter={() => setHighlightIndex(i)}
                 onClick={() => {
-                  onChange?.(opt.value);
+                  onChange?.(option.value);
                   setOpen(false);
                 }}
               >
-                {opt.label}
+                {renderOption ? renderOption(option) : option.label}
               </li>
             ))}
           </ul>,
