@@ -9,6 +9,7 @@ import { Dropdown } from 'components/Dropdown/Dropdown';
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
 
 import styles from './TransactionForm.module.scss';
+import Accordion from 'components/Accordion/Accordion';
 
 const TransactionForm: FC = () => {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -72,8 +73,10 @@ const TransactionForm: FC = () => {
           ]}
         />
       </div>
-      {selectedImporterId &&
+      {!!selectedImporterId &&
+      <Accordion title={`Importer Configuration: ${selectedImporterId}`} defaultOpen={true}>
         <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} isEditable={selectedImporterId === 'CREATE_NEW'} />
+      </Accordion>
       }
     </div>
   );

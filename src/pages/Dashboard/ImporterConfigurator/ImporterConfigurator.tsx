@@ -51,7 +51,6 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
 
   return (
     <div className={styles.importerConfiguratorForm}>
-      <h3>Importer Config ({importer.id})</h3>
       <Input
         ref={nameInputRef}
         label="Importer Name"

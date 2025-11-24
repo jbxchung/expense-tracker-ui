@@ -1,0 +1,14 @@
+.accordion {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .content {
+    margin-top: 1rem;
+  }
+}
