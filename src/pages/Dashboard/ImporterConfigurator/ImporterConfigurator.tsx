@@ -9,7 +9,7 @@ import ImportFieldEditor from './ImportFieldEditor';
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
 import Input, { type InputHandle } from 'components/Input/Input';
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { useCreateImporter } from 'hooks/useCreateImporter';
+import { useSaveImporter } from 'hooks/useSaveImporter';
 
 interface ImportConfiguratorProps {
   importer?: Importer;
@@ -25,7 +25,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   onChange,
 }) => {
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
-  const { create: createImporter, loading: creating, error } = useCreateImporter();
+  const { save: saveImporter, loading: saving, error } = useSaveImporter();
 
   const nameInputRef = useRef<InputHandle | null>(null);
 
@@ -33,6 +33,9 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
     const nameValid = nameInputRef.current?.validate() ?? false;
     if (!nameValid) return;
 
+    console.log('saving importer:', editableImporter);
+    await saveImporter(editableImporter);
+    // todo - notify parent of change so it can be selected
     // await onSubmit({ name: name.trim(), type });
   };
 
@@ -55,7 +58,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
         ref={nameInputRef}
         label="Importer Name"
         placeholder="Enter a name for this importer"
-        value={importer.name}
+        value={editableImporter.name}
         onChange={e => setEditableImporter({
           ...editableImporter,
           name: e.target.value
@@ -66,7 +69,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
       <Input
         label="Importer Description"
         placeholder="Enter a brief description for this importer"
-        value={importer.description}
+        value={editableImporter.description}
         onChange={e => setEditableImporter({
           ...editableImporter,
           description: e.target.value
@@ -88,7 +91,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
           {/* <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
             Cancel
           </Button> */}
-          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={creating}>
+          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={saving}>
             Save
           </Button>
         </div>

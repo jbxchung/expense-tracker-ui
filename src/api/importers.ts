@@ -48,11 +48,11 @@ const EXAMPLE_CSV_IMPORTER: Importer = {
 };
 
 export async function getImporters(): Promise<Importer[]> {
-  console.log('DEBUG - getImporters called - returning example for testing');
-  return [EXAMPLE_CSV_IMPORTER];
-  // const response: ApiResponse<Importer[]> = await fetchApi(IMPORTERS_API_PATH);
+  // console.log('DEBUG - getImporters called - returning example for testing');
+  // return [EXAMPLE_CSV_IMPORTER];
+  const response: ApiResponse<Importer[]> = await fetchApi(IMPORTERS_API_PATH);
 
-  // return unwrapApiResponse<Importer[]>(response);
+  return unwrapApiResponse<Importer[]>(response);
 }
 
 export async function createImporter(importer: Omit<Importer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Importer> {
@@ -73,7 +73,7 @@ export async function updateImporter(importer: Partial<Omit<Importer, 'createdAt
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({importer}),
+    body: JSON.stringify(importer),
   });
 
   return unwrapApiResponse<Importer>(response);
