@@ -9,7 +9,7 @@ import ImportFieldEditor from './ImportFieldEditor';
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
 import Input, { type InputHandle } from 'components/Input/Input';
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { useSaveImporter } from 'hooks/useSaveImporter';
+import { useSaveImporter } from 'hooks/importers/useSaveImporter';
 
 interface ImportConfiguratorProps {
   importer?: Importer;

@@ -1,6 +1,6 @@
 import { useEffect, type FC } from 'react';
 
-import { useAccounts } from 'hooks/useAccounts';
+import { useAccounts } from 'hooks/accounts/useAccounts';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import AccountSelector from './AccountSelector/AccountSelector';

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 
 import { AccountTypes, type AccountType } from 'types/account';
 
-import { useCreateAccount } from 'hooks/useCreateAccount';
+import { useCreateAccount } from 'hooks/accounts/useCreateAccount';
 import { useUsers } from 'hooks/useUsers';
 
 import AccountForm from './AccountForm';

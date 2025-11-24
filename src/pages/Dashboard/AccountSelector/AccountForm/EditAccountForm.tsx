@@ -2,10 +2,10 @@ import type { FC } from 'react';
 
 import type { AccountType } from 'types/account';
 
-import { useUpdateAccount } from 'hooks/useUpdateAccount';
+import { useUpdateAccount } from 'hooks/accounts/useUpdateAccount';
 
 import AccountForm from './AccountForm';
-import { useDeleteAccount } from 'hooks/useDeleteAccount';
+import { useDeleteAccount } from 'hooks/accounts/useDeleteAccount';
 
 interface EditAccountFormProps {
   account: { id: string; name: string; type: AccountType };

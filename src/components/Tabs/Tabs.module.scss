@@ -7,10 +7,12 @@
     display: flex;
 
     .tab-button {
-      // padding: 8px 14px;
-      // border-bottom: 2px solid transparent;
       opacity: 0.6;
       border-radius: 0;
+
+      &:hover {
+        color: var(--color-text-priamry)
+      }
 
       &.active {
         background-color: var(--color-surface-hover);

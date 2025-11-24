@@ -1,6 +1,6 @@
 import { useRef, useState, type FC } from 'react';
 
-import { useImporters } from 'hooks/useImporters';
+import { useImporters } from 'hooks/importers/useImporters';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
