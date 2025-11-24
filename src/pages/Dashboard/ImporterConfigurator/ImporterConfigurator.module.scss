@@ -1,0 +1,26 @@
+.importer-configurator-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h3 {
+    margin: 0;
+  }
+
+  .form-buttons-container {
+    display: flex;
+    justify-content: space-between;
+  
+    .form-buttons-left {
+      display: flex;
+      justify-content: flex-start;
+      gap: 0.5rem;
+    }
+  
+    .form-buttons-right {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+  }
+}

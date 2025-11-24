@@ -28,12 +28,11 @@ export type FieldMapping<Name> = {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 */
-export interface ImporterConfig {
+export interface Importer {
   id: string;
   name: string;
   description: string;
   type: 'csv';      // maybe consider adding more options in the future, like PDF
-  delimiter: string;
   mapping: {
     amount: FieldMapping<'Amount'>;
     date: FieldMapping<'Date'>;
@@ -44,46 +43,31 @@ export interface ImporterConfig {
 }
 
 // todo - make this empty; for testing it's set to parse the test csv file
-export const DEFAULT_IMPORTER: ImporterConfig = {
+export const DEFAULT_IMPORTER: Importer = {
   id: '',
   name: 'New Importer',
   type: 'csv',
   description: 'New Importer Description',
-  delimiter: ',',
   mapping: {
     amount: {
       title: 'Amount',
-      operations: [
-        { op: "ifNotNull", sourceField: "Credit", return: "Credit" },
-        { op: "ifNotNull", sourceField: "Debit", transform: "negate", return: "Debit" },
-        { op: "fallback", value: 0 }
-      ],
+      operations: [],
     },
     date: {
       title: 'Date',
-      operations: [
-        { op: "dateParse", sourceField: "Date", format: "MM/DD/YYYY" },
-        { op: "fallback", value: new Date() }
-      ],
+      operations: [],
     },
     category: {
       title: 'Category',
-      operations: [
-        { op: "fallback", value: "Uncategorized" }
-      ]
+      operations: []
     },
     description: {
       title: 'Description',
-      operations: [
-        { op: "fallback", value: "" }
-      ],
+      operations: [],
     },
     originalDescription: {
       title: 'Original Description',
-      operations: [
-        { op: "ifNotNull", sourceField: "Description", return: "Description" },
-        { op: "fallback", value: "" }
-      ],
+      operations: [],
     },
   }
 };

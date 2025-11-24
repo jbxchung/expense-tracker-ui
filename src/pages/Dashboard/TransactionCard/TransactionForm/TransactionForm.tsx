@@ -1,5 +1,6 @@
 import { useRef, useState, type FC } from 'react';
 
+import { useImporters } from 'hooks/useImporters';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -16,6 +17,7 @@ const TransactionForm: FC = () => {
   const [previewLines, setPreviewLines] = useState<string[]>([]);
   const [availableFields, setAvailableFields] = useState<string[]>([]);
 
+  const { importers, isLoading, error } = useImporters();
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
 
   const handleFileUpload = async (e: any) => {
@@ -62,14 +64,16 @@ const TransactionForm: FC = () => {
           onChange={setSelectedImporterId}
           buttonStyleVariant={ButtonVariants.GHOST}
           options={[
-            { label: 'Example Importer 0', value: 'example_importer_0_id' },
-            { label: 'Example Importer 1', value: 'example_importer_1_id' },
+            ...importers.map((importer) => ({
+              label: importer.name,
+              value: importer.id,
+            })),
             { label: 'Create New', value: 'CREATE_NEW'},
           ]}
         />
       </div>
       {selectedImporterId &&
-        <ImporterConfigurator importerId={selectedImporterId} availableFields={availableFields} isEditable={selectedImporterId === 'CREATE_NEW'} />
+        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} isEditable={selectedImporterId === 'CREATE_NEW'} />
       }
     </div>
   );
