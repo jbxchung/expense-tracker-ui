@@ -62,3 +62,31 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
     )
   ));
 }
+
+
+export async function saveTransactions(accountId: string, transactions: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>[]) {
+  const response: ApiResponse<Transaction[]> = await fetchApi(`${TRANSACTIONS_API_PATH}/bulk`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ accountId, transactions }),
+  });
+
+  const savedTransactions = await unwrapApiResponse<Transaction[]>(response);
+
+  // update cache
+  const existingCacheEntry = accountTransactionCache.get(accountId);
+  if (existingCacheEntry) {
+    accountTransactionCache.set(accountId, {
+      ...existingCacheEntry,
+      transactions: [...existingCacheEntry.transactions, ...savedTransactions],
+    });
+  } else {
+    accountTransactionCache.set(accountId, {
+      transactions: savedTransactions,
+    });
+  }
+
+  return savedTransactions;
+}

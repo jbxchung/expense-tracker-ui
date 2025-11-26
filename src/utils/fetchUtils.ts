@@ -23,9 +23,11 @@ export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promi
   return json;
 }
 
-export async function unwrapApiResponse<T>(response: ApiResponse<T>): Promise<T> {
+export async function unwrapApiResponse<T>(response: ApiResponse<T>, transform?: (data: T) => T): Promise<T> {
   if (!response.success) {
     throw new Error(response.message || 'API error');
   }
-  return response.data as T;
+  const data = response.data as T;
+
+  return transform ? transform(data) : data;
 }

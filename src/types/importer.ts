@@ -40,6 +40,9 @@ export interface Importer {
     description: FieldMapping<'Description'>;
     originalDescription: FieldMapping<'Original Description'>;
   };
+  userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // default empty importer configuration
