@@ -1,8 +1,21 @@
 import type { ApiResponse } from 'types/api-response';
 import type { Importer } from 'types/importer';
+import type { StagedTransaction } from 'types/transaction';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const IMPORTERS_API_PATH = '/importers';
+
+export async function executeImporter(importerId: string, file: File): Promise<StagedTransaction[]> {
+  const formData = new FormData();
+  formData.append('inputFile', file);
+
+  const response: ApiResponse<StagedTransaction[]> = await fetchApi(`${IMPORTERS_API_PATH}/${importerId}/execute`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  return unwrapApiResponse<StagedTransaction[]>(response);
+}
 
 export async function getImporters(): Promise<Importer[]> {
   const response: ApiResponse<Importer[]> = await fetchApi(IMPORTERS_API_PATH);
