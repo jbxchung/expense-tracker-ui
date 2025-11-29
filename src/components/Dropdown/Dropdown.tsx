@@ -120,7 +120,7 @@ export function Dropdown({
             style={{
               top: position.top,
               left: position.left,
-              width: position.width,
+              minWidth: position.width,
             }}
             onClick={e => e.stopPropagation()} // dont bubble up on selection
           >

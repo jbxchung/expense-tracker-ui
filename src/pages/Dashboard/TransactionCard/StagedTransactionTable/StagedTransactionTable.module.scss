@@ -36,8 +36,8 @@
       width: 100%;
     }
   }
-  // fit user-interactable elements to existing column size
-  input, select {
+  // fit input elements to existing column size
+  input {
     width: 100%;
     box-sizing: border-box;
   }
