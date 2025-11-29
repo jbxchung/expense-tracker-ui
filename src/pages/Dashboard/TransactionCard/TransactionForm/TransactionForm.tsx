@@ -1,18 +1,19 @@
-import { useRef, useState, type FC } from 'react';
+import { useEffect, useRef, useState, type FC } from 'react';
+
+import { DEFAULT_IMPORTER } from 'types/importer';
+import type { StagedTransaction } from 'types/transaction';
 
 import { useImporters } from 'hooks/importers/useImporters';
 import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { Dropdown, type DropdownOption } from 'components/Dropdown/Dropdown';
+import { Dropdown } from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
+import { StagedTransactionTable } from 'pages/Dashboard/StagedTransactionTable/StagedTransactionTable';
 
 import styles from './TransactionForm.module.scss';
-import Accordion from 'components/Accordion/Accordion';
-import Modal from 'components/Modal/Modal';
-import { DEFAULT_IMPORTER } from 'types/importer';
 
 const TransactionForm: FC = () => {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -25,6 +26,14 @@ const TransactionForm: FC = () => {
   const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [stagedTransactions, setStagedTransactions] = useState<StagedTransaction[]>(importerExecutionResult ?? []);
+
+  // reset staged transactions on importer execution
+  useEffect(() => {
+    if (importerExecutionResult) {
+      setStagedTransactions(importerExecutionResult);
+    }
+  }, [importerExecutionResult]);
 
   const handleFileUpload = async (e: any) => {
     const files = e.target.files;
@@ -108,10 +117,7 @@ const TransactionForm: FC = () => {
       {importerExecutionLoading && <div>Executing Importer...</div>}
       {importerExecutionResult && (
         <div className={styles.importedTransactionsPreview}>
-          todo: show importer execution results in a table
-          {importerExecutionResult.map(result => (
-            <pre>{JSON.stringify(result)}</pre>
-          ))}
+          <StagedTransactionTable data={stagedTransactions} setData={setStagedTransactions}></StagedTransactionTable>
         </div>
       )}
     </div>

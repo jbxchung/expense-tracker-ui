@@ -5,13 +5,13 @@ import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 export const CATEGORY_TREE_API_PATH = '/categories/tree';
 
 export async function getCategoryTree(userId: string): Promise<CategoryTree[]> {
-  const response: ApiResponse<CategoryTree[]> = await fetchApi(CATEGORY_TREE_API_PATH);
+  const response: ApiResponse<CategoryTree[]> = await fetchApi(`${CATEGORY_TREE_API_PATH}?userId=${userId}`);
   
   return unwrapApiResponse<CategoryTree[]>(response);
 }
 
 export async function saveCategoryTree(userId: string, categoryTree: CategoryTree[]): Promise<CategoryTree[]> {
-  const response: ApiResponse<CategoryTree[]> = await fetchApi(CATEGORY_TREE_API_PATH, {
+  const response: ApiResponse<CategoryTree[]> = await fetchApi(`${CATEGORY_TREE_API_PATH}?userId=${userId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

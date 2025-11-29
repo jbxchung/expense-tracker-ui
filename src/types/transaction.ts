@@ -1,12 +1,9 @@
-import type { Category } from './category';
-
 export type Transaction = {
   id: string;
   amount: number;
   date: Date;
   accountId: string;
   categoryId?: string;
-  category?: Category;
   description?: string;
   originalDescription?: string;
   createdAt: Date;
