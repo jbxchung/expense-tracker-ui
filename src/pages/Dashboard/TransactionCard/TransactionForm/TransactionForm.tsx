@@ -11,7 +11,7 @@ import Button, { ButtonVariants } from 'components/Button/Button';
 import { Dropdown } from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
-import { StagedTransactionTable } from 'pages/Dashboard/StagedTransactionTable/StagedTransactionTable';
+import { StagedTransactionTable } from 'pages/Dashboard/TransactionCard/StagedTransactionTable/StagedTransactionTable';
 
 import styles from './TransactionForm.module.scss';
 
@@ -115,6 +115,7 @@ const TransactionForm: FC = () => {
         Run Importer
       </Button>
       {importerExecutionLoading && <div>Executing Importer...</div>}
+      {importerExecutionError && <div>Error executing importer: {importerExecutionError.message}</div>}
       {importerExecutionResult && (
         <div className={styles.importedTransactionsPreview}>
           <StagedTransactionTable data={stagedTransactions} setData={setStagedTransactions}></StagedTransactionTable>

@@ -61,7 +61,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   //   ),
   // },
   {
-    accessorKey: 'categoryId',
+    accessorKey: 'category',
     header: 'Category',
     enableHiding: false,
     cell: ({ getValue, table  }) => {
@@ -70,7 +70,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
       // there should never be so many categories that this affect performance considerably
       const category = table.options.meta!.categories!.find(c => c.id === categoryId);
 
-      return category?.name ?? categoryId;
+      return category?.name ?? 'Unknown';
     },
     editCell: ({ getValue, setValue, table }) => (
       <Dropdown
