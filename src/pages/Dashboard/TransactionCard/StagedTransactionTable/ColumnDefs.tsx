@@ -7,6 +7,8 @@ import type { Category } from 'types/category';
 import type { EditableColumnDef } from 'types/table';
 import type { StagedTransaction } from 'types/transaction';
 
+import styles from './StagedTransactionTable.module.scss';
+
 export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'date',
@@ -27,6 +29,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
     accessorKey: 'amount',
     header: 'Amount',
     enableHiding: false,
+    className: styles.amountColumn,
     cell: ({ getValue }) => {
       const num = Number(getValue());
       return num.toFixed(2);

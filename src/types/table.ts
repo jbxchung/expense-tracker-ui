@@ -10,12 +10,14 @@ export type EditCellProps<TData> = {
   row: { index: number; original: TData };
   column: ColumnDef<TData>;
   table: Table<TData>;
-};
+  onDone: () => void;
+}
 
-// extend Tanstack's ColumnDef with our optional editCell render
+// extend Tanstack's ColumnDef
 export type EditableColumnDef<TData> = ColumnDef<TData> & {
   editCell?: (props: EditCellProps<TData>) => React.ReactNode;
-};
+  className?: string;
+}
 
 // extend Tanstack's TableMeta to give our account/category lists and a way to update the underlying data when a cell is edited
 declare module "@tanstack/react-table" {

@@ -11,16 +11,25 @@ import { TransactionTableColumns } from './ColumnDefs';
 import { useAccounts } from 'hooks/accounts/useAccounts';
 import { useCategoryList } from 'hooks/useCategories';
 
-type Props = {
+import styles from './StagedTransactionTable.module.scss';
+
+type StagedTransactionTableProps = {
   data: StagedTransaction[];
   setData: React.Dispatch<React.SetStateAction<StagedTransaction[]>>;
 };
 
-export function StagedTransactionTable({ data, setData }: Props) {
+export function StagedTransactionTable({ data, setData }: StagedTransactionTableProps) {
   const { accounts } = useAccounts();
   const { categories } = useCategoryList();
 
+  // for displaying editable controls
   const [hoveredCell, setHoveredCell] = React.useState<{
+    rowIndex: number;
+    columnId: string;
+  } | null>(null);
+
+  // for tracking when currently editing
+  const [editingCell, setEditingCell] = React.useState<{
     rowIndex: number;
     columnId: string;
   } | null>(null);
@@ -51,63 +60,76 @@ export function StagedTransactionTable({ data, setData }: Props) {
   });
 
   return (
-    <table className="transaction-table">
-      <thead>
-        {table.getHeaderGroups().map((hg) => (
-          <tr key={hg.id}>
-            {hg.headers.map((header) => (
-              <th key={header.id}>
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
+    <div className={styles.tableContainer}>
+      <table className={styles.stagedTransactionTable}>
+        <thead>
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th key={header.id}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
 
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => {
-              const col = cell.column.columnDef as EditableColumnDef<StagedTransaction>;
-              const isHovered =
-                hoveredCell?.rowIndex === row.index &&
-                hoveredCell?.columnId === cell.column.id;
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                const col = cell.column.columnDef as EditableColumnDef<StagedTransaction>;
+                const isHovered =
+                  hoveredCell?.rowIndex === row.index &&
+                  hoveredCell?.columnId === cell.column.id;
 
-              const shouldShowEdit = isHovered && !!col.editCell;
+                const isEditing =
+                  editingCell?.rowIndex === row.index &&
+                  editingCell?.columnId === cell.column.id;
 
-              return (
-                <td
-                  key={cell.id}
-                  onMouseEnter={() =>
-                    setHoveredCell({
-                      rowIndex: row.index,
-                      columnId: cell.column.id,
-                    })
-                  }
-                  onMouseLeave={() => setHoveredCell(null)}
-                  style={{ cursor: col.editCell ? "pointer" : "default" }}
-                >
-                  {shouldShowEdit
-                    ? col.editCell!({
-                        getValue: cell.getValue,
-                        row,
-                        column: cell.column,
-                        table,
-                        setValue: (newVal: any) =>
-                          table.options.meta?.updateCellValue?.(
-                            row.index,
-                            cell.column.id as keyof StagedTransaction,
-                            newVal
-                          ),
+                const shouldShowEdit = !!col.editCell && (isHovered || isEditing);
+
+                return (
+                  <td
+                    key={cell.id}
+                    className={(shouldShowEdit ? styles.editing : '') + col.className ? col.className : ''}
+                    onMouseEnter={() =>
+                      setHoveredCell({
+                        rowIndex: row.index,
+                        columnId: cell.column.id,
                       })
-                    : flexRender(cell.column.columnDef.cell, cell.getContext())
-                  }
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                    }
+                    onMouseLeave={() => setHoveredCell(null)}
+                    onClick={() =>
+                      col.editCell && setEditingCell({ rowIndex: row.index, columnId: cell.column.id })
+                    }
+                  >
+                    {shouldShowEdit
+                      ? col.editCell!({
+                          getValue: cell.getValue,
+                          row,
+                          column: cell.column,
+                          table,
+                          setValue: (newVal: any) =>
+                            table.options.meta?.updateCellValue?.(
+                              row.index,
+                              cell.column.id as keyof StagedTransaction,
+                              newVal
+                            ),
+                          onDone: () => {
+                            console.log('Updated row', row.index, cell.column.id, row);
+                            setEditingCell(null);
+                          },
+                        })
+                      : flexRender(cell.column.columnDef.cell, cell.getContext())
+                    }
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

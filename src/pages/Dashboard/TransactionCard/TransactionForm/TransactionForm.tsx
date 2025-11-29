@@ -44,13 +44,11 @@ const TransactionForm: FC = () => {
 
     const file = files[0];
     setUploadedFile(file);
-    console.log("Selected file:", file);
 
     const preview = await readFirstLines(file, 4);
     setPreviewLines(preview);
 
     const availableFields = await getHeadersFromCSV(file, ',');
-    console.log('available fields:', availableFields);
     setAvailableFields(availableFields);
   }
 
@@ -112,15 +110,25 @@ const TransactionForm: FC = () => {
         disabled={!selectedImporterId || !uploadedFile}
         onClick={() => executeImporter(selectedImporterId, uploadedFile!)}
       >
-        Run Importer
+        {importerExecutionResult && 'Re-'}Import
       </Button>
       {importerExecutionLoading && <div>Executing Importer...</div>}
       {importerExecutionError && <div>Error executing importer: {importerExecutionError.message}</div>}
-      {importerExecutionResult && (
+      {importerExecutionResult && (<>
         <div className={styles.importedTransactionsPreview}>
           <StagedTransactionTable data={stagedTransactions} setData={setStagedTransactions}></StagedTransactionTable>
         </div>
-      )}
+        <Button
+          variant={ButtonVariants.PRIMARY}
+          disabled={!importerExecutionResult}
+          onClick={() => {
+            alert('todo: save transactions');
+            console.log('todo: save transactions', stagedTransactions);
+          }}
+        >
+          Finalize & Save
+        </Button>
+      </>)}
     </div>
   );
 };

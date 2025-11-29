@@ -1,0 +1,36 @@
+.tableContainer {
+  overflow: auto;
+}
+
+.staged-transaction-table {
+  width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-collapse: collapse;
+  border-radius: 0.5rem;
+
+  color: var(--color-text-primary);
+  font-family: inherit;
+
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-surface-hover);
+    z-index: 1;
+  }
+
+  td, th {
+    height: 2rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--color-border);
+
+    &.editing {
+      padding: 0;
+    }
+  }
+}
+
+// column-specific classes
+.amountColumn {
+  text-align: right;
+}
