@@ -23,7 +23,7 @@ const Dashboard: FC = () => {
       // default to select all
       return filtered.length > 0 ? filtered : accounts.map(a => a.id);
     });
-  }, [accounts]);
+  }, [accounts, setSelectedAccountIds]);
 
   const toggleAccount = (id: string) => {
     setSelectedAccountIds((prev) => (

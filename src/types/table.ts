@@ -20,7 +20,7 @@ export type EditableColumnDef<TData> = ColumnDef<TData> & {
 
 // extend Tanstack's TableMeta to give our account/category lists and a way to update the underlying data when a cell is edited
 declare module "@tanstack/react-table" {
-  interface TableMeta<TData extends unknown> {
+  interface TableMeta<TData> {
     updateCellValue?: (
       rowIndex: number,
       columnId: keyof TData,
