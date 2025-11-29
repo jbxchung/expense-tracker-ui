@@ -105,22 +105,34 @@ export function StagedTransactionTable({ data, setData }: StagedTransactionTable
                     }
                   >
                     {shouldShowEdit
-                      ? col.editCell!({
-                          getValue: cell.getValue,
-                          row,
-                          column: cell.column,
-                          table,
-                          setValue: (newVal: any) =>
-                            table.options.meta?.updateCellValue?.(
-                              row.index,
-                              cell.column.id as keyof StagedTransaction,
-                              newVal
-                            ),
-                          onDone: () => {
+                      ? <div
+                          className={styles.cellEditor}
+                          tabIndex={0}
+                          onBlur={() => {
                             console.log('Updated row', row.index, cell.column.id, row);
                             setEditingCell(null);
-                          },
-                        })
+                          }}
+                          onKeyDown={(e: React.KeyboardEvent) => {
+                            if (e.key === 'Enter') {
+                              console.log('Updated row', row.index, cell.column.id, row);
+                              setEditingCell(null);
+                            }
+                          }}
+                        >
+                          {col.editCell!({
+                            getValue: cell.getValue,
+                            row,
+                            column: cell.column,
+                            table,
+                            setValue: (newVal: any) => (
+                              table.options.meta?.updateCellValue?.(
+                                row.index,
+                                cell.column.id as keyof StagedTransaction,
+                                newVal
+                              )
+                            )
+                          })}
+                        </div>
                       : flexRender(cell.column.columnDef.cell, cell.getContext())
                     }
                   </td>

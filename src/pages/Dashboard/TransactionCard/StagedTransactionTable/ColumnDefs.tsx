@@ -38,7 +38,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
       <Input
         type='number'
         value={getValue()}
-        onChange={(e) => setValue(parseFloat(e.target.value))}
+        onChange={e => setValue(parseFloat(e.target.value))}
       />
     ),
   },
@@ -89,7 +89,10 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
     enableHiding: false,
     cell: ({ getValue }) => getValue() ?? '',
     editCell: ({ getValue, setValue }) => (
-      <Input value={getValue() ?? ''} onChange={e => setValue(e.target.value)} />
+      <Input
+        value={getValue() ?? ''}
+        onChange={e => setValue(e.target.value)}
+      />
     ),
   },
   {

@@ -10,7 +10,6 @@ export type EditCellProps<TData> = {
   row: { index: number; original: TData };
   column: ColumnDef<TData>;
   table: Table<TData>;
-  onDone: () => void;
 }
 
 // extend Tanstack's ColumnDef
