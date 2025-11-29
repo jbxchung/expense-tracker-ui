@@ -105,6 +105,15 @@ const TransactionForm: FC = () => {
       >
         Run Importer
       </Button>
+      {importerExecutionLoading && <div>Executing Importer...</div>}
+      {importerExecutionResult && (
+        <div className={styles.importedTransactionsPreview}>
+          todo: show importer execution results in a table
+          {importerExecutionResult.map(result => (
+            <pre>{JSON.stringify(result)}</pre>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
