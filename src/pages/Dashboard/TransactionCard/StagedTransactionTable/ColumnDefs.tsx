@@ -89,7 +89,13 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
     enableHiding: false,
     cell: ({ getValue }) => getValue() ?? '',
     editCell: ({ getValue, setValue }) => (
-      <Input value={getValue() ?? ''} onChange={setValue} />
+      <Input value={getValue() ?? ''} onChange={e => setValue(e.target.value)} />
     ),
+  },
+  {
+    accessorKey: 'originalDescription',
+    header: 'Original Description',
+    enableHiding: false,
+    cell: ({ getValue }) => getValue() ?? '',
   },
 ];

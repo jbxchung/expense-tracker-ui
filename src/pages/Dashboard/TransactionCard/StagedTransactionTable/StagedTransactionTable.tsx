@@ -92,7 +92,7 @@ export function StagedTransactionTable({ data, setData }: StagedTransactionTable
                 return (
                   <td
                     key={cell.id}
-                    className={(shouldShowEdit ? styles.editing : '') + col.className ? col.className : ''}
+                    className={[shouldShowEdit ? styles.editing : '', col.className || ''].filter(Boolean).join(' ')}
                     onMouseEnter={() =>
                       setHoveredCell({
                         rowIndex: row.index,
