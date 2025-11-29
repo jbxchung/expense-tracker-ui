@@ -1,6 +1,7 @@
 import { useRef, useState, type FC } from 'react';
 
 import { useImporters } from 'hooks/importers/useImporters';
+import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -21,6 +22,7 @@ const TransactionForm: FC = () => {
   const [availableFields, setAvailableFields] = useState<string[]>([]);
 
   const { importers, isLoading, error } = useImporters();
+  const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -96,6 +98,13 @@ const TransactionForm: FC = () => {
         <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} />
       </div>
       }
+      <Button
+        variant={ButtonVariants.PRIMARY}
+        disabled={!selectedImporterId || !uploadedFile}
+        onClick={() => executeImporter(selectedImporterId, uploadedFile!)}
+      >
+        Run Importer
+      </Button>
     </div>
   );
 };
