@@ -8,7 +8,7 @@ import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
 import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { Dropdown } from 'components/Dropdown/Dropdown';
+import Dropdown from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
 import { StagedTransactionTable } from 'pages/Dashboard/TransactionCard/StagedTransactionTable/StagedTransactionTable';

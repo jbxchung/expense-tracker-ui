@@ -1,5 +1,5 @@
 // src/components/Modal.tsx
-import React from 'react';
+import React, { type FC } from 'react';
 import { createPortal } from 'react-dom';
 
 import Card from 'components/Card/Card';
@@ -15,7 +15,7 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = true, confirmOnClose = false, children }: ModalProps) {
+const Modal: FC<ModalProps> = ({ title, isOpen, onClose, closeOnOutsideClick = true, confirmOnClose = false, children }) => {
   if (!isOpen) return null;
 
   const close = () => {
@@ -54,3 +54,5 @@ export default function Modal({ title, isOpen, onClose, closeOnOutsideClick = tr
     document.body
   );
 }
+
+export default Modal;

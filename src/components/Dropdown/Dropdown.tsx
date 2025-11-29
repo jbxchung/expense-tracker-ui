@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type FC } from 'react';
 import { createPortal } from 'react-dom';
 
 import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Button';
@@ -22,7 +22,7 @@ interface DropdownProps {
   className?: string;
 }
 
-export function Dropdown({
+const Dropdown: FC<DropdownProps> = ({
   label,
   options,
   renderOption,
@@ -32,7 +32,7 @@ export function Dropdown({
   buttonStyleVariant = ButtonVariants.SECONDARY,
   suppressArrow = false,
   className = "",
-}: DropdownProps) {
+}) => {
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
@@ -143,3 +143,5 @@ export function Dropdown({
     </div>
   );
 }
+
+export default Dropdown;

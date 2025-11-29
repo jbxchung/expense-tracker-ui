@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import type { TabElement } from './Tab';
+import { useState, type ReactElement } from 'react';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 import styles from './Tabs.module.scss';
-import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface TabsProps {
   defaultIndex?: number;
   children: TabElement | TabElement[];
 }
 
-export const Tabs = ({ defaultIndex = 0, children }: TabsProps) => {
+const Tabs = ({ defaultIndex = 0, children }: TabsProps) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
 
   const tabs = Array.isArray(children) ? children : [children];
@@ -39,3 +38,19 @@ export const Tabs = ({ defaultIndex = 0, children }: TabsProps) => {
     </div>
   );
 };
+
+// single tab
+export type TabElement = ReactElement<TabProps, typeof Tab>;
+
+export interface TabProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+// button is managed by parent Tabs component, this is just the content of the Tab
+const Tab = ({ children }: TabProps) => {
+  return <div className={styles.tabContent}>{children}</div>;
+};
+Tabs.Tab = Tab;
+
+export default Tabs;

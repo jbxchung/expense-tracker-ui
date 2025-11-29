@@ -1,7 +1,8 @@
-import type { TableMeta } from '@tanstack/react-table';
+import { ButtonVariants } from 'components/Button/Button';
 import DatePicker from 'components/DatePicker/DatePicker';
-import { Dropdown } from 'components/Dropdown/Dropdown';
+import Dropdown from 'components/Dropdown/Dropdown';
 import Input from 'components/Input/Input';
+
 import type { Account } from 'types/account';
 import type { Category } from 'types/category';
 import type { EditableColumnDef } from 'types/table';
@@ -77,6 +78,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
     },
     editCell: ({ getValue, setValue, table }) => (
       <Dropdown
+        buttonStyleVariant={ButtonVariants.GHOST}
         value={getValue()}
         options={table.options.meta!.categories!.map((c: Category) => ({ value: c.id, label: c.name }))}
         onChange={setValue}

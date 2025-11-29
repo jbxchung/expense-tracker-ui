@@ -1,8 +1,7 @@
 import { type FC, useRef, useState } from 'react';
 
 import styles from './ImporterConfigurator.module.scss';
-import { Tabs } from 'components/Tabs/Tabs';
-import { Tab, type TabElement } from 'components/Tabs/Tab';
+import Tabs, { type TabElement } from 'components/Tabs/Tabs';
 
 import ImportFieldEditor from './ImportFieldEditor';
 
@@ -45,9 +44,9 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   const tabs: TabElement[] = Object.keys(importer.mapping).map((fieldName) => {
     const fieldConfig = importer.mapping[fieldName as keyof Importer['mapping']];
     return (
-      <Tab key={fieldName} title={fieldConfig.title}>
+      <Tabs.Tab key={fieldName} title={fieldConfig.title}>
         <ImportFieldEditor fieldConfig={fieldConfig} />
-      </Tab>
+      </Tabs.Tab>
     );
   });
 

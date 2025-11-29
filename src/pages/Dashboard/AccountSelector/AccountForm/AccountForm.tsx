@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { AccountTypes, type AccountType } from 'types/account';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
-import { Dropdown } from 'components/Dropdown/Dropdown';
+import Dropdown from 'components/Dropdown/Dropdown';
 import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './AccountForm.module.scss';
@@ -54,7 +54,7 @@ const AccountForm = ({
         <Dropdown
           label="Account Type"
           value={type}
-          onChange={value => setType(value)}
+          onChange={value => setType(value as AccountType)}
           options={[
             { label: AccountTypes.CHECKING, value: AccountTypes.CHECKING },
             { label: AccountTypes.SAVINGS, value: AccountTypes.SAVINGS },
