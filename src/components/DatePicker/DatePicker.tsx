@@ -58,8 +58,10 @@ const DatePicker: FC<DatePickerProps> = ({
   const [internalRange, setInternalRange] = useState<DateRange>(selectedPreset ? selectedPreset.getRange() : range);
 
   useEffect(() => {
-    setInternalRange(range);
-  }, [range]);
+    if (mode === DatePickerModes.RANGE) {
+      setInternalRange(range);
+    }
+  }, [range, mode]);
 
   const changePreset = (preset: DateRangePreset | null) => {
     setSelectedPreset(preset);
