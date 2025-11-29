@@ -34,3 +34,33 @@ html, body, #root {
     }
   }
 }
+
+* {
+  scrollbar-width: thin;          // Firefox
+  scrollbar-color: var(--color-secondary) var(--color-surface); // thumb, track
+}
+
+/* WebKit browsers (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-secondary);
+  border-radius: 8px;
+  border: 2px solid var(--color-surface); // adds spacing between thumb and track
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--color-surface);
+}
