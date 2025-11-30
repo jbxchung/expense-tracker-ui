@@ -1,15 +1,9 @@
-import { useState, type FC } from 'react';
+import type { FC } from 'react';
 
 import type { Account } from 'types/account';
-
-import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
-import Modal from 'components/Modal/Modal';
-
-import CreateAccountForm from './AccountForm/CreateAccountForm';
 
 import styles from './AccountSelector.module.scss';
-import EditAccountForm from './AccountForm/EditAccountForm';
 
 interface AccountSelectorProps {
   isLoading: boolean;
@@ -26,9 +20,6 @@ const AccountSelector: FC<AccountSelectorProps> = ({
   selectedIds,
   onToggle,
 }) => {
-  const [isNewAccountModalOpen, setIsNewAccountModalOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
-
   if (isLoading) {
     return (
       <Card title="Loading accounts...">
@@ -46,6 +37,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
 
   return (
     <Card title="Accounts">
+      <div className={styles.accountSelectorList}>
       {accounts.length ? (
         accounts.map(account => {
           const selected = selectedIds.includes(account.id);
@@ -57,14 +49,6 @@ const AccountSelector: FC<AccountSelectorProps> = ({
                   {account.type}
                 </span>
               </span>
-              <div className={styles.accountActions}>
-                <Button variant={ButtonVariants.GHOST} onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingAccount(account);
-                }}>
-                  Edit
-                </Button>
-              </div>
             </div>
           );
         })
@@ -73,33 +57,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
           No accounts found. Please add a new account.
         </div>
       )}
-      <Button
-        variant={ButtonVariants.PRIMARY}
-        className={styles.accountListItem}
-        onClick={() => setIsNewAccountModalOpen(true)}
-      >
-        + Add New
-      </Button>
-      <Modal
-        title="Create New Account"
-        isOpen={isNewAccountModalOpen}
-        onClose={() => setIsNewAccountModalOpen(false)}
-      >
-        <CreateAccountForm onSubmit={() => setIsNewAccountModalOpen(false)} onCancel={() => setIsNewAccountModalOpen(false)} />
-      </Modal>
-      <Modal
-        title="Edit Account"
-        isOpen={!!editingAccount}
-        onClose={() => setEditingAccount(null)}
-      >
-        {editingAccount && (
-          <EditAccountForm
-            account={editingAccount}
-            onSubmit={() => setEditingAccount(null)}
-            onCancel={() => setEditingAccount(null)}
-          />
-        )}
-      </Modal>
+      </div>
     </Card>
   );
 };

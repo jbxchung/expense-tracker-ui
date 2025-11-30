@@ -51,7 +51,6 @@ const Transactions: FC<TransactionListProps> = ({
   accountsLoading,
   selectedAccounts,
 }) => {
-  
   // memoize account ids so that useTransactions doesn't refetch on every render
   const accountIds = useMemo(() => (
     selectedAccounts.map(acc => acc.id)

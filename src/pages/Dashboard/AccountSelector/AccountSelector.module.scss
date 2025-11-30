@@ -1,30 +1,29 @@
-@use '../../../styles/theme';
-
-.account-list-item {
-  margin: 1rem;
-  padding: 1rem;
+.account-selector-list {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  cursor: pointer;
- 
-  &.selected {
-    border-color: var(--color-primary);
-  }
+  margin-top: 1rem;
+  gap: 1rem;
 
-  .account-name {
-    font-size: 1rem;
-
-    .account-type {
-      margin-left: 1rem;
-      font-size: 0.8rem;
-      color: var(--color-text-primary);
+  .account-list-item {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+  
+    &.selected {
+      border-color: var(--color-primary);
     }
-  }
 
-  .account-actions {
-    display: block;
+    .account-name {
+      font-size: 1rem;
+
+      .account-type {
+        margin-left: 1rem;
+        font-size: 0.75rem;
+        color: var(--color-text-primary);
+      }
+    }
   }
 }

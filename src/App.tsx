@@ -1,10 +1,9 @@
-import { useState } from 'react';
-
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import Header from 'components/Header/Header';
 
 import Dashboard from 'pages/Dashboard/Dashboard';
+import Accounts from 'pages/Accounts/Accounts';
 
 import './App.scss';
 // import Transactions from 'pages/Dashboard/Transactions/Transactions';
@@ -28,7 +27,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               {/* main page */}
               <Route path="/dashboard" element={<Dashboard />} />
-              {/* <Route path="/transactions" element={<Transactions />} /> */}
+              <Route path="/accounts" element={<Accounts />} />
               {/* manage stuff */}
               {/* <Route path="/accounts" element={<Accounts />} /> */}
             </Routes>

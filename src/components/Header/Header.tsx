@@ -55,7 +55,7 @@ const Header: FC = () => {
           const isCurrentPage = activePage!.value === headerLink.value;
           const linkStyle = [styles.navLink, isCurrentPage ? styles.active : ''].filter(Boolean).join(' ');
 
-          return <Link className={linkStyle} to={headerLink.value}>
+          return <Link key={headerLink.value} className={linkStyle} to={headerLink.value}>
             {headerLink.label}
           </Link>
         })}

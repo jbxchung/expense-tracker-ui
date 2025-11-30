@@ -9,13 +9,10 @@ import Transactions from './Transactions/Transactions';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
 
-
 const Dashboard: FC = () => {
-  // TODO 0 use app context
   const { accounts, accountsLoading, accountsError } = useAppContext();
   const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
   
-
   useEffect(() => {
     if (accounts.length === 0) return;
 
