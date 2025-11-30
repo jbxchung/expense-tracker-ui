@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/app/AppContext';
 import { Themes, useTheme } from 'contexts/ThemeContext';
@@ -15,6 +15,8 @@ const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
   const {users, selectedUser, selectUser, usersLoading, usersError } = useAppContext();
 
+  const location = useLocation();
+
   const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
 
   const headerLinks = [
@@ -23,6 +25,10 @@ const Header: FC = () => {
     { label: 'Categories', value: '/categories' },
     { label: 'Importers', value: '/importers' },
   ];
+  
+  const activePage = headerLinks.find(headerLink => 
+    location.pathname.startsWith(headerLink.value)
+  );
 
   return (
     <div className={styles.header}>
@@ -45,11 +51,14 @@ const Header: FC = () => {
         )}
       </div>
       <div className={styles.navLinks}>
-        {headerLinks.map(headerLink => (
-          <Link className={styles.navLink} to={headerLink.value}>
+        {headerLinks.map(headerLink => {
+          const isCurrentPage = activePage!.value === headerLink.value;
+          const linkStyle = [styles.navLink, isCurrentPage ? styles.active : ''].filter(Boolean).join(' ');
+
+          return <Link className={linkStyle} to={headerLink.value}>
             {headerLink.label}
           </Link>
-        ))}
+        })}
       </div>
       <div className={styles.headerRight}>
         <span className={styles.themeToggleIcon} title={`Switch to ${theme === Themes.LIGHT ? 'Dark' : 'Light'} theme`} onClick={toggleTheme}>

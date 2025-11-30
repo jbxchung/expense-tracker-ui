@@ -17,8 +17,8 @@ function App() {
     <div className="container">
       <BrowserRouter>
         <AppProvider>
+          {/* nav links for the routes in Header */}
           <Header />
-          {/* <Settings /> */}
 
           <div className="main-content">
             <div className="bg" />
@@ -26,7 +26,7 @@ function App() {
             <Routes>
               {/* root should redirect to dashboard*/}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              {/* maing page */}
+              {/* main page */}
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/transactions" element={<Transactions />} /> */}
               {/* manage stuff */}
