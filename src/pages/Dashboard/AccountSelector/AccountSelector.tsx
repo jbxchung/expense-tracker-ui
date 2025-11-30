@@ -4,6 +4,8 @@ import type { Account } from 'types/account';
 import Card from 'components/Card/Card';
 
 import styles from './AccountSelector.module.scss';
+import Button, { ButtonVariants } from 'components/Button/Button';
+import { Link } from 'react-router-dom';
 
 interface AccountSelectorProps {
   isLoading: boolean;
@@ -37,6 +39,11 @@ const AccountSelector: FC<AccountSelectorProps> = ({
 
   return (
     <Card title="Accounts">
+      <Link to="/accounts">
+        <Button className={styles.manageAccountsButton} variant={ButtonVariants.GHOST} title="Manage Accounts">
+          Manage
+        </Button>
+      </Link>
       <div className={styles.accountSelectorList}>
       {accounts.length ? (
         accounts.map(account => {
