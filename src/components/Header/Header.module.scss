@@ -1,7 +1,7 @@
 .header {
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   background: var(--color-surface);
   color: var(--color-text-primary);
   z-index: 2;
@@ -19,6 +19,23 @@
     .user-dropdown {
       position: relative;
       display: inline-block;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 6px 10px;
+    border-radius: 6px;
+
+    &:hover {
+      background: var(--hover-bg);
     }
   }
 

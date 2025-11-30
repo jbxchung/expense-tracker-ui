@@ -10,12 +10,11 @@ import Card from 'components/Card/Card';
 import DatePicker from 'components/DatePicker/DatePicker';
 import { DatePickerModes, type DateRange } from 'components/DatePicker/DatePicker';
 import Modal from 'components/Modal/Modal';
+import { UploadIcon } from 'icons/UploadIcon';
 
 import TransactionForm from './TransactionForm/TransactionForm';
 
-import { UploadIcon } from 'icons/UploadIcon';
-
-import styles from './TransactionCard.module.scss';
+import styles from './Transactions.module.scss';
 
 const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
 
@@ -48,10 +47,11 @@ interface TransactionListProps {
   selectedAccounts: Account[];
 }
 
-const TransactionList: FC<TransactionListProps> = ({
+const Transactions: FC<TransactionListProps> = ({
   accountsLoading,
   selectedAccounts,
 }) => {
+  
   // memoize account ids so that useTransactions doesn't refetch on every render
   const accountIds = useMemo(() => (
     selectedAccounts.map(acc => acc.id)
@@ -123,4 +123,4 @@ const TransactionList: FC<TransactionListProps> = ({
   );
 };
 
-export default TransactionList;
+export default Transactions;

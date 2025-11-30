@@ -3,9 +3,9 @@ import type { FC } from 'react';
 import { AccountTypes, type AccountType } from 'types/account';
 
 import { useCreateAccount } from 'hooks/accounts/useCreateAccount';
-import { useUsers } from 'hooks/useUsers';
 
 import AccountForm from './AccountForm';
+import { useAppContext } from 'contexts/app/AppContext';
 
 interface CreateAccountFormProps {
   onSubmit: () => void;
@@ -13,7 +13,7 @@ interface CreateAccountFormProps {
 }
 
 const CreateAccountForm: FC<CreateAccountFormProps> = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
-  const { selectedUser } = useUsers();
+  const { selectedUser } = useAppContext();
   const { create: createAccount, loading, error: createError } = useCreateAccount();
 
   const handleCreate = async (data: { name: string; type: AccountType }) => {

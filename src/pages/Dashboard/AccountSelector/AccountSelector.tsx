@@ -13,7 +13,7 @@ import EditAccountForm from './AccountForm/EditAccountForm';
 
 interface AccountSelectorProps {
   isLoading: boolean;
-  error?: Error;
+  error: Error | null;
   accounts: Account[];
   selectedIds: string[],
   onToggle: (id: string) => void;

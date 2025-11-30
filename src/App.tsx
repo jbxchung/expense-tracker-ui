@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
-import { BrowserRouter, Router } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
-import Header from './components/Header/Header';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Header from 'components/Header/Header';
+
+import Dashboard from 'pages/Dashboard/Dashboard';
 
 import './App.scss';
+// import Transactions from 'pages/Dashboard/Transactions/Transactions';
+import { AppProvider } from 'contexts/app/AppProvider';
 
 
 function App() {
@@ -13,21 +16,24 @@ function App() {
   
     <div className="container">
       <BrowserRouter>
-        <Header />
-        {/* <Settings /> */}
+        <AppProvider>
+          <Header />
+          {/* <Settings /> */}
 
-        <div className="main-content">
-          <div className="bg" />
-          
-          <Dashboard />
-          {/* <Routes>
-            {
-              this.state.pages.map(page => (
-                <Route path={page.url} key={page.url} element={<page.component />} />
-              ))
-            }
-          </Routes> */}
-        </div>
+          <div className="main-content">
+            <div className="bg" />
+            
+            <Routes>
+              {/* root should redirect to dashboard*/}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              {/* maing page */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              {/* <Route path="/transactions" element={<Transactions />} /> */}
+              {/* manage stuff */}
+              {/* <Route path="/accounts" element={<Accounts />} /> */}
+            </Routes>
+          </div>
+        </AppProvider>
       </BrowserRouter>
     </div>
   )

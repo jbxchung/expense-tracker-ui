@@ -3,10 +3,10 @@ import { mutate } from 'swr';
 
 import { AccountTypes, type Account } from 'types/account';
 import { ACCOUNTS_API_PATH, createAccount } from 'api/accounts';
-import { useUsers } from 'hooks/useUsers';
+import { useAppContext } from 'contexts/app/AppContext';
 
 export function useCreateAccount() {
-  const { selectedUser } = useUsers();
+  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 

@@ -11,7 +11,7 @@ import Button, { ButtonVariants } from 'components/Button/Button';
 import Dropdown from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
-import { StagedTransactionTable } from 'pages/Dashboard/TransactionCard/StagedTransactionTable/StagedTransactionTable';
+import { StagedTransactionTable } from 'pages/Dashboard/Transactions/StagedTransactionTable/StagedTransactionTable';
 
 import styles from './TransactionForm.module.scss';
 

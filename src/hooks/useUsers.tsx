@@ -6,17 +6,17 @@ import { getUsers, USERS_API_PATH } from 'api/users';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
 export const useUsers = () => {
-  const { data: users, error, isLoading, isValidating } = useSWR<User[]>(USERS_API_PATH, getUsers);
+  const { data: users, error, isLoading } = useSWR<User[], Error>(USERS_API_PATH, getUsers);
 
   // persistent selected user id
   const [selectedUserId, setSelectedUserId] = useLocalStorage<string | null>('', null);
 
   // derive the selected user object
-  const selectedUser = users?.find(u => u.id === selectedUserId) ?? users?.[0] ?? null;
+  const selectedUser = users?.find(u => u.id === selectedUserId) ?? users?.[0];
 
   // default - select first user
   useEffect(() => {
-    if (users && users.length > 0 && !selectedUserId) {
+    if (!selectedUserId && users && users.length > 0) {
       setSelectedUserId(users[0].id);
     }
   }, [users, selectedUserId, setSelectedUserId]);
@@ -29,8 +29,7 @@ export const useUsers = () => {
     users: users || [],
     selectedUser,
     selectUser,
-    loading: isLoading,
+    isLoading,
     error,
-    isValidating,
   };
 };

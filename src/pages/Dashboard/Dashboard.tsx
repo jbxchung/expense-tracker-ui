@@ -1,16 +1,18 @@
 import { useEffect, type FC } from 'react';
 
-import { useAccounts } from 'hooks/accounts/useAccounts';
+import { useAppContext } from 'contexts/app/AppContext';
+
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import AccountSelector from './AccountSelector/AccountSelector';
-import TransactionCard from './TransactionCard/TransactionCard';
+import Transactions from './Transactions/Transactions';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
 
 
 const Dashboard: FC = () => {
-  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts();
+  // TODO 0 use app context
+  const { accounts, accountsLoading, accountsError } = useAppContext();
   const [selectedAccountIds, setSelectedAccountIds] = useLocalStorage<string[]>(STORED_SELECTED_ACCOUNTS_KEY, []);
   
 
@@ -35,7 +37,7 @@ const Dashboard: FC = () => {
 
   return (<>
     <AccountSelector accounts={accounts} isLoading={accountsLoading} error={accountsError} selectedIds={selectedAccountIds} onToggle={toggleAccount} />
-    <TransactionCard
+    <Transactions
       accountsLoading={accountsLoading}
       selectedAccounts={selectedAccounts}
     />

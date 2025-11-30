@@ -1,7 +1,8 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
 
-import { Themes, useTheme } from 'contexts/themeContext';
-import { useUsers } from 'hooks/useUsers';
+import { useAppContext } from 'contexts/app/AppContext';
+import { Themes, useTheme } from 'contexts/ThemeContext';
 
 import Dropdown from 'components/Dropdown/Dropdown';
 import { ButtonVariants } from 'components/Button/Button';
@@ -12,16 +13,23 @@ import styles from './Header.module.scss';
 
 const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const {users, selectedUser, selectUser, loading, error } = useUsers();
+  const {users, selectedUser, selectUser, usersLoading, usersError } = useAppContext();
 
   const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
+
+  const headerLinks = [
+    { label: 'Dashboard', value: '/dashboard'},
+    { label: 'Accounts', value: '/accounts' },
+    { label: 'Categories', value: '/categories' },
+    { label: 'Importers', value: '/importers' },
+  ];
 
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
-        {loading && <span>Loading users...</span>}
-        {error && <span>Error loading users</span>}
-        {!loading && !error && userOptions.length > 0 && (
+        {usersLoading && <span>Loading users...</span>}
+        {usersError && <span>Error loading users</span>}
+        {!usersLoading && !usersError && userOptions.length > 0 && (
           <Dropdown
             options={userOptions}
             value={selectedUser?.id}
@@ -35,6 +43,13 @@ const Header: FC = () => {
             className={styles.userDropdown}
           />
         )}
+      </div>
+      <div className={styles.navLinks}>
+        {headerLinks.map(headerLink => (
+          <Link className={styles.navLink} to={headerLink.value}>
+            {headerLink.label}
+          </Link>
+        ))}
       </div>
       <div className={styles.headerRight}>
         <span className={styles.themeToggleIcon} title={`Switch to ${theme === Themes.LIGHT ? 'Dark' : 'Light'} theme`} onClick={toggleTheme}>

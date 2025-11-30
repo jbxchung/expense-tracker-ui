@@ -1,11 +1,12 @@
 import type { ApiResponse } from 'types/api-response';
 import { type Account, type AccountTypeKey, AccountTypes, AccountTypeValueToKey } from 'types/account';
+import type { User } from 'types/user';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const ACCOUNTS_API_PATH = '/accounts';
 
-export async function getAccounts(): Promise<Account[]> {
-  const response: ApiResponse<Account[]> = await fetchApi(ACCOUNTS_API_PATH);
+export async function getAccounts(user?: User): Promise<Account[]> {
+  const response: ApiResponse<Account[]> = await fetchApi(`${ACCOUNTS_API_PATH}/?userId=${user?.id}`);
   
   // map backend AccountType to frontend for display
   const accounts: Account[] = (await unwrapApiResponse<Account[]>(response)).map(account => ({

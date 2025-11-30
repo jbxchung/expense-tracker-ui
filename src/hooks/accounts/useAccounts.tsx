@@ -1,17 +1,14 @@
 import useSWR from 'swr';
 
 import type { Account } from 'types/account';
+import type { User } from 'types/user';
 import { ACCOUNTS_API_PATH, getAccounts } from 'api/accounts';
-import { useUsers } from 'hooks/useUsers';
 
-export const useAccounts = () => {
-  // available accounts depends on the current user
-  const { selectedUser, loading: usersLoading } = useUsers();
+export const useAccounts = (selectedUser?: User) => {
+  const swrKey = selectedUser ? `${selectedUser.id}_${ACCOUNTS_API_PATH}` : null;
+  const { data, error, mutate, isLoading: accountsLoading } = useSWR<Account[], Error>(swrKey, () => getAccounts(selectedUser));
 
-  const swrKey = selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null;
-  const { data, error, mutate, isLoading: accountsLoading } = useSWR<Account[], Error>(swrKey, getAccounts);
-
-  const isLoading = accountsLoading || usersLoading;
+  const isLoading = accountsLoading || !selectedUser;
 
   return {
     accounts: data ?? [],

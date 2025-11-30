@@ -3,10 +3,10 @@ import { mutate } from 'swr';
 
 import type { Account } from 'types/account';
 import { ACCOUNTS_API_PATH, deleteAccount } from 'api/accounts';
-import { useUsers } from 'hooks/useUsers';
+import { useAppContext } from 'contexts/app/AppContext';
 
 export function useDeleteAccount() {
-  const { selectedUser } = useUsers();
+  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 

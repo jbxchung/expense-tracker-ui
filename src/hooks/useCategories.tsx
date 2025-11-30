@@ -4,12 +4,12 @@ import useSWR from 'swr';
 
 import type { Category } from 'types/category';
 import { CATEGORY_TREE_API_PATH, getCategoryTree } from 'api/categories';
-import { useUsers } from 'hooks/useUsers';
 import { flattenTree } from 'utils/treeUtils';
+import { useAppContext } from 'contexts/app/AppContext';
 
 export const useCategoryTree = () => {
   // available accounts depends on the current user
-  const { selectedUser, loading: usersLoading } = useUsers();
+  const { selectedUser, usersLoading } = useAppContext();
 
   // if the user isnt selected yet, swrKey will be null so swr won't try and fetch
   const swrKey = selectedUser ? `${selectedUser.id}_${CATEGORY_TREE_API_PATH}` : null;

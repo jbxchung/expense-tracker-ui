@@ -3,10 +3,10 @@ import { mutate } from 'swr';
 
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
 import { IMPORTERS_API_PATH, createImporter, updateImporter } from 'api/importers';
-import { useUsers } from 'hooks/useUsers';
+import { useAppContext } from 'contexts/app/AppContext';
 
 export function useSaveImporter() {
-  const { selectedUser } = useUsers();
+  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
