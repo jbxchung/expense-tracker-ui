@@ -1,4 +1,3 @@
-// create this hook in the style of useSaveImporter but calling executeImporter from api/importers
 import { useState, useCallback } from 'react';
 
 import type { StagedTransaction } from 'types/transaction';

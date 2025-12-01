@@ -12,15 +12,13 @@ import { useSaveImporter } from 'hooks/importers/useSaveImporter';
 
 interface ImportConfiguratorProps {
   importer?: Importer;
-  availableFields: string[];
-  onChange?: (config: Importer) => void;
+  onSave?: (config: Importer) => void;
 }
 
 
 const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   importer = DEFAULT_IMPORTER,
-  availableFields,
-  onChange,
+  onSave,
 }) => {
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
   const { save: saveImporter, loading: saving, error } = useSaveImporter();
@@ -33,8 +31,10 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
 
     console.log('saving importer:', editableImporter);
     await saveImporter(editableImporter);
-    // todo - notify parent of change so it can be selected
-    // await onSubmit({ name: name.trim(), type });
+    
+    if (onSave) {
+      onSave(editableImporter);
+    }
   };
 
   if (!importer) {

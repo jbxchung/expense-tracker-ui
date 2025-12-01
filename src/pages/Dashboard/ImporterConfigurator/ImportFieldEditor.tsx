@@ -13,7 +13,6 @@ const ImportFieldEditor: FC<ImporterFieldEditorProps> = ({
   fieldConfig,
   // onChange,
 }) => {
-  
   return (
     <div>
       <pre>{JSON.stringify(fieldConfig, null, 4)}</pre>

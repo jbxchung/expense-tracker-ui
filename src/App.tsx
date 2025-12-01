@@ -4,6 +4,7 @@ import Header from 'components/Header/Header';
 
 import Dashboard from 'pages/Dashboard/Dashboard';
 import Accounts from 'pages/Accounts/Accounts';
+import Importers from 'pages/Importers/Importers';
 
 import './App.scss';
 // import Transactions from 'pages/Dashboard/Transactions/Transactions';
@@ -28,6 +29,7 @@ function App() {
               {/* main page */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/importers" element={<Importers />} />
               {/* manage stuff */}
               {/* <Route path="/accounts" element={<Accounts />} /> */}
             </Routes>

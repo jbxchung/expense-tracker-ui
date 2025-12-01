@@ -1,5 +1,3 @@
-import type { Category } from "./category";
-
 export type OperationStep =
   | { op: "ifNotNull"; sourceField: string; transform?: "negate" | "absolute"; return: string; }
   | { op: "fallback"; value: any }
@@ -32,7 +30,7 @@ export interface Importer {
   id: string;
   name: string;
   description: string;
-  type: 'csv';      // maybe consider adding more options in the future, like PDF
+  type: 'CSV';      // maybe consider adding more options in the future, like PDF
   mapping: {
     amount: FieldMapping<'Amount'>;
     date: FieldMapping<'Date'>;
@@ -49,7 +47,7 @@ export interface Importer {
 export const DEFAULT_IMPORTER: Importer = {
   id: 'NEW_IMPORTER',
   name: 'New Importer',
-  type: 'csv',
+  type: 'CSV',
   description: 'New Importer Description',
   mapping: {
     amount: {
