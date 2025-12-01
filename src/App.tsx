@@ -1,14 +1,15 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
+import { AppProvider } from 'contexts/app/AppProvider';
+
 import Header from 'components/Header/Header';
 
 import Dashboard from 'pages/Dashboard/Dashboard';
 import Accounts from 'pages/Accounts/Accounts';
+import Categories from 'pages/Categories/Categories';
 import Importers from 'pages/Importers/Importers';
 
 import './App.scss';
-// import Transactions from 'pages/Dashboard/Transactions/Transactions';
-import { AppProvider } from 'contexts/app/AppProvider';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
               {/* main page */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/categories" element={<Categories />} />
               <Route path="/importers" element={<Importers />} />
               {/* manage stuff */}
               {/* <Route path="/accounts" element={<Accounts />} /> */}
