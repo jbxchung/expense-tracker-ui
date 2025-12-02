@@ -1,21 +1,26 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 import styles from './Input.module.scss';
 
 export interface InputHandle {
-  validate: () => boolean;
+  focus: () => void;
+  validate?: () => boolean;
 }
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   validate?: (value: string) => string | null; // custom validation function
+  selectAllOnFocus?: boolean;
 }
 
-const Input = forwardRef<InputHandle, InputProps>(
-  ({ label, className = "", validate, onChange, ...props}, ref) => {
+const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", selectAllOnFocus = false, validate, onChange, ...props}, ref) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   
   useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
     validate: () => {
       if (validate) {
         const errorMessage = validate((props.value as string) || "");
@@ -26,30 +31,32 @@ const Input = forwardRef<InputHandle, InputProps>(
     },
   }));
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (selectAllOnFocus) e.target.select();
+    if (props.onFocus) props.onFocus(e);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (validate) {
-      const errorMessage = validate(event.target.value);
+      const errorMessage = validate(e.target.value);
       setError(errorMessage);
     }
   };
   
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(event);
-    }
-    if (error) {
-      // Revalidate on change
-      handleBlur(event as unknown as React.FocusEvent<HTMLInputElement>);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) onChange(e);
+    if (error) handleBlur(e as unknown as React.FocusEvent<HTMLInputElement>); // revalidate on change
   };
 
   return (
     <div className={`${styles.inputContainer} ${className}`}>
       {label && <span className={styles.label}>{label}</span>}
       <input
+        ref={inputRef}
         className={`${styles.input} ${error ? styles.inputError : ""}`}
         onBlur={handleBlur}
         onChange={handleChange}
+        onFocus={handleFocus}
         {...props}
       />
       {error && (

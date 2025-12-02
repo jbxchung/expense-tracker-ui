@@ -9,7 +9,7 @@ import type { StagedTransaction } from 'types/transaction';
 import type { EditableColumnDef } from 'types/table';
 import { TransactionTableColumns } from './ColumnDefs';
 import { useAccounts } from 'hooks/accounts/useAccounts';
-import { useCategoryList } from 'hooks/useCategories';
+import { useCategoryList } from 'hooks/categories/useCategories';
 
 import styles from './StagedTransactionTable.module.scss';
 

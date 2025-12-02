@@ -12,15 +12,11 @@ export interface Category {
   user?: User;
 
   parentId?: string;
-  parent?: Omit<Category, 'parent' | 'children'>; // shallow reference to avoid deep recursion
-  children?: Omit<Category, 'parent' | 'children'>[];
+  parent?: Category
+  children?: Category[];
 
   transactions?: Transaction[];
 
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface CategoryTree extends Omit<Category, 'parentId'> {
-  children: CategoryTree[];
 }

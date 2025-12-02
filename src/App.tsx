@@ -29,11 +29,10 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               {/* main page */}
               <Route path="/dashboard" element={<Dashboard />} />
+              {/* managing stuff */}
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/importers" element={<Importers />} />
-              {/* manage stuff */}
-              {/* <Route path="/accounts" element={<Accounts />} /> */}
             </Routes>
           </div>
         </AppProvider>

@@ -1,3 +1,29 @@
+.category-tree-container {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+
+  .category-node {
+    padding-left: 0.5rem;
+
+    .row {
+      display: flex;
+
+      .expand-spacer {
+        visibility: hidden;
+      }
+
+      .expand-category {
+        display: flex;
+      }
+    }
+
+    .expanded-children {
+      margin-left: 1.5rem;
+      border-left: 1px solid white;
+    }
+  }
+}
+
 .debug {
   border: 1px solid red;
 }
