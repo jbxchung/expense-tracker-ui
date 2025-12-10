@@ -4,6 +4,7 @@ import type { Category } from 'types/category';
 import InlineEdit from 'components/InlineEdit/InlineEdit';
 
 import styles from './Categories.module.scss';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface CategoryNodeProps {
   category: Category;
@@ -26,13 +27,26 @@ const CategoryNode: FC<CategoryNodeProps> = ({ category, onEdit }) => {
           <span className={styles.expandSpacer}>▸</span>
         )}
 
+
         <InlineEdit
           value={category.name}
           onSave={name => onEdit({ ...category, name })}
         />
         
-        <button onClick={() => /* add child */ {}}>＋</button>
-        <button onClick={() => /* delete */ {}}>🗑️</button>
+        <Button
+          title={`Add subcategory under "${category.name}"`}
+          variant={ButtonVariants.GHOST}
+          onClick={() => /* add child */ {}}
+        >
+          ＋
+        </Button>
+        <Button
+          title={`Delete "${category.name}"`}
+          variant={ButtonVariants.GHOST}
+          onClick={() => /* delete */ {}}
+        >
+          🗑️
+        </Button>
       </div>
 
       {expandable && open && (

@@ -12,7 +12,7 @@ import CategoryNode from './CategoryNode';
 
 const Categories: FC = () => {
   const { categoryTree, isLoading, error } = useCategoryTree();
-  const { saveTree, loading: saving } = useSaveCategoryTree();
+  const { saveTree, /*loading: saving*/ } = useSaveCategoryTree();
 
   // Local state holds the editable tree
   const [tree, setTree] = useState<Category[]>(categoryTree);
