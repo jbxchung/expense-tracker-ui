@@ -4,19 +4,21 @@ import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './InlineEdit.module.scss';
 
-interface InlineEditProps<T = string> {
-  value: T;
-  onSave: (newValue: T) => void;
+interface InlineEditProps {
+  value: string;
+  onSave: (newValue: string) => void;
   onCancel?: () => void;
   className?: string;
+  placeholder?: string;
 }
 
-const InlineEdit = <T extends string | number>({
+const InlineEdit: FC<InlineEditProps> = ({
   value,
   onSave,
   onCancel,
   className = '',
-}: InlineEditProps<T>) => {
+  placeholder = 'Click to edit',
+}) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const inputRef = useRef<InputHandle | null>(null);
@@ -57,10 +59,11 @@ const InlineEdit = <T extends string | number>({
     );
   }
 
+  // todo - custom styles for inline-edit?
   const classes = [styles.inlineEdit, className].filter(Boolean).join(' ');
   return (
     <span className={classes} onClick={() => setEditing(true)}>
-      {value ?? <span className={styles.placeholder}>Click to edit</span>}
+      {value ?? <span className={styles.placeholder}>{placeholder}</span>}
     </span>
   );
 };

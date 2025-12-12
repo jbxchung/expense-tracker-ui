@@ -16,6 +16,10 @@
       .expand-category {
         cursor: pointer;
       }
+
+      .drag-handle {
+        cursor: grab;
+      }
     }
 
     .expanded-children {

@@ -11,6 +11,7 @@ export interface Category {
   userId?: string;
   user?: User;
 
+  sortOrder: number;
   parentId?: string;
   parent?: Category
   children?: Category[];

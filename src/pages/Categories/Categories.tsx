@@ -2,19 +2,19 @@ import { useCallback, useEffect, useState, type FC } from 'react';
 
 import type { Category } from 'types/category';
 import { useCategoryTree, useSaveCategoryTree } from 'hooks/categories/useCategories';
+import { patchTree } from 'utils/treeUtils';
 
 import Card from 'components/Card/Card';
+import InlineEdit from 'components/InlineEdit/InlineEdit';
+import SortableTree from 'components/SortableTree/SortableTree';
 
 import styles from './Categories.module.scss';
-import { patchTree } from 'utils/treeUtils';
-import CategoryNode from './CategoryNode';
-
 
 const Categories: FC = () => {
   const { categoryTree, isLoading, error } = useCategoryTree();
   const { saveTree, /*loading: saving*/ } = useSaveCategoryTree();
 
-  // Local state holds the editable tree
+  // local state holds the editable tree
   const [tree, setTree] = useState<Category[]>(categoryTree);
   
   // reset editableCategoryTree on fetch API completion
@@ -30,6 +30,7 @@ const Categories: FC = () => {
     saveTree(newTree);
   }, [saveTree, tree]);
 
+  // set placeholders
   if (isLoading) {
     return (
       <Card title="Loading categories...">
@@ -48,18 +49,31 @@ const Categories: FC = () => {
   return (
     <Card title="Categories">
       <div className={styles.categoryTreeContainer}>
-        {categoryTree.map(category => (
-          <CategoryNode
-            key={category.id}
-            category={category}
-            onEdit={handleEdit}
-          />
-        ))}
+        <SortableTree
+          items={tree}
+          onChange={(newTree: any) => {
+            console.log('Tree changed:', newTree);
+            // todo - persist changes
+            // saveTree(newTree);
+          }}
+          renderItem={(category: Category) => (
+            <InlineEdit
+              value={category.name}
+              onSave={name => {
+                const updated = { ...category, name };
+                handleEdit(updated);
+              }}
+            />
+          )}
+        />
       </div>
+        
+      {/* TODO - remove below after finished */}
       <br />
       <div className={styles.debug}>
         <pre>{JSON.stringify(categoryTree, null, 4)}</pre>
       </div>
+      {/* TODO - remove above after finished */}
     </Card>
   );
 };
