@@ -100,6 +100,7 @@ const SortableTree = <T extends TreeNode>({
     setActiveId(active.id as string);
   };
 
+  // set horizontal drag distance for depth calculation
   const handleDragMove = ({ delta }: DragMoveEvent) => {
     setDragX(delta.x);
   };
@@ -155,7 +156,7 @@ const SortableTree = <T extends TreeNode>({
       return;
     }
 
-    // Extract subtree
+    // extract subtree
     const subtree: FlattenedNode<T>[] = [];
     const rootDepth = flattened[activeIndex].depth;
 
@@ -248,7 +249,6 @@ const SortableTree = <T extends TreeNode>({
           node={f.node}
           depth={f.depth}
           renderItem={renderItem}
-          activeId={activeId}
         />
       </React.Fragment>
     ));
@@ -279,7 +279,7 @@ const SortableTree = <T extends TreeNode>({
         </SortableContext>
       )}
 
-      <DragOverlay>
+      <DragOverlay adjustScale={false}>
         {/* {activeId && (
           <div className={styles.dragOverlay}>
             {draggedSubtree.map(f => (
@@ -312,14 +312,13 @@ interface SortableTreeNodeProps<T extends TreeNode> {
   node: T;
   depth: number;
   renderItem: (node: T) => React.ReactNode;
-  activeId: string | null;
 }
 
 const SortableTreeNode = <T extends TreeNode>({
   node,
   depth,
   renderItem,
-  activeId,
+  // activeId,
 }: SortableTreeNodeProps<T>) => {
   const {
     attributes,
@@ -328,11 +327,7 @@ const SortableTreeNode = <T extends TreeNode>({
     transform,
     transition,
     isDragging,
-  } = useSortable({
-    id: node.id,
-    // Disable sortable logic entirely during drag
-    disabled: activeId !== null,
-  });
+  } = useSortable({ id: node.id });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -342,10 +337,15 @@ const SortableTreeNode = <T extends TreeNode>({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.treeNode}>
-      <div {...attributes} className={styles.treeNodeContent}>
-        {renderItem(node)}
-        <span className={styles.handle} {...listeners}>≡</span>
+    <div ref={setNodeRef} style={style} className={styles.treeNodeWrapper}>
+      <div {...attributes} className={styles.treeNode}>
+        <div className={styles.content}>
+          <span className={styles.handle} {...listeners}>≡</span>
+          {renderItem(node)}
+        </div>
+        <div className={styles.actions}>
+          + x{/* TODO: allow caller to pass in action buttons with full enabled/disabled states and custom handlers */}
+        </div>
       </div>
     </div>
   );

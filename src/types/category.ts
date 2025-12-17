@@ -16,8 +16,13 @@ export interface Category {
   parent?: Category
   children?: Category[];
 
+  _count: CategoryMetaCount;
   transactions?: Transaction[];
 
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CategoryMetaCount {
+  transactions: number;
 }
