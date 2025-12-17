@@ -20,7 +20,6 @@ export function flattenTree<T extends TreeNode>(nodes: T[], parentId: string | n
       flat = flat.concat(flattenTree(node[childrenKey]!, node.id, depth + 1));
     }
   });
-  console.log('Flattened tree:', flat);
   return flat;
 }
 
@@ -39,6 +38,5 @@ export function rebuildTree<T extends TreeNode>(flat: FlattenedNode<T>[], childr
       tree.push(item);
     }
   });
-  console.log('Rebuilt tree:', tree);
   return tree;
 }

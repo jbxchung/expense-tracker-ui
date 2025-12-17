@@ -56,6 +56,7 @@ const Categories: FC = () => {
             // todo - persist changes
             // saveTree(newTree);
           }}
+          childrenOptions={{ labels: { singular: 'subcategory', plural: 'subcategories' } }}
           renderItem={(category: Category) => (
             <InlineEdit
               value={category.name}
