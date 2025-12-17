@@ -1,5 +1,5 @@
-import type { ApiResponse } from "types/api-response";
-import { API_BASE_URL } from "./hostUtils";
+import type { ApiResponse } from 'types/api-response';
+import { API_BASE_URL } from './hostUtils';
 
 // generic fetch wrapper
 export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promise<ApiResponse<T>> {
