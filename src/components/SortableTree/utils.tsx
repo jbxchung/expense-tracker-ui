@@ -49,32 +49,24 @@ export function getValidDropIndices<T extends TreeNode>(
   const activeIndex = flattened.findIndex(f => f.id === activeId);
   if (activeIndex === -1) return new Set();
 
-  const activeNode = flattened[activeIndex];
+  const activeDepth = flattened[activeIndex].depth;
 
-  // collect subtree of active node
-  const subtreeIds = new Set<string>();
-  for (let i = activeIndex; i < flattened.length; i++) {
-    const node = flattened[i];
-    if (i !== activeIndex && node.depth <= activeNode.depth) break;
-    subtreeIds.add(node.id);
+  // find subtree range
+  let subtreeEnd = activeIndex + 1;
+  while (subtreeEnd < flattened.length && flattened[subtreeEnd].depth > activeDepth) {
+    subtreeEnd++;
   }
 
-  const validIndices = new Set<number>();
-
-  // every index in flattened array except inside its own subtree is valid
+  const valid = new Set<number>();
   for (let i = 0; i <= flattened.length; i++) {
-    // check if inserting here would place any node inside its own subtree
-    const prevNode = flattened[i - 1];
-    const nextNode = flattened[i];
+    const node = flattened[i];
+    // skip indices inside subtree
+    if (i >= activeIndex && i < subtreeEnd) continue;
+    // skip same index at same depth
+    if (i === activeIndex && node?.depth === activeDepth) continue;
 
-    const prevId = prevNode?.id;
-    const nextId = nextNode?.id;
-
-    // cannot insert before or after a node in own subtree
-    if ((prevId && subtreeIds.has(prevId)) || (nextId && subtreeIds.has(nextId))) continue;
-
-    validIndices.add(i);
+    valid.add(i);
   }
 
-  return validIndices;
+  return valid;
 }
