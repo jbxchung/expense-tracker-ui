@@ -69,7 +69,7 @@ export function isValidDrop(
   // normalize index as if subtree were removed first
   const normalizedIndex = targetIndex > activeIndex ? targetIndex - subtreeSize : targetIndex;
 
-  const inOwnSubtree = targetIndex > activeIndex && targetIndex < subtreeEnd;
+  const inOwnSubtree = targetIndex > activeIndex && targetIndex <= subtreeEnd;
   const inSamePosition = normalizedIndex === activeIndex && targetDepth === activeDepth;
   const selfAsChild = targetIndex === activeIndex + 1 && targetDepth === activeDepth + 1;
 

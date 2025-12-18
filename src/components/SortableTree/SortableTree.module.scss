@@ -35,7 +35,7 @@
   }
 }
 
-.drag-label {
+.drag-overlay {
   background: var(--color-modal-bg);
   color: var(--color-text-primary);
   padding: 0.5rem 1rem;
@@ -43,15 +43,23 @@
   font-size: 1rem;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   pointer-events: none;
-}
+  
+  .drag-title {
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+  .drag-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    // opacity: 0.7;
+  }
 
-.drag-meta {
-  opacity: 0.7;
-  font-size: 0.75rem;
+  .drag-reparent {
+    color: var(--color-accent);
+  }
 }
-
 
 .drop-indicator {
   height: 0.25rem;

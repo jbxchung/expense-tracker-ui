@@ -8,7 +8,6 @@ import {
   type DragStartEvent,
   type DragMoveEvent,
   type DragEndEvent,
-  type DragOverEvent,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -42,6 +41,7 @@ interface SortableTreeProps<T extends TreeNode> {
 type Projection = {
   parentId: string | null;
   index: number;
+  depth: number;
 };
 
 const SortableTree = <T extends TreeNode>({
@@ -86,10 +86,7 @@ const SortableTree = <T extends TreeNode>({
     const activeDepth = flattened[activeIndex].depth;
 
     let subtreeEnd = activeIndex + 1;
-    while (
-      subtreeEnd < flattened.length &&
-      flattened[subtreeEnd].depth > activeDepth
-    ) {
+    while (subtreeEnd < flattened.length && flattened[subtreeEnd].depth > activeDepth) {
       subtreeEnd++;
     }
 
@@ -129,8 +126,6 @@ const SortableTree = <T extends TreeNode>({
       return;
     }
 
-    // console.log(`pointerY: ${pointerY}, rect.top: ${rect.top}, rect.height: ${rect.height}, rect.bottom: ${rect.bottom}, ratio: ${ratio.toFixed(2)}`);
-
     let targetParentId: string | null = null;
     let targetDepth = null;
     let targetIndex = null;
@@ -159,19 +154,12 @@ const SortableTree = <T extends TreeNode>({
     }
 
     if (isValidDrop(ctx, targetIndex, targetDepth)) {
-      console.log(`will drop current index ${activeIndex} at index ${targetIndex} with parent ${targetParentId} (depth ${targetDepth})`);
-      setProjection({ parentId: targetParentId, index: targetIndex });
+      setProjection({ parentId: targetParentId, index: targetIndex, depth: targetDepth });
     } else {
       // invalid drop position, do not show preview
       setProjection(null);
     }
   };
-
-  const handleDragOver = ({ over }: DragOverEvent) => {
-    const activeIndex = flattened.findIndex(f => f.id === activeId);
-    const overIndex = flattened.findIndex(f => f.id === over!.id);
-    console.log(`dragging ${activeIndex} ${flattened[activeIndex].node.name} over ${overIndex} ${flattened[overIndex].node.name}`);
-  }
 
   const handleDragEnd = ({ active }: DragEndEvent) => {
     const ctx = dragContextRef.current;
@@ -227,6 +215,7 @@ const SortableTree = <T extends TreeNode>({
     const index = flattened.findIndex(f => f.id === activeId);
     if (index === -1) return null;
 
+    // count children
     const parentDepth = flattened[index].depth;
     let count = 0;
     for (let i = index + 1; i < flattened.length; i++) {
@@ -234,8 +223,26 @@ const SortableTree = <T extends TreeNode>({
       else break;
     }
 
-    return { title: flattened[index].node.name, childrenCount: count };
-  }, [activeId, flattened]);
+    // build projected parent path (if any)
+    let parentPath: string[] | null = null;
+
+    if (projection?.parentId) {
+      parentPath = [];
+      let currentId: string | null = projection.parentId;
+
+      while (currentId) {
+        const node = flattened.find(f => f.id === currentId);
+        if (!node) break;
+
+        parentPath.push(node.node.name);
+        currentId = node.parentId;
+      }
+
+      parentPath.reverse();
+    }
+
+    return { title: flattened[index].node.name, childrenCount: count, parentPath };
+  }, [activeId, flattened, projection?.parentId]);
 
   const renderNodes = () =>
     flattened.map((f, index) => (
@@ -243,7 +250,7 @@ const SortableTree = <T extends TreeNode>({
         {projection?.index === index && (
           <div
             className={styles.dropIndicator}
-            style={{ marginLeft: (flattened[index].depth ?? 0) * indentWidth }}
+            style={{ marginLeft: (projection.depth ?? 0) * indentWidth }}
           />
         )}
         <SortableTreeNode
@@ -262,7 +269,6 @@ const SortableTree = <T extends TreeNode>({
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
-      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       {isDragging ? renderNodes() : (
@@ -273,11 +279,17 @@ const SortableTree = <T extends TreeNode>({
 
       <DragOverlay adjustScale={false}>
         {dragOverlayContent && (
-          <div className={styles.dragLabel}>
-            <strong>{dragOverlayContent.title}</strong>
+          <div className={styles.dragOverlay}>
+            <span>Move </span>
+            <span className={styles.dragTitle}>{dragOverlayContent.title}</span>
             {dragOverlayContent.childrenCount > 0 && (
               <span className={styles.dragMeta}>
-                + {dragOverlayContent.childrenCount} {dragOverlayContent.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}
+                {` +${dragOverlayContent.childrenCount} ${dragOverlayContent.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}`}
+              </span>
+            )}
+            {dragOverlayContent.parentPath && (
+              <span className={styles.dragReparent}>
+                {` to ${dragOverlayContent.parentPath.join('/')}`}
               </span>
             )}
           </div>
