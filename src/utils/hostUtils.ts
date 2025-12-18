@@ -1,5 +1,5 @@
 const ENV_SERVICE_HOST_MAP = {
-  localhost: 'http://localhost:8080',
+  localhost: 'http://localhost:3000',
   // todo - fill in other envs
 };
 

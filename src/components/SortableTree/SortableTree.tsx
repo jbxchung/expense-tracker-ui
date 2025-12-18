@@ -22,7 +22,8 @@ import {
   rebuildTree,
   type TreeNode,
   type FlattenedNode,
-  getValidDropIndices,
+  type DragContext,
+  isValidDrop,
 } from './utils';
 
 import styles from './SortableTree.module.scss';
@@ -61,8 +62,8 @@ const SortableTree = <T extends TreeNode>({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [projection, setProjection] = useState<Projection | null>(null);
 
-  // on drag start, keep track of valid drop indices for active node
-  const validDropIndicesRef = useRef<Set<number>>(new Set());
+  // on drag start, calculate 
+  const dragContextRef = useRef<DragContext | null>(null);
   // keep current y position of pointer during drag
   const pointerYRef = useRef<number>(0);
   // keep refs for each row so we can get the HtmlElement bounding rect during drag
@@ -78,8 +79,28 @@ const SortableTree = <T extends TreeNode>({
     }));
 
   const handleDragStart = ({ active }: DragStartEvent) => {
+    // get currently dragged subtree
+    const activeIndex = flattened.findIndex(f => f.id === active.id);
+    if (activeIndex === -1) return;
+
+    const activeDepth = flattened[activeIndex].depth;
+
+    let subtreeEnd = activeIndex + 1;
+    while (
+      subtreeEnd < flattened.length &&
+      flattened[subtreeEnd].depth > activeDepth
+    ) {
+      subtreeEnd++;
+    }
+
+    dragContextRef.current = {
+      activeIndex,
+      activeDepth,
+      subtreeEnd,
+    };
+
+    // track currently dragging item
     setActiveId(active.id as string);
-    validDropIndicesRef.current = getValidDropIndices(flattened, active.id as string);
   };
 
   // track pointer Y position during drag
@@ -90,46 +111,58 @@ const SortableTree = <T extends TreeNode>({
       return;
     }
 
-    const activeIndex = flattened.findIndex(f => f.id === activeId);
+    // const activeIndex = flattened.findIndex(f => f.id === activeId);
+    const activeIndex = dragContextRef.current?.activeIndex ?? -1;
     const overIndex = flattened.findIndex(f => f.id === over.id);
     if (activeIndex === -1 || overIndex === -1) return;
 
     const overElement = nodeRefs.current.get(String(over.id));
     if (!overElement) return;
 
-    // skip if over self
-    // if (activeIndex === overIndex) {
-    //   setProjection(null);
-    //   return;
-    // }
-
     const rect = overElement.getBoundingClientRect();
     const pointerY = pointerYRef.current;
     const ratio = Math.abs((pointerY - rect.top) / rect.height);
     
+    // same depth and index, no change
+    if (activeIndex === overIndex) {
+      setProjection(null);
+      return;
+    }
+
     // console.log(`pointerY: ${pointerY}, rect.top: ${rect.top}, rect.height: ${rect.height}, rect.bottom: ${rect.bottom}, ratio: ${ratio.toFixed(2)}`);
 
-    let targetParentId: string | null = flattened[overIndex].parentId;
-    let targetIndex = overIndex;
+    let targetParentId: string | null = null;
+    let targetDepth = null;
+    let targetIndex = null;
 
     if (ratio < 0.3) {
       // before
       targetParentId = flattened[overIndex].parentId;
+      targetDepth = flattened[overIndex].depth;
       targetIndex = overIndex;
     } else if (ratio > 0.7) {
       // after
       targetParentId = flattened[overIndex].parentId;
+      targetDepth = flattened[overIndex].depth;
       targetIndex = overIndex + 1;
     } else {
       // inside
       targetParentId = flattened[overIndex].node.id;
-      targetIndex = overIndex + 1; // first child because parentId is set
+      targetDepth = flattened[overIndex].depth + 1;
+      targetIndex = overIndex + 1;
     }
 
-    if (validDropIndicesRef.current.has(targetIndex)) {
+    const ctx = dragContextRef.current;
+    if (!ctx) {
+      console.warn('No drag context');
+      return;
+    }
+
+    if (isValidDrop(ctx, targetIndex, targetDepth)) {
+      console.log(`will drop current index ${activeIndex} at index ${targetIndex} with parent ${targetParentId} (depth ${targetDepth})`);
       setProjection({ parentId: targetParentId, index: targetIndex });
     } else {
-      // invalid, do not show preview
+      // invalid drop position, do not show preview
       setProjection(null);
     }
   };
@@ -137,43 +170,50 @@ const SortableTree = <T extends TreeNode>({
   const handleDragOver = ({ over }: DragOverEvent) => {
     const activeIndex = flattened.findIndex(f => f.id === activeId);
     const overIndex = flattened.findIndex(f => f.id === over!.id);
-    console.log(`dragging ${flattened[activeIndex].node.name} over ${flattened[overIndex].node.name}`);
+    console.log(`dragging ${activeIndex} ${flattened[activeIndex].node.name} over ${overIndex} ${flattened[overIndex].node.name}`);
   }
 
   const handleDragEnd = ({ active }: DragEndEvent) => {
-    if (!projection) {
+    const ctx = dragContextRef.current;
+    if (!projection || !ctx) {
       resetDrag();
       return;
     }
 
-    const activeIndex = flattened.findIndex(f => f.id === active.id);
-    if (activeIndex === -1) return resetDrag();
-
-    // extract subtree
-    const subtree: FlattenedNode<T>[] = [];
+    const activeIndex = ctx.activeIndex;
     const rootDepth = flattened[activeIndex].depth;
-    for (let i = activeIndex; i < flattened.length; i++) {
-      if (flattened[i].depth < rootDepth) break;
+
+    // extract subtree and remove it from flattened list
+    const subtree: FlattenedNode<T>[] = [];
+    for (let i = activeIndex; i < ctx.subtreeEnd; i++) {
       subtree.push({ ...flattened[i] });
     }
-
     const next = flattened.filter(f => !subtree.some(s => s.id === f.id));
 
-    const parentId = projection.parentId;
-    const parentNode = flattened.find(f => f.node.id === parentId);
-    const depth = parentNode ? parentNode.depth + 1 : 0;
+    // normalize insertion index
+    const subtreeSize = subtree.length;
+    const insertionIndex = projection.index > activeIndex ? projection.index - subtreeSize : projection.index;
 
+    // compute new depth
+    const parentNode = flattened.find(f => f.node.id === projection.parentId);
+    const newDepth = parentNode ? parentNode.depth + 1 : 0;
+
+    // reparent + redepth subtree
     subtree.forEach(n => {
-      n.parentId = n.id === active.id ? parentId : n.parentId;
-      n.depth = n.depth - rootDepth + depth;
+      if (n.id === active.id) {
+        n.parentId = projection.parentId;
+      }
+      n.depth = n.depth - rootDepth + newDepth;
     });
 
-    next.splice(projection.index, 0, ...subtree);
+    // insert subtree into next flattened list and update state
+    next.splice(insertionIndex, 0, ...subtree);
+
     setFlattened(next);
     onChange(rebuildTree(next));
-
     resetDrag();
   };
+
 
   const resetDrag = () => {
     setActiveId(null);

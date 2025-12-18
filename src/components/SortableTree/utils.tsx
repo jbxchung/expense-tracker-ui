@@ -12,6 +12,18 @@ export interface FlattenedNode<T> {
   index: number;
 }
 
+export type DragContext = {
+  activeIndex: number;
+  activeDepth: number;
+  subtreeEnd: number;
+}
+
+export type DropPosition = {
+  depth: number;  // depth level to drop at
+  index: number;  // flattened index to drop at
+}
+export type ValidDropPositions = Map<DropPosition['depth'], Set<DropPosition['index']>>;
+
 export function flattenTree<T extends TreeNode>(nodes: T[], parentId: string | null = null, depth = 0, childrenKey: keyof T = 'children'): FlattenedNode<T>[] {
   let flat: FlattenedNode<T>[] = [];
   nodes.forEach((node, index) => {
@@ -41,32 +53,25 @@ export function rebuildTree<T extends TreeNode>(flat: FlattenedNode<T>[], childr
   return tree;
 }
 
-// utility to get which indices of our SortableTree's data are valid for the active node to be dropped at
-export function getValidDropIndices<T extends TreeNode>(
-  flattened: FlattenedNode<T>[],
-  activeId: string
-): Set<number> {
-  const activeIndex = flattened.findIndex(f => f.id === activeId);
-  if (activeIndex === -1) return new Set();
+export function isValidDrop(
+  ctx: DragContext,
+  targetIndex: number,
+  targetDepth: number,
+): boolean {
+  const {
+    activeIndex,
+    activeDepth,
+    subtreeEnd,
+  } = ctx;
 
-  const activeDepth = flattened[activeIndex].depth;
+  const subtreeSize = subtreeEnd - activeIndex;
 
-  // find subtree range
-  let subtreeEnd = activeIndex + 1;
-  while (subtreeEnd < flattened.length && flattened[subtreeEnd].depth > activeDepth) {
-    subtreeEnd++;
-  }
+  // normalize index as if subtree were removed first
+  const normalizedIndex = targetIndex > activeIndex ? targetIndex - subtreeSize : targetIndex;
 
-  const valid = new Set<number>();
-  for (let i = 0; i <= flattened.length; i++) {
-    const node = flattened[i];
-    // skip indices inside subtree
-    if (i >= activeIndex && i < subtreeEnd) continue;
-    // skip same index at same depth
-    if (i === activeIndex && node?.depth === activeDepth) continue;
+  const inOwnSubtree = targetIndex > activeIndex && targetIndex < subtreeEnd;
+  const inSamePosition = normalizedIndex === activeIndex && targetDepth === activeDepth;
+  const selfAsChild = targetIndex === activeIndex + 1 && targetDepth === activeDepth + 1;
 
-    valid.add(i);
-  }
-
-  return valid;
+  return !inOwnSubtree && !inSamePosition && !selfAsChild;
 }
