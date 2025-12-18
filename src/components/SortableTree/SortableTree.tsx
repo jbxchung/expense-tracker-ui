@@ -244,8 +244,8 @@ const SortableTree = <T extends TreeNode>({
     return { title: flattened[index].node.name, childrenCount: count, parentPath };
   }, [activeId, flattened, projection?.parentId]);
 
-  const renderNodes = () =>
-    flattened.map((f, index) => (
+  const renderNodes = () => {
+    const nodes = flattened.map((f, index) => (
       <React.Fragment key={f.id}>
         {projection?.index === index && (
           <div
@@ -261,6 +261,19 @@ const SortableTree = <T extends TreeNode>({
         />
       </React.Fragment>
     ));
+
+    // if projection is at the end, render drop indicator
+    if (projection?.index === flattened.length) {
+      nodes.push(
+        <div
+          className={styles.dropIndicator}
+          style={{ marginLeft: (projection.depth ?? 0) * indentWidth }}
+        />
+      );
+    }
+    
+    return nodes;
+  };
 
   const isDragging = activeId !== null;
 
