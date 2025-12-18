@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -7,8 +7,8 @@ import {
   DragOverlay,
   type DragStartEvent,
   type DragMoveEvent,
-  type DragOverEvent,
   type DragEndEvent,
+  type DragOverEvent,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -22,39 +22,26 @@ import {
   rebuildTree,
   type TreeNode,
   type FlattenedNode,
+  getValidDropIndices,
 } from './utils';
 
 import styles from './SortableTree.module.scss';
 
-/* --------------------------------------------------
- * Types
- * -------------------------------------------------- */
-
 interface SortableTreeProps<T extends TreeNode> {
   items: T[];
   onChange: (newTree: T[]) => void;
-  childrenOptions?: SortableTreeChildrenOptions;
+  childrenOptions?: {
+    key?: string;
+    labels?: { singular: string; plural: string };
+  };
   renderItem: (node: T) => React.ReactNode;
   indentWidth?: number;
-}
-
-interface SortableTreeChildrenOptions {
-  key?: string;
-  labels?: {
-    singular: string;
-    plural: string;
-  };
 }
 
 type Projection = {
   parentId: string | null;
   index: number;
-  depth: number;
 };
-
-/* --------------------------------------------------
- * Component
- * -------------------------------------------------- */
 
 const SortableTree = <T extends TreeNode>({
   items,
@@ -65,84 +52,93 @@ const SortableTree = <T extends TreeNode>({
 }: SortableTreeProps<T>) => {
   const {
     key: childrenKey = 'children',
-    labels: childrenLabels = { singular: 'child', plural: 'children' }
+    labels: childrenLabels = { singular: 'child', plural: 'children' },
   } = childrenOptions ?? {};
 
-  const [flattened, setFlattened] = useState<FlattenedNode<T>[]>(() =>
-    flattenTree(items, null, 0, childrenKey)
+  const [flattened, setFlattened] = useState<FlattenedNode<T>[]>(
+    () => flattenTree(items, null, 0, childrenKey)
   );
-
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [dragX, setDragX] = useState(0);
   const [projection, setProjection] = useState<Projection | null>(null);
 
-  /* --------------------------------------------------
-   * Sync external changes
-   * -------------------------------------------------- */
+  // on drag start, keep track of valid drop indices for active node
+  const validDropIndicesRef = useRef<Set<number>>(new Set());
+  // keep current y position of pointer during drag
+  const pointerYRef = useRef<number>(0);
+  // keep refs for each row so we can get the HtmlElement bounding rect during drag
+  const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   useEffect(() => {
     setFlattened(flattenTree(items, null, 0, childrenKey));
   }, [items, childrenKey]);
 
-  /* --------------------------------------------------
-   * Sensors
-   * -------------------------------------------------- */
-
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  );
-
-  /* --------------------------------------------------
-   * Drag lifecycle
-   * -------------------------------------------------- */
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 1 },
+    }));
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(active.id as string);
+    validDropIndicesRef.current = getValidDropIndices(flattened, active.id as string);
   };
 
-  // set horizontal drag distance for depth calculation
-  const handleDragMove = ({ delta }: DragMoveEvent) => {
-    setDragX(delta.x);
-  };
-
-  const handleDragOver = ({ active, over }: DragOverEvent) => {
-    if (!over) {
+  // track pointer Y position during drag
+  const handleDragMove = ({ active, over }: DragMoveEvent) => {
+    pointerYRef.current = ((active.rect.current.translated?.top ?? 0) + active.rect.current.translated!.bottom) / 2;
+    if (!over || !activeId) {
       setProjection(null);
       return;
     }
 
-    const activeIndex = flattened.findIndex(f => f.id === active.id);
+    const activeIndex = flattened.findIndex(f => f.id === activeId);
     const overIndex = flattened.findIndex(f => f.id === over.id);
-
     if (activeIndex === -1 || overIndex === -1) return;
 
-    const activeNode = flattened[activeIndex];
-    const overNode = flattened[overIndex];
+    const overElement = nodeRefs.current.get(String(over.id));
+    if (!overElement) return;
 
-    // Calculate intended depth from horizontal drag
-    let depth = overNode.depth + Math.round(dragX / indentWidth);
-    depth = Math.max(0, depth);
+    // skip if over self
+    // if (activeIndex === overIndex) {
+    //   setProjection(null);
+    //   return;
+    // }
 
-    // Prevent dropping into own subtree
-    for (let i = activeIndex + 1; i < flattened.length; i++) {
-      if (flattened[i].depth <= activeNode.depth) break;
-      if (flattened[i].id === overNode.id) {
-        depth = activeNode.depth;
-        break;
-      }
+    const rect = overElement.getBoundingClientRect();
+    const pointerY = pointerYRef.current;
+    const ratio = Math.abs((pointerY - rect.top) / rect.height);
+    
+    // console.log(`pointerY: ${pointerY}, rect.top: ${rect.top}, rect.height: ${rect.height}, rect.bottom: ${rect.bottom}, ratio: ${ratio.toFixed(2)}`);
+
+    let targetParentId: string | null = flattened[overIndex].parentId;
+    let targetIndex = overIndex;
+
+    if (ratio < 0.3) {
+      // before
+      targetParentId = flattened[overIndex].parentId;
+      targetIndex = overIndex;
+    } else if (ratio > 0.7) {
+      // after
+      targetParentId = flattened[overIndex].parentId;
+      targetIndex = overIndex + 1;
+    } else {
+      // inside
+      targetParentId = flattened[overIndex].node.id;
+      targetIndex = overIndex + 1; // first child because parentId is set
     }
 
-    setProjection({
-      parentId:
-        depth === 0
-          ? null
-          : depth > overNode.depth
-          ? overNode.id
-          : overNode.parentId ?? null,
-      index: overIndex,
-      depth,
-    });
+    if (validDropIndicesRef.current.has(targetIndex)) {
+      setProjection({ parentId: targetParentId, index: targetIndex });
+    } else {
+      // invalid, do not show preview
+      setProjection(null);
+    }
   };
+
+  const handleDragOver = ({ over }: DragOverEvent) => {
+    const activeIndex = flattened.findIndex(f => f.id === activeId);
+    const overIndex = flattened.findIndex(f => f.id === over!.id);
+    console.log(`dragging ${flattened[activeIndex].node.name} over ${flattened[overIndex].node.name}`);
+  }
 
   const handleDragEnd = ({ active }: DragEndEvent) => {
     if (!projection) {
@@ -151,15 +147,11 @@ const SortableTree = <T extends TreeNode>({
     }
 
     const activeIndex = flattened.findIndex(f => f.id === active.id);
-    if (activeIndex === -1) {
-      resetDrag();
-      return;
-    }
+    if (activeIndex === -1) return resetDrag();
 
     // extract subtree
     const subtree: FlattenedNode<T>[] = [];
     const rootDepth = flattened[activeIndex].depth;
-
     for (let i = activeIndex; i < flattened.length; i++) {
       if (flattened[i].depth < rootDepth) break;
       subtree.push({ ...flattened[i] });
@@ -167,17 +159,16 @@ const SortableTree = <T extends TreeNode>({
 
     const next = flattened.filter(f => !subtree.some(s => s.id === f.id));
 
-    const depthDelta = projection.depth - subtree[0].depth;
+    const parentId = projection.parentId;
+    const parentNode = flattened.find(f => f.node.id === parentId);
+    const depth = parentNode ? parentNode.depth + 1 : 0;
 
     subtree.forEach(n => {
-      n.depth += depthDelta;
-      if (n.id === active.id) {
-        n.parentId = projection.parentId;
-      }
+      n.parentId = n.id === active.id ? parentId : n.parentId;
+      n.depth = n.depth - rootDepth + depth;
     });
 
     next.splice(projection.index, 0, ...subtree);
-
     setFlattened(next);
     onChange(rebuildTree(next));
 
@@ -187,30 +178,10 @@ const SortableTree = <T extends TreeNode>({
   const resetDrag = () => {
     setActiveId(null);
     setProjection(null);
-    setDragX(0);
+    pointerYRef.current = 0;
   };
 
-  /* --------------------------------------------------
-   * Drag overlay subtree
-   * -------------------------------------------------- */
-
-  // const draggedSubtree = useMemo(() => {
-  //   if (!activeId) return [];
-
-  //   const index = flattened.findIndex(f => f.id === activeId);
-  //   if (index === -1) return [];
-
-  //   const depth = flattened[index].depth;
-  //   const result: FlattenedNode<T>[] = [];
-
-  //   for (let i = index; i < flattened.length; i++) {
-  //     if (flattened[i].depth < depth) break;
-  //     result.push(flattened[i]);
-  //   }
-
-  //   return result;
-  // }, [activeId, flattened]);
-  const activeSummary = useMemo(() => {
+  const dragOverlayContent = useMemo(() => {
     if (!activeId) return null;
 
     const index = flattened.findIndex(f => f.id === activeId);
@@ -218,22 +189,13 @@ const SortableTree = <T extends TreeNode>({
 
     const parentDepth = flattened[index].depth;
     let count = 0;
-
     for (let i = index + 1; i < flattened.length; i++) {
-      if (flattened[i].depth > parentDepth) {
-        count++;
-      } else break;
+      if (flattened[i].depth > parentDepth) count++;
+      else break;
     }
 
-    return {
-      title: flattened[index].node.name,
-      childrenCount: count,
-    };
+    return { title: flattened[index].node.name, childrenCount: count };
   }, [activeId, flattened]);
-
-  /* --------------------------------------------------
-   * Render helpers
-   * -------------------------------------------------- */
 
   const renderNodes = () =>
     flattened.map((f, index) => (
@@ -241,23 +203,19 @@ const SortableTree = <T extends TreeNode>({
         {projection?.index === index && (
           <div
             className={styles.dropIndicator}
-            style={{ marginLeft: projection.depth * indentWidth }}
+            style={{ marginLeft: (flattened[index].depth ?? 0) * indentWidth }}
           />
         )}
-
-        <SortableTreeNode<T>
+        <SortableTreeNode
           node={f.node}
           depth={f.depth}
           renderItem={renderItem}
+          refMap={nodeRefs}
         />
       </React.Fragment>
     ));
 
   const isDragging = activeId !== null;
-
-  /* --------------------------------------------------
-   * Render
-   * -------------------------------------------------- */
 
   return (
     <DndContext
@@ -267,34 +225,19 @@ const SortableTree = <T extends TreeNode>({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      {isDragging ? (
-        // 🔒 No SortableContext during drag → NO live sorting
-        renderNodes()
-      ) : (
-        <SortableContext
-          items={flattened.map(f => f.id)}
-          strategy={verticalListSortingStrategy}
-        >
+      {isDragging ? renderNodes() : (
+        <SortableContext items={flattened.map(f => f.id)} strategy={verticalListSortingStrategy}>
           {renderNodes()}
         </SortableContext>
       )}
 
       <DragOverlay adjustScale={false}>
-        {/* {activeId && (
-          <div className={styles.dragOverlay}>
-            {draggedSubtree.map(f => (
-              <div key={f.id} style={{ paddingLeft: f.depth * indentWidth }}>
-                {renderItem(f.node)}
-              </div>
-            ))}
-          </div>
-        )} */}
-        {activeSummary && (
+        {dragOverlayContent && (
           <div className={styles.dragLabel}>
-            <strong>{activeSummary.title}</strong>
-            {activeSummary.childrenCount > 0 && (
+            <strong>{dragOverlayContent.title}</strong>
+            {dragOverlayContent.childrenCount > 0 && (
               <span className={styles.dragMeta}>
-                + {activeSummary.childrenCount} {activeSummary.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}
+                + {dragOverlayContent.childrenCount} {dragOverlayContent.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}
               </span>
             )}
           </div>
@@ -304,30 +247,26 @@ const SortableTree = <T extends TreeNode>({
   );
 };
 
-/* --------------------------------------------------
- * Node
- * -------------------------------------------------- */
-
 interface SortableTreeNodeProps<T extends TreeNode> {
   node: T;
   depth: number;
   renderItem: (node: T) => React.ReactNode;
+  refMap: React.RefObject<Map<string, HTMLElement>>;
 }
 
 const SortableTreeNode = <T extends TreeNode>({
   node,
   depth,
   renderItem,
-  // activeId,
+  refMap,
 }: SortableTreeNodeProps<T>) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: node.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: node.id });
+
+  const setRef = (el: HTMLElement | null) => {
+    if (el) refMap.current.set(node.id, el);
+    else refMap.current.delete(node.id);
+    setNodeRef(el);
+  };
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -337,14 +276,11 @@ const SortableTreeNode = <T extends TreeNode>({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.treeNodeWrapper}>
+    <div ref={setRef} style={style} className={styles.treeNodeWrapper}>
       <div {...attributes} className={styles.treeNode}>
         <div className={styles.content}>
           <span className={styles.handle} {...listeners}>≡</span>
           {renderItem(node)}
-        </div>
-        <div className={styles.actions}>
-          + x{/* TODO: allow caller to pass in action buttons with full enabled/disabled states and custom handlers */}
         </div>
       </div>
     </div>
