@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import type { TreeNode } from './utils';
 
@@ -19,7 +18,7 @@ const SortableTreeNode = <T extends TreeNode>({
   renderItem,
   refMap,
 }: SortableTreeNodeProps<T>) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: node.id });
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: node.id });
 
   const setRef = (el: HTMLElement | null) => {
     if (el) refMap.current.set(node.id, el);
@@ -27,15 +26,11 @@ const SortableTreeNode = <T extends TreeNode>({
     setNodeRef(el);
   };
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.35 : 1,
-    paddingLeft: depth * 24,
-  };
+  const style = { '--depth': depth } as React.CSSProperties;
+  const cssClasses = [styles.treeNodeWrapper, isDragging ? styles.dragging : ''].filter(Boolean).join(' ');
 
   return (
-    <div ref={setRef} style={style} className={styles.treeNodeWrapper}>
+    <div ref={setRef} style={style} className={cssClasses}>
       <div {...attributes} className={styles.treeNode}>
         <div className={styles.content}>
           <span className={styles.handle} {...listeners}>≡</span>

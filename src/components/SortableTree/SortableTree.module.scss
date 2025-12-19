@@ -8,30 +8,35 @@
   --indent: 1rem;
   padding-left: calc(var(--depth) * var(--indent));
 
+  &.dragging {
+    opacity: 0.35;
+  }
+
   &:hover {
     background-color: var(--color-surface-hover);
   }
-}
 
-.tree-node {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 8px;
-
-  .content {
+  .tree-node {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    padding: 4px 8px;
 
-    .handle {
-      cursor: grab;
+
+    .content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .handle {
+        cursor: grab;
+      }
     }
-  }
 
-  .actions {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
+    .actions {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
   }
 }
 
