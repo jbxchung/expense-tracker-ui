@@ -1,10 +1,7 @@
-interface Tree {
-  id: string;
-  children?: Tree[];
-}
+import type { Tree } from 'types/tree';
 
 // flatten a nested structure
-export function flattenTree<T> (
+export function flattenTree<T extends Tree> (
   nodes: Array<T & { [key: string]: any }>,
   childrenKey: string = 'children'
 ): T[] {

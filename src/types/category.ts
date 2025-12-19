@@ -1,28 +1,19 @@
-// types/category.ts
-import type { Transaction } from './transaction';
-import type { User } from './user';
+import type { Tree } from 'types/tree';
 
-// todo - may not need all these fields for frontend
-export interface Category {
+// category object minus relations to user/parent/transactions
+export interface Category extends Tree {
   id: string;
   name: string;
   description?: string;
 
   userId?: string;
-  user?: User;
 
   sortOrder: number;
   parentId?: string;
-  parent?: Category
   children?: Category[];
 
-  _count: CategoryMetaCount;
-  transactions?: Transaction[];
+  transactionCount: number;
 
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface CategoryMetaCount {
-  transactions: number;
 }

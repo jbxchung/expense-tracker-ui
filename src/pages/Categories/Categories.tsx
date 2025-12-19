@@ -9,6 +9,7 @@ import InlineEdit from 'components/InlineEdit/InlineEdit';
 import SortableTree from 'components/SortableTree/SortableTree';
 
 import styles from './Categories.module.scss';
+import { normalizeSortOrder } from 'utils/categoryUtils';
 
 const Categories: FC = () => {
   const { categoryTree, isLoading, error } = useCategoryTree();
@@ -51,10 +52,9 @@ const Categories: FC = () => {
       <div className={styles.categoryTreeContainer}>
         <SortableTree
           items={tree}
-          onChange={(newTree: any) => {
-            console.log('Tree changed:', newTree);
-            // todo - persist changes
-            // saveTree(newTree);
+          onChange={(reorderedTree: Category[]) => {
+            const newTree = normalizeSortOrder(reorderedTree);
+            saveTree(newTree);
           }}
           childrenOptions={{ labels: { singular: 'subcategory', plural: 'subcategories' } }}
           renderItem={(category: Category) => (
