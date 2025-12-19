@@ -1,21 +1,20 @@
 import { useState, type FC } from 'react';
 
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
-import { useAppContext } from 'contexts/app/AppContext';
+// import { useAppContext } from 'contexts/app/AppContext';
 import { useImporters } from 'hooks/importers/useImporters';
 // import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
 
 import Accordion from 'components/Accordion/Accordion';
 import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
-import Modal from 'components/Modal/Modal';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
 
 import styles from './Importers.module.scss';
 
 const Importers: FC = () => {
-  const { accounts, accountsLoading, accountsError } = useAppContext();
+  // const { accounts, accountsLoading, accountsError } = useAppContext();
 
   const { importers, isLoading: importersLoading, error: importersError } = useImporters();
   // const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();

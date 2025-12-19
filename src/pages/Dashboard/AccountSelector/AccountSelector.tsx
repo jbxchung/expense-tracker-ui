@@ -1,11 +1,11 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
 
 import type { Account } from 'types/account';
+import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
 
 import styles from './AccountSelector.module.scss';
-import Button, { ButtonVariants } from 'components/Button/Button';
-import { Link } from 'react-router-dom';
 
 interface AccountSelectorProps {
   isLoading: boolean;

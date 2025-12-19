@@ -1,14 +1,16 @@
 import { type FC, useRef, useState } from 'react';
 
-import styles from './ImporterConfigurator.module.scss';
+import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
+import { useSaveImporter } from 'hooks/importers/useSaveImporter';
+
+import Button, { ButtonVariants } from 'components/Button/Button';
+import Input, { type InputHandle } from 'components/Input/Input';
 import Tabs, { type TabElement } from 'components/Tabs/Tabs';
 
 import ImportFieldEditor from './ImportFieldEditor';
 
-import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
-import Input, { type InputHandle } from 'components/Input/Input';
-import Button, { ButtonVariants } from 'components/Button/Button';
-import { useSaveImporter } from 'hooks/importers/useSaveImporter';
+import styles from './ImporterConfigurator.module.scss';
+
 
 interface ImportConfiguratorProps {
   importer?: Importer;

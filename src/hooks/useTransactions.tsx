@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Transaction } from 'types/transaction';
 import { fetchTransactions } from 'api/transactions';
 
-
 interface UseTransactionsOptions {
   accountIds: string[];
   from?: Date;

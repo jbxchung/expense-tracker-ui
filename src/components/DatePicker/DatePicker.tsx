@@ -1,9 +1,10 @@
 import { useEffect, useState, type FC } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
-import styles from './DatePicker.module.scss';
 import Input from 'components/Input/Input';
+
+import 'react-datepicker/dist/react-datepicker.css';
+import styles from './DatePicker.module.scss';
 
 // types
 export type DateValue = Date | null;
