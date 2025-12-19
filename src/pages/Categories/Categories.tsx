@@ -8,8 +8,10 @@ import Card from 'components/Card/Card';
 import InlineEdit from 'components/InlineEdit/InlineEdit';
 import SortableTree from 'components/SortableTree/SortableTree';
 
-import styles from './Categories.module.scss';
 import { normalizeSortOrder } from 'utils/categoryUtils';
+
+import styles from './Categories.module.scss';
+import CategoryItem from './CategoryItem';
 
 const Categories: FC = () => {
   const { categoryTree, isLoading, error } = useCategoryTree();
@@ -58,13 +60,14 @@ const Categories: FC = () => {
           }}
           childrenOptions={{ labels: { singular: 'subcategory', plural: 'subcategories' } }}
           renderItem={(category: Category) => (
-            <InlineEdit
-              value={category.name}
-              onSave={name => {
-                const updated = { ...category, name };
-                handleEdit(updated);
-              }}
-            />
+            <CategoryItem category={category} onEdit={handleEdit} />
+            // <InlineEdit
+            //   value={category.name}
+            //   onSave={name => {
+            //     const updated = { ...category, name };
+            //     handleEdit(updated);
+            //   }}
+            // />
           )}
         />
       </div>

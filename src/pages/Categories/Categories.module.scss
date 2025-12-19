@@ -2,29 +2,17 @@
   margin-top: 1rem;
   font-size: 1.2rem;
 
-  .category-node {
-    padding-left: 0.5rem;
+  .category-item {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
 
-    .row {
+    .category-description {
+      flex: 1;
       display: flex;
-      align-items: center;
-
-      .expand-spacer {
-        visibility: hidden;
-      }
-
-      .expand-category {
-        cursor: pointer;
-      }
-
-      .drag-handle {
-        cursor: grab;
-      }
-    }
-
-    .expanded-children {
-      margin-left: 1.5rem;
-      border-left: 1px solid white;
+      // justify-content: flex-end;
+      font-size: 0.75rem;
     }
   }
 }

@@ -78,7 +78,7 @@ const InlineEdit: FC<InlineEditProps> = ({
   const classes = [styles.inlineEdit, className].filter(Boolean).join(' ');
   return (
     <div className={classes} onClick={() => setEditing(true)}>
-      {value ?? <span className={styles.placeholder}>{placeholder}</span>}
+      {value ? <span>{value}</span> : <span className={styles.placeholder}>{placeholder}</span>}
     </div>
   );
 };
