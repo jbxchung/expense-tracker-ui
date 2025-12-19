@@ -5,7 +5,7 @@
   border: 1px solid var(--color-border);
 
   // indent per tree depth
-  --indent: 1rem;
+  --indent: 1.5rem;
   padding-left: calc(var(--depth) * var(--indent));
 
   &.dragging {
@@ -20,15 +20,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 8px;
-
+    padding: 0.25rem 0.5rem;
 
     .content {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
 
       .handle {
+        margin-left: 0.5rem;
         cursor: grab;
       }
     }
@@ -62,6 +62,7 @@
   }
 }
 
+// drop preview
 .drop-indicator {
   height: 0.25rem;
   background: var(--color-primary);
@@ -69,6 +70,6 @@
   margin-top: 1px;
   margin-bottom: 1px;
 
-  --indent: 1rem;
+  --indent: 2rem;
   margin-left: calc((var(--depth)) * var(--indent));
 }

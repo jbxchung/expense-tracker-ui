@@ -1,0 +1,37 @@
+.inline-edit {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+
+  &:hover {
+    border: 1px solid var(--color-input-border-hover);
+  }
+
+  .placeholder {
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+}
+
+
+.inline-input-wrapper {
+  position: relative;
+  font-size: 1rem;
+
+  .inline-input {
+    font-size: inherit;
+    border: none;
+    background: transparent;
+    min-width: 1ch;
+    box-sizing: border-box;
+  }
+
+  .input-mirror {
+    position: absolute;
+    padding: 0.25rem 0.5rem;
+    visibility: hidden;
+    font-size: inherit;
+    white-space: pre;
+  }
+}

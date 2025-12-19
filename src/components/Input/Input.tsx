@@ -4,6 +4,8 @@ import styles from './Input.module.scss';
 
 export interface InputHandle {
   focus: () => void;
+  select?: () => void;
+  setWidth?: (px: number) => void;
   validate?: () => boolean;
 }
 
@@ -20,6 +22,14 @@ const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", sele
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputRef.current?.focus();
+    },
+    select: () => {
+      inputRef.current?.select();
+    },
+    setWidth: (width: number) => {
+      if (inputRef.current) {
+        inputRef.current.style.width = `${width}px`;
+      }
     },
     validate: () => {
       if (validate) {

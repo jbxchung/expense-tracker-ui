@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type FC } from 'react';
+import { type FC, useState, useRef, useEffect, useLayoutEffect } from 'react';
 
 import Input, { type InputHandle } from 'components/Input/Input';
 
@@ -21,14 +21,26 @@ const InlineEdit: FC<InlineEditProps> = ({
 }) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
+
   const inputRef = useRef<InputHandle | null>(null);
+  const mirrorRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
     if (editing) {
       setDraft(value);
       inputRef.current?.focus();
+      // inputRef.current?.select?.();
     }
   }, [editing, value]);
+
+  // autosize input width
+  useLayoutEffect(() => {
+    if (!editing) return;
+    if (!mirrorRef.current || !inputRef.current) return;
+
+    const width = mirrorRef.current.offsetWidth;
+    inputRef.current.setWidth?.(width + 2); // small buffer
+  }, [draft, editing]);
 
   const handleSave = () => {
     setEditing(false);
@@ -48,23 +60,26 @@ const InlineEdit: FC<InlineEditProps> = ({
 
   if (editing) {
     return (
-      <Input
-        ref={inputRef}
-        value={draft}
-        onChange={e => setDraft(e.target.value as T)}
-        onBlur={handleSave}
-        onKeyDown={handleKeyDown}
-        autoFocus
-      />
+      <div className={styles.inlineInputWrapper}>
+        <Input
+          ref={inputRef}
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onBlur={handleSave}
+          onKeyDown={handleKeyDown}
+          className={styles.inlineInput}
+          autoFocus
+        />
+        <span className={styles.inputMirror} ref={mirrorRef}>{draft || placeholder}</span>
+      </div>
     );
   }
 
-  // todo - custom styles for inline-edit?
   const classes = [styles.inlineEdit, className].filter(Boolean).join(' ');
   return (
-    <span className={classes} onClick={() => setEditing(true)}>
+    <div className={classes} onClick={() => setEditing(true)}>
       {value ?? <span className={styles.placeholder}>{placeholder}</span>}
-    </span>
+    </div>
   );
 };
 
