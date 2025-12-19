@@ -12,18 +12,28 @@ export interface FlattenedNode<T> {
   index: number;
 }
 
+// utility type for projected indicator position
+export type Projection = {
+  parentId: string | null;
+  index: number;
+  depth: number;
+};
+
+// utility type for drag context
 export type DragContext = {
   activeIndex: number;
   activeDepth: number;
   subtreeEnd: number;
 }
 
+// utlity types for drop position tracking
 export type DropPosition = {
-  depth: number;  // depth level to drop at
-  index: number;  // flattened index to drop at
+  depth: number;
+  index: number;
 }
 export type ValidDropPositions = Map<DropPosition['depth'], Set<DropPosition['index']>>;
 
+// tree utilities
 export function flattenTree<T extends TreeNode>(nodes: T[], parentId: string | null = null, depth = 0, childrenKey: keyof T = 'children'): FlattenedNode<T>[] {
   let flat: FlattenedNode<T>[] = [];
   nodes.forEach((node, index) => {
@@ -53,6 +63,7 @@ export function rebuildTree<T extends TreeNode>(flat: FlattenedNode<T>[], childr
   return tree;
 }
 
+// drag and drop validation
 export function isValidDrop(
   ctx: DragContext,
   targetIndex: number,
@@ -69,6 +80,8 @@ export function isValidDrop(
   // normalize index as if subtree were removed first
   const normalizedIndex = targetIndex > activeIndex ? targetIndex - subtreeSize : targetIndex;
 
+  // TODO - revisit ownsubtree condition for edge case where a last child cannot be moved out to before its parent's next sibling
+  // low priority since it is an easy workaround to just drag it somewhere else first
   const inOwnSubtree = targetIndex > activeIndex && targetIndex <= subtreeEnd;
   const inSamePosition = normalizedIndex === activeIndex && targetDepth === activeDepth;
   const selfAsChild = targetIndex === activeIndex + 1 && targetDepth === activeDepth + 1;

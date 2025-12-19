@@ -12,18 +12,20 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  useSortable,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import {
   flattenTree,
   rebuildTree,
-  type TreeNode,
-  type FlattenedNode,
-  type DragContext,
   isValidDrop,
+  type DragContext,
+  type FlattenedNode,
+  type Projection,
+  type TreeNode,
 } from './utils';
+
+import DropIndicator from './DropIndicator';
+import SortableTreeNode from './SortableTreeNode';
 
 import styles from './SortableTree.module.scss';
 
@@ -35,36 +37,28 @@ interface SortableTreeProps<T extends TreeNode> {
     labels?: { singular: string; plural: string };
   };
   renderItem: (node: T) => React.ReactNode;
-  indentWidth?: number;
+  edgeThreshold?: number; // proportion of node height for edge drop zones
 }
-
-type Projection = {
-  parentId: string | null;
-  index: number;
-  depth: number;
-};
 
 const SortableTree = <T extends TreeNode>({
   items,
   onChange,
   childrenOptions,
   renderItem,
-  indentWidth = 24,
+  edgeThreshold = 0.25,
 }: SortableTreeProps<T>) => {
   const {
     key: childrenKey = 'children',
     labels: childrenLabels = { singular: 'child', plural: 'children' },
   } = childrenOptions ?? {};
 
-  const [flattened, setFlattened] = useState<FlattenedNode<T>[]>(
-    () => flattenTree(items, null, 0, childrenKey)
-  );
+  const [flattened, setFlattened] = useState<FlattenedNode<T>[]>(() => flattenTree(items, null, 0, childrenKey));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [projection, setProjection] = useState<Projection | null>(null);
 
-  // on drag start, calculate 
+  // on drag start, get info for the currently dragging subtree
   const dragContextRef = useRef<DragContext | null>(null);
-  // keep current y position of pointer during drag
+  // keep current y position of pointer during drag to compare with row bounding rects
   const pointerYRef = useRef<number>(0);
   // keep refs for each row so we can get the HtmlElement bounding rect during drag
   const nodeRefs = useRef<Map<string, HTMLElement>>(new Map());
@@ -108,7 +102,6 @@ const SortableTree = <T extends TreeNode>({
       return;
     }
 
-    // const activeIndex = flattened.findIndex(f => f.id === activeId);
     const activeIndex = dragContextRef.current?.activeIndex ?? -1;
     const overIndex = flattened.findIndex(f => f.id === over.id);
     if (activeIndex === -1 || overIndex === -1) return;
@@ -130,12 +123,12 @@ const SortableTree = <T extends TreeNode>({
     let targetDepth = null;
     let targetIndex = null;
 
-    if (ratio < 0.3) {
+    if (ratio < edgeThreshold) {
       // before
       targetParentId = flattened[overIndex].parentId;
       targetDepth = flattened[overIndex].depth;
       targetIndex = overIndex;
-    } else if (ratio > 0.7) {
+    } else if (ratio > 1 - edgeThreshold) {
       // after
       targetParentId = flattened[overIndex].parentId;
       targetDepth = flattened[overIndex].depth;
@@ -148,10 +141,7 @@ const SortableTree = <T extends TreeNode>({
     }
 
     const ctx = dragContextRef.current;
-    if (!ctx) {
-      console.warn('No drag context');
-      return;
-    }
+    if (!ctx) return;
 
     if (isValidDrop(ctx, targetIndex, targetDepth)) {
       setProjection({ parentId: targetParentId, index: targetIndex, depth: targetDepth });
@@ -209,7 +199,8 @@ const SortableTree = <T extends TreeNode>({
     pointerYRef.current = 0;
   };
 
-  const dragOverlayContent = useMemo(() => {
+  // helper object for display info in drag overlay
+  const dragOverlayMeta = useMemo(() => {
     if (!activeId) return null;
 
     const index = flattened.findIndex(f => f.id === activeId);
@@ -241,17 +232,17 @@ const SortableTree = <T extends TreeNode>({
       parentPath.reverse();
     }
 
-    return { title: flattened[index].node.name, childrenCount: count, parentPath };
+    const currentParentId = flattened[index].parentId;
+    const targetParentId = projection?.parentId ?? currentParentId;
+
+    return { title: flattened[index].node.name, childrenCount: count, parentPath, isSameParent: currentParentId === targetParentId };
   }, [activeId, flattened, projection?.parentId]);
 
   const renderNodes = () => {
     const nodes = flattened.map((f, index) => (
       <React.Fragment key={f.id}>
         {projection?.index === index && (
-          <div
-            className={styles.dropIndicator}
-            style={{ marginLeft: (projection.depth ?? 0) * indentWidth }}
-          />
+          <DropIndicator depth={projection.depth} />
         )}
         <SortableTreeNode
           node={f.node}
@@ -264,14 +255,9 @@ const SortableTree = <T extends TreeNode>({
 
     // if projection is at the end, render drop indicator
     if (projection?.index === flattened.length) {
-      nodes.push(
-        <div
-          className={styles.dropIndicator}
-          style={{ marginLeft: (projection.depth ?? 0) * indentWidth }}
-        />
-      );
+      nodes.push(<DropIndicator depth={projection.depth} />);
     }
-    
+
     return nodes;
   };
 
@@ -291,64 +277,24 @@ const SortableTree = <T extends TreeNode>({
       )}
 
       <DragOverlay adjustScale={false}>
-        {dragOverlayContent && (
+        {dragOverlayMeta && (
           <div className={styles.dragOverlay}>
             <span>Move </span>
-            <span className={styles.dragTitle}>{dragOverlayContent.title}</span>
-            {dragOverlayContent.childrenCount > 0 && (
+            <span className={styles.dragTitle}>{dragOverlayMeta.title}</span>
+            {dragOverlayMeta.childrenCount > 0 && (
               <span className={styles.dragMeta}>
-                {` +${dragOverlayContent.childrenCount} ${dragOverlayContent.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}`}
+                {` +${dragOverlayMeta.childrenCount} ${dragOverlayMeta.childrenCount === 1 ? childrenLabels.singular : childrenLabels.plural}`}
               </span>
             )}
-            {dragOverlayContent.parentPath && (
-              <span className={styles.dragReparent}>
-                {` to ${dragOverlayContent.parentPath.join('/')}`}
+            {dragOverlayMeta.parentPath && !dragOverlayMeta.isSameParent && (
+              <span>
+                {` to ${dragOverlayMeta.parentPath.join(' / ')}`}
               </span>
             )}
           </div>
         )}
       </DragOverlay>
     </DndContext>
-  );
-};
-
-interface SortableTreeNodeProps<T extends TreeNode> {
-  node: T;
-  depth: number;
-  renderItem: (node: T) => React.ReactNode;
-  refMap: React.RefObject<Map<string, HTMLElement>>;
-}
-
-const SortableTreeNode = <T extends TreeNode>({
-  node,
-  depth,
-  renderItem,
-  refMap,
-}: SortableTreeNodeProps<T>) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: node.id });
-
-  const setRef = (el: HTMLElement | null) => {
-    if (el) refMap.current.set(node.id, el);
-    else refMap.current.delete(node.id);
-    setNodeRef(el);
-  };
-
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.35 : 1,
-    paddingLeft: depth * 24,
-  };
-
-  return (
-    <div ref={setRef} style={style} className={styles.treeNodeWrapper}>
-      <div {...attributes} className={styles.treeNode}>
-        <div className={styles.content}>
-          <span className={styles.handle} {...listeners}>≡</span>
-          {renderItem(node)}
-        </div>
-      </div>
-    </div>
   );
 };
 

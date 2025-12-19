@@ -50,14 +50,10 @@
     font-weight: bold;
     color: var(--color-primary);
   }
+  
   .drag-meta {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
-    // opacity: 0.7;
-  }
-
-  .drag-reparent {
-    color: var(--color-accent);
   }
 }
 
@@ -69,5 +65,5 @@
   margin-bottom: 1px;
 
   --indent: 1rem;
-  margin-left: calc(2 * (var(--depth) + 1) * var(--indent));
+  margin-left: calc((var(--depth)) * var(--indent));
 }
