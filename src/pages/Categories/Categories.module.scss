@@ -14,6 +14,32 @@
       // justify-content: flex-end;
       font-size: 0.75rem;
     }
+
+    .category-actions {
+      display: flex;
+      align-self: center;
+      gap: 0.5rem;
+      color: var(--color-text-primary);
+      fill: var(--color-text-primary);
+
+      svg {
+        height: 1.5rem;
+        width: 1.5rem;
+        vertical-align: middle;
+        cursor: pointer;
+        
+        &:hover {
+          color: var(--color-link-hover);
+        }
+      }
+
+      
+      .delete-icon {
+        svg:hover {
+          color: var(--color-danger);
+        }
+      }
+    }
   }
 }
 

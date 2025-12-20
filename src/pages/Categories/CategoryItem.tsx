@@ -5,6 +5,8 @@ import type { Category } from 'types/category';
 import InlineEdit from 'components/InlineEdit/InlineEdit';
 
 import styles from './Categories.module.scss';
+import { AddChildIcon } from 'icons/AddChildIcon';
+import { TrashIcon } from 'icons/TrashIcon';
 
 interface CategoryItemProps {
   category: Category;
@@ -34,7 +36,23 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
         />
       </div>
       <div className={styles.categoryActions}>
-        {/* Placeholder for future actions like edit, delete */}
+        <span
+          title="Add Subcategory"
+          onClick={(e) => {
+            // todo - add child category
+          }}
+        >
+          <AddChildIcon />
+        </span>
+        <span
+          className={styles.deleteIcon}
+          title={`Delete '${category.name}'`}
+          onClick={(e) => {
+            // todo - delete this category
+          }}
+        >
+          <TrashIcon />
+        </span>
       </div>
     </div>
   );
