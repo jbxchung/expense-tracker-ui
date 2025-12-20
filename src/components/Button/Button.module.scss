@@ -81,6 +81,32 @@
   }
 }
 
+.icon {
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.25rem; // tighter than normal buttons
+  border-radius: 0.375rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-text-secondary);
+
+  &:hover:not(:disabled) {
+    color: var(--color-link-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--color-ghost-active);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
 .danger {
   background-color: var(--color-danger);
   color: var(--color-text-primary);

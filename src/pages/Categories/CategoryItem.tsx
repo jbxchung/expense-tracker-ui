@@ -2,11 +2,13 @@ import type { FC } from 'react';
 
 import type { Category } from 'types/category';
 
+import Button, { ButtonVariants } from 'components/Button/Button';
 import InlineEdit from 'components/InlineEdit/InlineEdit';
 
-import styles from './Categories.module.scss';
 import { AddChildIcon } from 'icons/AddChildIcon';
 import { TrashIcon } from 'icons/TrashIcon';
+
+import styles from './Categories.module.scss';
 
 interface CategoryItemProps {
   category: Category;
@@ -36,23 +38,26 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
         />
       </div>
       <div className={styles.categoryActions}>
-        <span
+        <Button
           title="Add Subcategory"
+          variant={ButtonVariants.ICON}
           onClick={(e) => {
             // todo - add child category
           }}
         >
           <AddChildIcon />
-        </span>
-        <span
+        </Button>
+        <Button
           className={styles.deleteIcon}
           title={`Delete '${category.name}'`}
+          variant={ButtonVariants.ICON}
+          disabled
           onClick={(e) => {
             // todo - delete this category
           }}
         >
           <TrashIcon />
-        </span>
+        </Button>
       </div>
     </div>
   );

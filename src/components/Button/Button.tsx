@@ -7,6 +7,7 @@ export const ButtonVariants = {
   SECONDARY: 'secondary',
   GHOST: 'ghost',
   DANGER: 'danger',
+  ICON: 'icon',
 } as const;
 export type ButtonVariant = typeof ButtonVariants[keyof typeof ButtonVariants];
 
