@@ -9,7 +9,7 @@ export interface Category extends Tree {
   userId?: string;
 
   sortOrder: number;
-  parentId?: string;
+  parentId: string | null;
   children?: Category[];
 
   transactionCount: number;

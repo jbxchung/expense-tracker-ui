@@ -28,14 +28,10 @@
           width: 1.25rem;
         }
 
-        &.delete-icon:hover {
+        &.delete-icon:hover:not(:disabled) {
           color: var(--color-danger);
         }
       }
     }
   }
-}
-
-.debug {
-  border: 1px solid red;
 }

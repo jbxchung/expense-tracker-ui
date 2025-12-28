@@ -5,10 +5,9 @@ import { useCategoryTree, useSaveCategoryTree } from 'hooks/categories/useCatego
 import { patchTree } from 'utils/treeUtils';
 
 import Card from 'components/Card/Card';
-import InlineEdit from 'components/InlineEdit/InlineEdit';
 import SortableTree from 'components/SortableTree/SortableTree';
 
-import { normalizeSortOrder } from 'utils/categoryUtils';
+import { createTempCategory, insertCategory, normalizeSortOrder, removeCategory } from 'utils/categoryUtils';
 
 import styles from './Categories.module.scss';
 import CategoryItem from './CategoryItem';
@@ -31,7 +30,24 @@ const Categories: FC = () => {
   const handleEdit = useCallback((updatedCategory: Category) => {
     const newTree = patchTree(tree, updatedCategory);
     saveTree(newTree);
-  }, [saveTree, tree]);
+  }, [tree, saveTree]);
+
+  const handleAddCategory = useCallback((parentId: string | null) => {
+    const newCategory = createTempCategory(parentId);
+    const newTree = insertCategory(tree, newCategory, parentId);
+
+    const normalized = normalizeSortOrder(newTree);
+    setTree(normalized);
+    saveTree(normalized);
+  }, [tree, saveTree]);
+
+  const handleDelete = useCallback((id: string) => {
+      const newTree = removeCategory(tree, id);
+      
+      const normalized = normalizeSortOrder(newTree);
+      setTree(normalized);
+      saveTree(normalized);
+  }, [tree, saveTree]);
 
   // set placeholders
   if (isLoading) {
@@ -60,24 +76,10 @@ const Categories: FC = () => {
           }}
           childrenOptions={{ labels: { singular: 'subcategory', plural: 'subcategories' } }}
           renderItem={(category: Category) => (
-            <CategoryItem category={category} onEdit={handleEdit} />
-            // <InlineEdit
-            //   value={category.name}
-            //   onSave={name => {
-            //     const updated = { ...category, name };
-            //     handleEdit(updated);
-            //   }}
-            // />
+            <CategoryItem category={category} onEdit={handleEdit} onAddChild={handleAddCategory} onDelete={handleDelete} />
           )}
         />
       </div>
-        
-      {/* TODO - remove below after finished */}
-      <br />
-      <div className={styles.debug}>
-        <pre>{JSON.stringify(categoryTree, null, 4)}</pre>
-      </div>
-      {/* TODO - remove above after finished */}
     </Card>
   );
 };

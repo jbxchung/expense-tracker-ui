@@ -13,9 +13,12 @@ import styles from './Categories.module.scss';
 interface CategoryItemProps {
   category: Category;
   onEdit: (updatedCategory: Category) => void;
+  onAddChild: (parentId: string) => void;
+  onDelete: (id: string) => void;
 }
 
-const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
+const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit, onAddChild, onDelete }) => {
+  const allowDelete = !category.children?.length  && !category.transactionCount;
 
   return (
     <div className={styles.categoryItem}>
@@ -28,6 +31,7 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
       />
       <div className={styles.categoryDescription}>
         <InlineEdit
+          // todo - fix long description wrapping lines, we should scroll on editing and truncate with ellipsis on display
           // className={styles.categoryDescription}
           value={category.description ?? ''}
           onSave={description => {
@@ -41,9 +45,7 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
         <Button
           title="Add Subcategory"
           variant={ButtonVariants.ICON}
-          onClick={(e) => {
-            // todo - add child category
-          }}
+          onClick={() => onAddChild(category.id)}
         >
           <AddChildIcon />
         </Button>
@@ -51,10 +53,8 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit }) => {
           className={styles.deleteIcon}
           title={`Delete '${category.name}'`}
           variant={ButtonVariants.ICON}
-          disabled
-          onClick={(e) => {
-            // todo - delete this category
-          }}
+          disabled={!allowDelete}
+          onClick={() => onDelete(category.id)}
         >
           <TrashIcon />
         </Button>
