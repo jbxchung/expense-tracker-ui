@@ -52,8 +52,8 @@ const Header: FC = () => {
         )}
       </div>
       <div className={styles.navLinks}>
-        {headerLinks.map(headerLink => {
-          const isCurrentPage = activePage!.value === headerLink.value;
+        {user && headerLinks.map(headerLink => {
+          const isCurrentPage = activePage?.value === headerLink.value;
           const linkStyle = [styles.navLink, isCurrentPage ? styles.active : ''].filter(Boolean).join(' ');
 
           return <Link key={headerLink.value} className={linkStyle} to={headerLink.value}>

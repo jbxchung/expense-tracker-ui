@@ -10,6 +10,7 @@ import Categories from 'pages/Categories/Categories';
 import Importers from 'pages/Importers/Importers';
 
 import './App.scss';
+import ProtectedRoutes from 'components/ProtectedRoutes/ProtectedRoutes';
 
 function App() {
   return (
@@ -24,14 +25,19 @@ function App() {
             <div className="bg" />
             
             <Routes>
-              {/* root should redirect to dashboard*/}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              {/* main page */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* managing stuff */}
-              <Route path="/accounts" element={<Accounts />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/importers" element={<Importers />} />
+              {/* login */}
+              <Route path="/login" element={<div>todo: login page</div>} />
+
+              <Route element={<ProtectedRoutes/>}>
+                {/* main page */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                {/* managing stuff */}
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/importers" element={<Importers />} />
+              </Route>
             </Routes>
           </div>
         </AppProvider>
