@@ -3,10 +3,8 @@ import { mutate } from 'swr';
 
 import { AccountTypes, type Account } from 'types/account';
 import { ACCOUNTS_API_PATH, createAccount } from 'api/accounts';
-import { useAppContext } from 'contexts/app/AppContext';
 
 export function useCreateAccount() {
-  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -21,7 +19,7 @@ export function useCreateAccount() {
       newAccount.type = AccountTypes[newAccount.type as keyof typeof AccountTypes];
       
       // update SWR cache manually
-      mutate(selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null, (accounts: Account[] = []) => [...accounts, newAccount], false);
+      mutate(ACCOUNTS_API_PATH, (accounts: Account[] = []) => [...accounts, newAccount], false);
 
       return newAccount;
     } catch (e) {
@@ -30,7 +28,7 @@ export function useCreateAccount() {
     } finally {
       setLoading(false);
     }
-  }, [selectedUser]);
+  }, []);
 
   return { create, loading, error };
 };

@@ -13,12 +13,12 @@ interface CreateAccountFormProps {
 }
 
 const CreateAccountForm: FC<CreateAccountFormProps> = ({ onSubmit, onCancel }: CreateAccountFormProps) => {
-  const { selectedUser } = useAppContext();
+  const { user } = useAppContext();
   const { create: createAccount, loading, error: createError } = useCreateAccount();
 
   const handleCreate = async (data: { name: string; type: AccountType }) => {
     await createAccount({
-      userId: selectedUser!.id,
+      userId: user!.id,
       name: data.name,
       type: data.type,
     });

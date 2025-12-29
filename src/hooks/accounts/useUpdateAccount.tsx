@@ -3,10 +3,8 @@ import { mutate } from 'swr';
 
 import { AccountTypes, type Account } from 'types/account';
 import { ACCOUNTS_API_PATH, updateAccount } from 'api/accounts';
-import { useAppContext } from 'contexts/app/AppContext';
 
 export function useUpdateAccount() {
-  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -21,7 +19,7 @@ export function useUpdateAccount() {
       updatedAccount.type = AccountTypes[updatedAccount.type as keyof typeof AccountTypes];
 
       // update SWR cache manually
-      mutate(selectedUser ? `${selectedUser}_${ACCOUNTS_API_PATH}` : null, (accounts: Account[] = []) => accounts.map(a => (a.id === updatedAccount.id ? updatedAccount : a)), false);
+      mutate(ACCOUNTS_API_PATH, (accounts: Account[] = []) => accounts.map(a => (a.id === updatedAccount.id ? updatedAccount : a)), false);
 
       return updatedAccount;
     } catch (e) {
@@ -30,7 +28,7 @@ export function useUpdateAccount() {
     } finally {
       setLoading(false);
     }
-  }, [selectedUser]);
+  }, []);
 
   return { update, loading, error };
 }

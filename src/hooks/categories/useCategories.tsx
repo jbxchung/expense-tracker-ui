@@ -8,13 +8,13 @@ import { useAppContext } from 'contexts/app/AppContext';
 
 export const useCategoryTree = () => {
   // available accounts depends on the current user
-  const { selectedUser, usersLoading } = useAppContext();
+  const { user, userLoading } = useAppContext();
 
   // if the user isnt selected yet, swrKey will be null so swr won't try and fetch
-  const swrKey = selectedUser ? `${selectedUser.id}_${CATEGORY_TREE_API_PATH}` : null;
-  const { data, error, mutate, isLoading: categoryTreeLoading } = useSWR<Category[], Error>(swrKey, () => getCategoryTree(selectedUser!.id));
+  const swrKey = user ? `${user.id}_${CATEGORY_TREE_API_PATH}` : null;
+  const { data, error, mutate, isLoading: categoryTreeLoading } = useSWR<Category[], Error>(swrKey, () => getCategoryTree(user!.id));
 
-  const isLoading = categoryTreeLoading || usersLoading;
+  const isLoading = categoryTreeLoading || userLoading;
 
   return {
     categoryTree: data ?? [],
@@ -37,17 +37,17 @@ export const useCategoryList = () => {
 };
 
 export function useSaveCategoryTree() {
-  const { selectedUser } = useAppContext();
+  const { user } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const saveTree = useCallback(
     async (tree: Category[]) => {
-      if (!selectedUser) {
+      if (!user) {
         throw new Error('Cannot save category tree without a selected user');
       }
 
-      const cacheKey = `${selectedUser.id}_${CATEGORY_TREE_API_PATH}`;
+      const cacheKey = `${user.id}_${CATEGORY_TREE_API_PATH}`;
       setLoading(true);
       setError(null);
 
@@ -59,7 +59,7 @@ export function useSaveCategoryTree() {
         mutate(cacheKey, tree, false);
 
         // call API to persist the full tree
-        await saveCategoryTree(selectedUser.id, tree);
+        await saveCategoryTree(user.id, tree);
 
         // revalidate the cache in the background
         mutate(cacheKey);
@@ -72,7 +72,7 @@ export function useSaveCategoryTree() {
         setLoading(false);
       }
     },
-    [selectedUser]
+    [user]
   );
 
   return { saveTree, loading, error };

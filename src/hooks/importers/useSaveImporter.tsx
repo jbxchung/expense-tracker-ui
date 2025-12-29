@@ -3,10 +3,8 @@ import { mutate } from 'swr';
 
 import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
 import { IMPORTERS_API_PATH, createImporter, updateImporter } from 'api/importers';
-import { useAppContext } from 'contexts/app/AppContext';
 
 export function useSaveImporter() {
-  const { selectedUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -23,7 +21,7 @@ export function useSaveImporter() {
       }
       
       // update SWR cache manually
-      mutate(selectedUser ? `${selectedUser}_${IMPORTERS_API_PATH}` : null, (importers: Importer[] = []) => (
+      mutate(IMPORTERS_API_PATH, (importers: Importer[] = []) => (
         savedImporter
           ? [...importers.filter(i => i.id !== savedImporter!.id), savedImporter]
           : importers
@@ -37,7 +35,7 @@ export function useSaveImporter() {
     } finally {
       setLoading(false);
     }
-  }, [selectedUser]);
+  }, []);
 
   return { save, loading, error };
 };

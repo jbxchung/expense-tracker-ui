@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { useAccounts } from 'hooks/accounts/useAccounts';
-import { useUsers } from 'hooks/useUsers';
+import { useSession } from 'hooks/useSession';
 
 import { AppContext } from './AppContext';
 
@@ -10,19 +10,19 @@ interface AppProviderProps {
 }
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const { users, isLoading: usersLoading, error: usersError, selectedUser, selectUser } = useUsers();
-  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts(selectedUser);
+  // const { users, isLoading: usersLoading, error: usersError, selectedUser, selectUser } = useUsers();
+  const { user, login, logout, isLoading: userLoading, error: userError } = useSession();
+  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts(user);
 
   return (
     <AppContext.Provider
       value={{
         // users
-        users,
-        usersLoading,
-        usersError: usersError ?? null,
-        
-        selectedUser: selectedUser ?? null,
-        selectUser,
+        user,
+        login,
+        logout,
+        userLoading,
+        userError,
 
         // accounts
         accounts,

@@ -13,11 +13,11 @@ import styles from './Header.module.scss';
 
 const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const {users, selectedUser, selectUser, usersLoading, usersError } = useAppContext();
+  const {user, logout, userLoading, userError } = useAppContext();
 
   const location = useLocation();
 
-  const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
+  // const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
 
   const headerLinks = [
     { label: 'Dashboard', value: '/dashboard'},
@@ -30,20 +30,21 @@ const Header: FC = () => {
     location.pathname.startsWith(headerLink.value)
   );
 
+  // TODO - replace select-style dropdown with proper menu
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
-        {usersLoading && <span>Loading users...</span>}
-        {usersError && <span>Error loading users</span>}
-        {!usersLoading && !usersError && userOptions.length > 0 && (
+        {userLoading && <span>Loading user...</span>}
+        {userError && <span>Error loading user</span>}
+        {user && (
           <Dropdown
-            options={userOptions}
-            value={selectedUser?.id}
+            options={[ { label: user.name, value: user.id }, { label: 'logout', value: '' } ]}
+            value={user.id}
             onChange={id => {
-              const newUser = users.find(u => u.id === id);
-              if (newUser) selectUser(newUser);
+              if (!id) {
+                logout();
+              }
             }}
-            placeholder='Select user'
             buttonStyleVariant={ButtonVariants.GHOST}
             suppressArrow
             className={styles.userDropdown}
