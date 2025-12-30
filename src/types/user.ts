@@ -12,6 +12,10 @@ export interface UserLoginDto {
   password: string;
 }
 
+export interface UserSignupDto extends UserLoginDto {
+  name: string;
+}
+
 export const UserRoles = {
   OWNER: 'OWNER',
   USER: 'USER',

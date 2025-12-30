@@ -35,7 +35,7 @@ const Header: FC = () => {
     <div className={styles.header}>
       <div className={styles.headerLeft}>
         {userLoading && <span>Loading user...</span>}
-        {userError && <span>Error loading user</span>}
+        {/*userError && <span>Error loading user</span>*/}
         {user && (
           <Dropdown
             options={[ { label: user.name, value: user.id }, { label: 'logout', value: '' } ]}

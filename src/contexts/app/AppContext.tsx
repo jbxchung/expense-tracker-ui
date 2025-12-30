@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
 
 import type { Account } from 'types/account';
-import type { User, UserLoginDto } from 'types/user';
+import type { User, UserLoginDto, UserSignupDto } from 'types/user';
 
 interface AppContextType {
   user: User | null;
   login: (user: UserLoginDto) => void;
+  signup: (user: UserSignupDto) => void;
   logout: () => void;
   userLoading: boolean;
   userError: Error | null;

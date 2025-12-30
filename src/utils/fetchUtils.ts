@@ -3,7 +3,23 @@ import { API_BASE_URL } from './hostUtils';
 
 // generic fetch wrapper
 export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promise<ApiResponse<T>> {
-  const rawRes = await fetch(`${API_BASE_URL}${urlPath}`, options);
+  const defaultOptions: RequestInit = {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const mergedOptions: RequestInit = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options?.headers,
+    },
+  };
+
+  const rawRes = await fetch(`${API_BASE_URL}${urlPath}`, mergedOptions);
   let json: ApiResponse<T> | null = null;
   try {
     json = await rawRes.json();

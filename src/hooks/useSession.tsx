@@ -1,7 +1,7 @@
 import useSWR from 'swr';
-import { useState } from 'react';
-import type { User, UserLoginDto } from 'types/user';
-import { getSession, loginUser, logoutUser, AUTH_API_PATH } from 'api/auth';
+import { useCallback, useState } from 'react';
+import type { User, UserLoginDto, UserSignupDto } from 'types/user';
+import { getSession, loginUser, signupUser, logoutUser, AUTH_API_PATH } from 'api/auth';
 
 export function useSession() {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,7 @@ export function useSession() {
   const { data: user, error, mutate } = useSWR<User | null>(`${AUTH_API_PATH}/session`, getSession);
 
   // login
-  const login = async (userLogin: UserLoginDto) => {
+  const login = useCallback(async (userLogin: UserLoginDto) => {
     setLoading(true);
     try {
       const loggedInUser = await loginUser(userLogin);
@@ -19,9 +19,19 @@ export function useSession() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mutate]);
 
-  // logout
+  const signup = useCallback(async (data: UserSignupDto) => {
+    setLoading(true);
+    try {
+      const newUser = await signupUser(data);
+      mutate(newUser, false);
+      return newUser;
+    } finally {
+      setLoading(false);
+    }
+  }, [mutate]);
+
   const logout = async () => {
     setLoading(true);
     try {
@@ -37,6 +47,7 @@ export function useSession() {
     isLoading: !error && !user,
     error,
     login,
+    signup,
     logout,
     loading,
   };

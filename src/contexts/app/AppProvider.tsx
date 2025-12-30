@@ -11,7 +11,7 @@ interface AppProviderProps {
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   // const { users, isLoading: usersLoading, error: usersError, selectedUser, selectUser } = useUsers();
-  const { user, login, logout, isLoading: userLoading, error: userError } = useSession();
+  const { user, login, logout, signup, isLoading: userLoading, error: userError } = useSession();
   const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts(user);
 
   return (
@@ -21,6 +21,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         user,
         login,
         logout,
+        signup,
         userLoading,
         userError,
 

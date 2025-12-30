@@ -14,9 +14,6 @@ export async function getCategoryTree(userId: string): Promise<Category[]> {
 export async function saveCategoryTree(userId: string, categoryTree: Category[]): Promise<Category[]> {
   const response: ApiResponse<Category[]> = await fetchApi(`${CATEGORY_TREE_API_PATH}?userId=${userId}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(categoryTree),
   });
 
@@ -26,9 +23,6 @@ export async function saveCategoryTree(userId: string, categoryTree: Category[])
 export async function createCategory(category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<Category> {
   const response: ApiResponse<Category> = await fetchApi(CATEGORIES_API_PATH, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(category),
   });
 
@@ -38,9 +32,6 @@ export async function createCategory(category: Omit<Category, 'id' | 'createdAt'
 export async function updateCategory(category: Partial<Omit<Category, 'createdAt' | 'updatedAt'>> & { id: string }): Promise<Category> {
   const response: ApiResponse<Category> = await fetchApi(`${CATEGORIES_API_PATH}/${category.id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(category),
   });
 
@@ -48,12 +39,7 @@ export async function updateCategory(category: Partial<Omit<Category, 'createdAt
 }
 
 export async function deleteCategory(categoryId: string): Promise<Category> {
-  const response: ApiResponse<Category> = await fetchApi(`${CATEGORIES_API_PATH}/${categoryId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  });
+  const response: ApiResponse<Category> = await fetchApi(`${CATEGORIES_API_PATH}/${categoryId}`, { method: 'DELETE' });
 
   return unwrapApiResponse<Category>(response);
 }

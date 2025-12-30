@@ -26,9 +26,6 @@ export async function getImporters(): Promise<Importer[]> {
 export async function createImporter(importer: Omit<Importer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Importer> {
   const response: ApiResponse<Importer> = await fetchApi(IMPORTERS_API_PATH, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(importer),
   });
 
@@ -38,9 +35,6 @@ export async function createImporter(importer: Omit<Importer, 'id' | 'createdAt'
 export async function updateImporter(importer: Partial<Omit<Importer, 'createdAt' | 'updatedAt'>> & { id: string }): Promise<Importer> {
   const response: ApiResponse<Importer> = await fetchApi(`${IMPORTERS_API_PATH}/${importer.id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(importer),
   });
 
@@ -48,12 +42,7 @@ export async function updateImporter(importer: Partial<Omit<Importer, 'createdAt
 }
 
 export async function deleteImporter(importerId: string): Promise<Importer> {
-  const response: ApiResponse<Importer> = await fetchApi(`${IMPORTERS_API_PATH}/${importerId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  });
+  const response: ApiResponse<Importer> = await fetchApi(`${IMPORTERS_API_PATH}/${importerId}`, { method: 'DELETE' });
 
   return unwrapApiResponse<Importer>(response, mapImporterDates);
 }

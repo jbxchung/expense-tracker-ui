@@ -20,9 +20,6 @@ export async function getAccounts(user: User | null): Promise<Account[]> {
 export async function createAccount(account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>): Promise<Account> {
   const response: ApiResponse<Account> = await fetchApi(ACCOUNTS_API_PATH, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       ...account,
       type: AccountTypeValueToKey[account.type],
@@ -35,9 +32,6 @@ export async function createAccount(account: Omit<Account, 'id' | 'createdAt' | 
 export async function updateAccount(account: Partial<Omit<Account, 'createdAt' | 'updatedAt'>> & { id: string }): Promise<Account> {
   const response: ApiResponse<Account> = await fetchApi(`${ACCOUNTS_API_PATH}/${account.id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       ...account,
       type: account.type
@@ -50,12 +44,7 @@ export async function updateAccount(account: Partial<Omit<Account, 'createdAt' |
 }
 
 export async function deleteAccount(accountId: string): Promise<Account> {
-  const response: ApiResponse<Account> = await fetchApi(`${ACCOUNTS_API_PATH}/${accountId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  });
+  const response: ApiResponse<Account> = await fetchApi(`${ACCOUNTS_API_PATH}/${accountId}`, { method: 'DELETE' });
 
   return unwrapApiResponse<Account>(response);
 }
