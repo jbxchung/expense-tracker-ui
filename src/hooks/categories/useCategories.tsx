@@ -7,14 +7,7 @@ import { flattenTree } from 'utils/treeUtils';
 import { useAppContext } from 'contexts/app/AppContext';
 
 export const useCategoryTree = () => {
-  // available accounts depends on the current user
-  const { user, userLoading } = useAppContext();
-
-  // if the user isnt selected yet, swrKey will be null so swr won't try and fetch
-  const swrKey = user ? `${user.id}_${CATEGORY_TREE_API_PATH}` : null;
-  const { data, error, mutate, isLoading: categoryTreeLoading } = useSWR<Category[], Error>(swrKey, () => getCategoryTree(user!.id));
-
-  const isLoading = categoryTreeLoading || userLoading;
+  const { data, error, mutate, isLoading } = useSWR<Category[], Error>(CATEGORY_TREE_API_PATH, () => getCategoryTree());
 
   return {
     categoryTree: data ?? [],
@@ -47,7 +40,7 @@ export function useSaveCategoryTree() {
         throw new Error('Cannot save category tree without a selected user');
       }
 
-      const cacheKey = `${user.id}_${CATEGORY_TREE_API_PATH}`;
+      const cacheKey = CATEGORY_TREE_API_PATH;
       setLoading(true);
       setError(null);
 
@@ -59,7 +52,7 @@ export function useSaveCategoryTree() {
         mutate(cacheKey, tree, false);
 
         // call API to persist the full tree
-        await saveCategoryTree(user.id, tree);
+        await saveCategoryTree(tree);
 
         // revalidate the cache in the background
         mutate(cacheKey);

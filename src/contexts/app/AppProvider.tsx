@@ -10,14 +10,12 @@ interface AppProviderProps {
 }
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  // const { users, isLoading: usersLoading, error: usersError, selectedUser, selectUser } = useUsers();
   const { user, login, logout, signup, isLoading: userLoading, error: userError } = useSession();
-  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts(user);
+  const { accounts, isLoading: accountsLoading, error: accountsError } = useAccounts();
 
   return (
     <AppContext.Provider
       value={{
-        // users
         user,
         login,
         logout,

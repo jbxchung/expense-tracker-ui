@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { useCallback, useState } from 'react';
 import type { User, UserLoginDto, UserSignupDto } from 'types/user';
 import { getSession, loginUser, signupUser, logoutUser, AUTH_API_PATH } from 'api/auth';
@@ -8,6 +8,14 @@ export function useSession() {
 
   // session
   const { data: user, error, mutate } = useSWR<User | null>(`${AUTH_API_PATH}/session`, getSession);
+
+  // need to clear full cache on logout
+  const { mutate: mutateAll } = useSWRConfig();
+  const clearCache = () => mutateAll(
+    () => true,
+    undefined,
+    { revalidate: false }
+  );
 
   // login
   const login = useCallback(async (userLogin: UserLoginDto) => {
@@ -36,7 +44,7 @@ export function useSession() {
     setLoading(true);
     try {
       await logoutUser();
-      mutate(null, false); // clear SWR cache
+      await clearCache();
     } finally {
       setLoading(false);
     }
