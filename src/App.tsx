@@ -12,12 +12,14 @@ import Categories from 'pages/Categories/Categories';
 import Importers from 'pages/Importers/Importers';
 
 import './App.scss';
+import NavigationBridge from 'components/NavigationBridge/NavigationBridge';
 
 function App() {
   return (
   
     <div className="container">
       <BrowserRouter>
+        <NavigationBridge />
         <AppProvider>
           {/* nav links for the routes in Header */}
           <Header />
@@ -30,7 +32,7 @@ function App() {
               <Route path="/login" element={<Auth mode={AuthModes.LOGIN} />} />
               <Route path="/signup" element={<Auth mode={AuthModes.SIGNUP} />} />
 
-              <Route element={<ProtectedRoutes/>}>
+              <Route element={<ProtectedRoutes />}>
                 {/* main page */}
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />

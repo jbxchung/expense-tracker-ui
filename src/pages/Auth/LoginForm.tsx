@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react';
+import { Link } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/app/AppContext';
 
@@ -6,7 +7,6 @@ import Button, { ButtonVariants } from 'components/Button/Button';
 import Input from 'components/Input/Input';
 
 import styles from './Auth.module.scss';
-import { Link } from 'react-router-dom';
 
 const LoginForm: FC = () => {
   const { login } = useAppContext();
@@ -19,8 +19,8 @@ const LoginForm: FC = () => {
       <Input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
       <Input placeholder="Password" type="password" onChange={(e) => setPassword(e.target.value)} />
       <Button
-          variant={ButtonVariants.PRIMARY}
-          onClick={() => login({ email, password })}
+        variant={ButtonVariants.PRIMARY}
+        onClick={() => login({ email, password })}
       >
       Login
       </Button>

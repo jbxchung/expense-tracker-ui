@@ -1,16 +1,11 @@
-import { useState, type FC } from 'react';
+import type { FC } from 'react';
 
-import type { Account } from 'types/account';
-import { useAppContext } from 'contexts/app/AppContext';
-
-import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
-import Input from 'components/Input/Input';
 
 import LoginForm from './LoginForm';
+import SignupForm from './SignupForm';
 
 import styles from './Auth.module.scss';
-import SignupForm from './SignupForm';
 
 // enum
 export const AuthModes = {

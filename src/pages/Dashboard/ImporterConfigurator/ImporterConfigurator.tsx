@@ -28,7 +28,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   const nameInputRef = useRef<InputHandle | null>(null);
 
   const handleSubmit = async () => {
-    const nameValid = nameInputRef.current?.validate() ?? false;
+    const nameValid = nameInputRef.current?.validate?.() ?? false;
     if (!nameValid) return;
 
     console.log('saving importer:', editableImporter);

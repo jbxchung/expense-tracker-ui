@@ -32,7 +32,7 @@ const AccountForm = ({
   const nameInputRef = useRef<InputHandle | null>(null);
 
   const handleSubmit = async () => {
-    const nameValid = nameInputRef.current?.validate() ?? false;
+    const nameValid = nameInputRef.current?.validate?.() ?? false;
     if (!nameValid) return;
 
     await onSubmit({ name: name.trim(), type });

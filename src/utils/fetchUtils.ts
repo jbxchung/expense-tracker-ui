@@ -1,7 +1,14 @@
+import type { NavigateFunction } from 'react-router-dom';
 import type { ApiResponse } from 'types/api-response';
 import { API_BASE_URL } from './hostUtils';
 
-// generic fetch wrapper
+let navigate: NavigateFunction | null = null;
+
+// to be used in hook so we can handle `redirectTo` in ApiResponse
+export function registerNavigate(fn: NavigateFunction) {
+  navigate = fn;
+}
+
 export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promise<ApiResponse<T>> {
   const defaultOptions: RequestInit = {
     credentials: 'include',
@@ -34,6 +41,11 @@ export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promi
 
   if (!json) {
     throw new Error('Invalid JSON response from server');
+  }
+
+  if (json.redirectTo && navigate) {
+    navigate(json.redirectTo, { replace: true });
+    return json;
   }
 
   return json;

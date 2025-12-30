@@ -13,11 +13,9 @@ import styles from './Header.module.scss';
 
 const Header: FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const {user, logout, userLoading, userError } = useAppContext();
+  const {user, logout } = useAppContext();
 
   const location = useLocation();
-
-  // const userOptions = users?.map(user => ({ label: user.name, value: user.id })) ?? [];
 
   const headerLinks = [
     { label: 'Dashboard', value: '/dashboard'},
@@ -34,11 +32,9 @@ const Header: FC = () => {
   return (
     <div className={styles.header}>
       <div className={styles.headerLeft}>
-        {userLoading && <span>Loading user...</span>}
-        {/*userError && <span>Error loading user</span>*/}
         {user && (
           <Dropdown
-            options={[ { label: user.name, value: user.id }, { label: 'logout', value: '' } ]}
+            options={[ { label: user.name, value: user.id }, { label: 'Log Out', value: '' } ]}
             value={user.id}
             onChange={id => {
               if (!id) {
