@@ -57,25 +57,29 @@ const SignupForm: FC = () => {
   return (
     <div className={styles.authForm}>
       <Input
-        placeholder="Name"
+        label="Name"
+        placeholder="John Doe"
         onChange={(e) => setName(e.target.value)}
         onBlur={() => markTouched('name')}
         validate={() => showNameError}
       />
       <Input
-        placeholder="Email"
+        label="Email"
+        placeholder="test@example.com"
         onChange={(e) => setEmail(e.target.value)}
         onBlur={() => markTouched('email')}
         validate={() => showEmailError}
       />
       <Input
-        placeholder="Password"
+        label="Password"
+        placeholder="********"
         type="password"
         onChange={(e) => setPassword(e.target.value)}
         onBlur={() => markTouched('password')}
         validate={() => showPasswordError}
       />
       <Input
+        label="Confirm Password"
         placeholder="Confirm Password"
         type="password"
         onChange={(e) => setConfirmPassword(e.target.value)}
