@@ -1,90 +1,71 @@
-import { useState, type FC } from 'react';
+import { useEffect, useRef, useState, type FC } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useAppContext } from 'contexts/app/AppContext';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
-import Input from 'components/Input/Input';
+import Input, { type InputHandle } from 'components/Input/Input';
 
 import styles from './Auth.module.scss';
-import { getPasswordErrors, validatePassword } from 'utils/passwordUtils';
+import { getPasswordErrors, validateEmail, validatePassword } from 'utils/loginUtils';
 
 const SignupForm: FC = () => {
   const { signup } = useAppContext();
+  
+  const confirmInputRef = useRef<InputHandle | null>(null);
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-  // to help determine whether validation messages should be shown
-  const [touched, setTouched] = useState({
-    name: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
-  });
-  const markTouched = (field: keyof typeof touched) => setTouched(t => ({ ...t, [field]: true }));
+  const [nameValid, setNameValid] = useState<boolean>(false);
+  const [emailValid, setEmailValid] = useState<boolean>(false);
+  const [passwordValid, setPasswordValid] = useState<boolean>(false);
+  const [confirmValid, setConfirmValid] = useState<boolean>(false);
 
-  // simple field validation
-  const validateName = (name: string) => name.trim().length ? null : 'Name is required';
-  const validateEmail = (email: string) => email.trim().length ? null : 'Email is required';
-  const validateConfirmPassword = (password: string, confirm: string) => password === confirm ? null : 'Passwords must match';
+  const isFormValid = nameValid && emailValid && passwordValid && confirmValid;
 
-  // set error messages
-  const nameError = validateName(name);
-  const emailError = validateEmail(email);
-  const passwordValidation = validatePassword(password);
-  const passwordError = getPasswordErrors(passwordValidation).join('\n');
-
-  const confirmPasswordError =
-    confirmPassword.length
-      ? validateConfirmPassword(password, confirmPassword)
-      : null;
-  // only show show error messages if field is touched
-  const showNameError = touched.name ? nameError : null;
-  const showEmailError = touched.email ? emailError : null;
-  const showPasswordError = touched.password ? passwordError : null;
-  const showConfirmError = touched.confirmPassword ? confirmPasswordError : null;
+  // on password change, need to make sure we revalidate the confirm password field too
+  useEffect(() => {
+    confirmInputRef.current?.validate?.();
+  }, [password]);
   
-  // flag to determine if form is valid
-  const isFormValid =
-    !nameError &&
-    !emailError &&
-    !passwordError &&
-    !confirmPasswordError;
-
   return (
     <div className={styles.authForm}>
       <Input
-        label="Name"
-        placeholder="John Doe"
+        placeholder="Name"
+        value={name}
         onChange={(e) => setName(e.target.value)}
-        onBlur={() => markTouched('name')}
-        validate={() => showNameError}
+        validate={(n) => (n.trim() ? null : 'Name is required')}
+        onValidityChange={setNameValid}
       />
       <Input
-        label="Email"
-        placeholder="test@example.com"
+        placeholder="Email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => markTouched('email')}
-        validate={() => showEmailError}
+        validate={validateEmail}
+        onValidityChange={setEmailValid}
       />
       <Input
-        label="Password"
-        placeholder="********"
+        placeholder="Password"
         type="password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
-        onBlur={() => markTouched('password')}
-        validate={() => showPasswordError}
+        validate={(p) => {
+          const passwordValidation = validatePassword(p);
+          return getPasswordErrors(passwordValidation);
+        }}
+        onValidityChange={setPasswordValid}
       />
       <Input
-        label="Confirm Password"
+        ref={confirmInputRef}
         placeholder="Confirm Password"
         type="password"
+        value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        onBlur={() => markTouched('confirmPassword')}
-        validate={() => showConfirmError}
+        validate={(c) => (c === password ? null : 'Passwords must match')}
+        onValidityChange={setConfirmValid}
       />
       <Button
         variant={ButtonVariants.PRIMARY}

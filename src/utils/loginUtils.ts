@@ -41,3 +41,19 @@ export function getPasswordErrors(
 
   return errors;
 }
+
+export function validateEmail(email: string): string[] | null {
+  const errors: string[] = [];
+
+  if (!email.trim()) {
+    errors.push('Email is required');
+  } else {
+    // basic email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push('Email is invalid');
+    }
+  }
+
+  return errors.length > 0 ? errors : null;
+}

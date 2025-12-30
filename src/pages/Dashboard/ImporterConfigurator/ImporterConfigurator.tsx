@@ -23,7 +23,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   onSave,
 }) => {
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
-  const { save: saveImporter, loading: saving, error } = useSaveImporter();
+  const { save: saveImporter, loading: saving } = useSaveImporter();
 
   const nameInputRef = useRef<InputHandle | null>(null);
 

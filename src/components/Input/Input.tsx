@@ -11,14 +11,31 @@ export interface InputHandle {
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  validate?: (value: string) => string | null; // custom validation function
+  validate?: (value: string) => string | string[] | null;    // custom validation function
+  onValidityChange?: (isValid: boolean) => void;  // to notify caller
   selectAllOnFocus?: boolean;
 }
 
-const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", selectAllOnFocus = false, validate, onChange, ...props}, ref) => {
+const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", selectAllOnFocus = false, validate, onChange, onValidityChange, ...props}, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   
+  // helper to run validation and call onValidityChange
+  const runValidation = (value: string) => {
+    if (validate) {
+      const result = validate(value);
+      const normalized = Array.isArray(result) ? result : (result ? [result] : []);
+      setErrors(normalized);
+      onValidityChange?.(normalized.length === 0);
+      return normalized.length === 0;
+    } else {
+      onValidityChange?.(true);
+      setErrors([]);
+      return true;
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputRef.current?.focus();
@@ -31,14 +48,7 @@ const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", sele
         inputRef.current.style.width = `${width}px`;
       }
     },
-    validate: () => {
-      if (validate) {
-        const errorMessage = validate((props.value as string) || "");
-        setError(errorMessage);
-        return !errorMessage;
-      }
-      return true;
-    },
+    validate: () => runValidation((props.value as string) || ''),
   }));
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -47,15 +57,14 @@ const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", sele
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (validate) {
-      const errorMessage = validate(e.target.value);
-      setError(errorMessage);
-    }
+    setTouched(true);
+    runValidation(e.target.value);
+    if (props.onBlur) props.onBlur(e);
   };
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) onChange(e);
-    if (error) handleBlur(e as unknown as React.FocusEvent<HTMLInputElement>); // revalidate on change
+    if (touched) runValidation(e.target.value); // revalidate after touched
   };
 
   return (
@@ -63,14 +72,18 @@ const Input = forwardRef<InputHandle, InputProps>(({ label, className = "", sele
       {label && <span className={styles.label}>{label}</span>}
       <input
         ref={inputRef}
-        className={`${styles.input} ${error ? styles.inputError : ""}`}
+        className={`${styles.input} ${errors.length ? styles.inputError : ""}`}
         onBlur={handleBlur}
         onChange={handleChange}
         onFocus={handleFocus}
         {...props}
       />
-      {error && (
-        <div className={styles.errorText}>{error}</div>
+      {touched && errors.length > 0 && (
+        <div className={styles.errorText}>
+          {errors.map((error, index) => (
+            <div key={index}>{error}</div>
+          ))}
+        </div>
       )}
     </div>
   );
