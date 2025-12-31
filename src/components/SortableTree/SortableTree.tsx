@@ -14,14 +14,16 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
+import type {
+  DragContext,
+  FlattenedNode,
+  Projection,
+  TreeNode,
+} from './types';
 import {
   flattenTree,
   rebuildTree,
   isValidDrop,
-  type DragContext,
-  type FlattenedNode,
-  type Projection,
-  type TreeNode,
 } from './utils';
 
 import DropIndicator from './DropIndicator';

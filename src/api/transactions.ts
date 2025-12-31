@@ -5,7 +5,6 @@ import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
 export const TRANSACTIONS_API_PATH = '/transactions';
 
-
 interface AccountTransactionCacheEntry {
   transactions: Transaction[];
   minDate?: Date;

@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppProvider } from 'contexts/app/AppProvider';
 
 import Header from 'components/Header/Header';
-import ProtectedRoutes from 'components/ProtectedRoutes/ProtectedRoutes';
+import ProtectedRoutes from 'routing/ProtectedRoutes';
 
 import Auth, { AuthModes } from 'pages/Auth/Auth';
 import Dashboard from 'pages/Dashboard/Dashboard';
@@ -12,7 +12,7 @@ import Categories from 'pages/Categories/Categories';
 import Importers from 'pages/Importers/Importers';
 
 import './App.scss';
-import NavigationBridge from 'components/NavigationBridge/NavigationBridge';
+import NavigationBridge from 'routing/NavigationBridge';
 
 function App() {
   return (
