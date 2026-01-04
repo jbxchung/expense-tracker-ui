@@ -22,7 +22,7 @@ const TransactionForm: FC = () => {
   const [previewLines, setPreviewLines] = useState<string[]>([]);
   const [availableFields, setAvailableFields] = useState<string[]>([]);
 
-  const { importers, isLoading, error } = useImporters();
+  const { importers, /*isLoading, error*/ } = useImporters();
   const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -102,7 +102,7 @@ const TransactionForm: FC = () => {
       </div>
       {isEditing && 
       <div className={styles.importerEditor}>
-        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableFields={availableFields} />
+        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableSourceFields={availableFields} />
       </div>
       }
       <Button

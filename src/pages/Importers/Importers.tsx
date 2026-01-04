@@ -43,7 +43,7 @@ const Importers: FC = () => {
           importers.map(importer => {
             return (
               <Accordion key={importer.id} title={importer.name}>
-                <ImporterConfigurator importer={importer} />
+                <ImporterConfigurator importer={importer} availableSourceFields={[]} />
               </Accordion>
             );
           })
@@ -55,10 +55,13 @@ const Importers: FC = () => {
         {newImporter ?
           (
             <Accordion title="New Importer" defaultOpen>
-              <ImporterConfigurator onSave={(e) => {
-                console.log('saved importer:', e);
-                setNewImporter(null);
-              }} />
+              <ImporterConfigurator
+                onSave={(e) => {
+                  console.log('saved importer:', e);
+                  setNewImporter(null);
+                }}
+                availableSourceFields={[]}
+              />
             </Accordion>
           )
           :

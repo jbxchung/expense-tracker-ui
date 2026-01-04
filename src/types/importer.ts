@@ -1,17 +1,55 @@
-export type OperationStep =
-  | { op: "ifNotNull"; sourceField: string; transform?: "negate" | "absolute"; return: string; }
-  | { op: "fallback"; value: any }
-  | { op: "concat"; sourceFields: string[]; separator?: string }
-  | { op: "dateParse"; sourceField: string; format?: string }
-  | { op: "exactMatch"; sourceField: string; mapping: Record<string, any>; fallback?: any }
-  | { op: "startsWith"; sourceField: string; mapping: Record<string, any>; fallback?: any }
-  | { op: "regexMatch"; sourceField: string; pattern: string; mapping: Record<string, any>; fallback?: any }
-;
-
-export type FieldMapping<Name> = {
-  title: Name,
-  operations: OperationStep[];
+export type FieldMapping = {
+  field: string;
+  title: string;
+  rules: FieldMappingRule[];
 }
+
+export type FieldMappingRule = {
+  condition: FieldMappingRuleCondition;
+  action: FieldMappingRuleAction;
+};
+
+export type FieldMappingRuleCondition = {
+  column: string;
+  type: FieldMappingRuleConditionType;
+  exact?: string[];
+  startsWith?: string[];
+  includes?: string[];
+  regex?: string;
+}
+export const FieldMappingRuleConditionTypes = {
+  EXISTS: 'exists',
+  MATCHES: 'matches',
+  STARTS_WITH: 'startsWith',
+  INCLUDES: 'includes',
+  REGEX: 'regex',
+} as const;
+export type FieldMappingRuleConditionType = typeof FieldMappingRuleConditionTypes[keyof typeof FieldMappingRuleConditionTypes];
+export const FieldMappingRuleConditionTypeLabels = {
+  [FieldMappingRuleConditionTypes.EXISTS]: 'exists',
+  [FieldMappingRuleConditionTypes.MATCHES]: 'exactly matches',
+  [FieldMappingRuleConditionTypes.STARTS_WITH]: 'starts with',
+  [FieldMappingRuleConditionTypes.INCLUDES]: 'includes',
+  [FieldMappingRuleConditionTypes.REGEX]: 'matches regex',
+};
+
+
+export type FieldMappingRuleAction = {
+  type: 'useColumn' | 'setValue';
+  column?: string;
+  value?: string;
+  // transform?: 'uppercase' | 'lowercase' | 'trim';
+}
+export const FieldMappingRuleActionTypes = {
+  USE_COLUMN: 'useColumn',
+  SET_VALUE: 'setValue',
+} as const;
+export type FieldMappingRuleActionType = typeof FieldMappingRuleActionTypes[keyof typeof FieldMappingRuleActionTypes];
+export const FieldMappingRuleActionTypeLabels = {
+  [FieldMappingRuleActionTypes.USE_COLUMN]: 'use',
+  [FieldMappingRuleActionTypes.SET_VALUE]: 'set value to',
+};
+
 
 /* corresponding backend schema:
   id          String   @id @default(uuid())
@@ -32,11 +70,11 @@ export interface Importer {
   description: string;
   type: 'CSV';      // maybe consider adding more options in the future, like PDF
   mapping: {
-    amount: FieldMapping<'Amount'>;
-    date: FieldMapping<'Date'>;
-    category: FieldMapping<'Category'>;
-    description: FieldMapping<'Description'>;
-    originalDescription: FieldMapping<'Original Description'>;
+    amount: FieldMapping;
+    date: FieldMapping;
+    category: FieldMapping;
+    description: FieldMapping;
+    originalDescription: FieldMapping;
   };
   userId?: string;
   createdAt?: Date;
@@ -51,24 +89,29 @@ export const DEFAULT_IMPORTER: Importer = {
   description: 'New Importer Description',
   mapping: {
     amount: {
+      field: 'amount',
       title: 'Amount',
-      operations: [],
+      rules: [],
     },
     date: {
+      field: 'date',
       title: 'Date',
-      operations: [],
+      rules: [],
     },
     category: {
+      field: 'category',
       title: 'Category',
-      operations: []
+      rules: []
     },
     description: {
+      field: 'description',
       title: 'Description',
-      operations: [],
+      rules: [],
     },
     originalDescription: {
+      field: 'originalDescription',
       title: 'Original Description',
-      operations: [],
+      rules: [],
     },
   }
 };

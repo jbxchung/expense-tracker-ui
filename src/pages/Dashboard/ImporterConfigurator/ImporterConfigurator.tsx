@@ -1,6 +1,6 @@
 import { type FC, useRef, useState } from 'react';
 
-import { DEFAULT_IMPORTER, type Importer } from 'types/importer';
+import { DEFAULT_IMPORTER, type FieldMapping, type Importer } from 'types/importer';
 import { useSaveImporter } from 'hooks/importers/useSaveImporter';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -15,14 +15,16 @@ import styles from './ImporterConfigurator.module.scss';
 interface ImportConfiguratorProps {
   importer?: Importer;
   onSave?: (config: Importer) => void;
-  availableFields: string[];
+  availableSourceFields: string[];
 }
-
 
 const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
   importer = DEFAULT_IMPORTER,
   onSave,
+  availableSourceFields
 }) => {
+  const [sourceFields, setSourceFields] = useState<string[]>(availableSourceFields);
+
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
   const { save: saveImporter, loading: saving } = useSaveImporter();
 
@@ -44,17 +46,35 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
     importer = DEFAULT_IMPORTER;
   }
 
+  const handleFieldChanged = (newFieldMapping: FieldMapping) => {
+    setEditableImporter({
+      ...editableImporter,
+      mapping: {
+        ...editableImporter.mapping,
+        [newFieldMapping.field]: newFieldMapping,
+      }
+    });
+  }
+
   const tabs: TabElement[] = Object.keys(importer.mapping).map((fieldName) => {
     const fieldConfig = importer.mapping[fieldName as keyof Importer['mapping']];
     return (
       <Tabs.Tab key={fieldName} title={fieldConfig.title}>
-        <ImportFieldEditor fieldConfig={fieldConfig} />
+        <ImportFieldEditor fieldConfig={fieldConfig} onChange={handleFieldChanged} availableSourceFields={availableSourceFields} />
       </Tabs.Tab>
     );
   });
 
   return (
     <div className={styles.importerConfiguratorForm}>
+      <div className={styles.availableSourceFields}>
+        <h4>Available Source Fields:</h4>
+        <ul>
+          {sourceFields.map((field, index) => (
+            <li key={index}>{field}</li>
+          ))}
+        </ul>
+      </div>
       <Input
         ref={nameInputRef}
         label="Importer Name"
