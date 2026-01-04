@@ -9,21 +9,23 @@ export function registerNavigate(fn: NavigateFunction) {
   navigate = fn;
 }
 
-export async function fetchApi<T>(urlPath: string, options?: RequestInit): Promise<ApiResponse<T>> {
-  const defaultOptions: RequestInit = {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+export async function fetchApi<T>(urlPath: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  const hasBody = !!options.body;
+  const isMultipart = isFormData(options.body);
+
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string> | undefined),
   };
 
+  // default to JSON content type if there is a non-multipart body
+  if (hasBody && !isMultipart && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const mergedOptions: RequestInit = {
-    ...defaultOptions,
+    credentials: 'include',
     ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...options?.headers,
-    },
+    headers,
   };
 
   const rawRes = await fetch(`${API_BASE_URL}${urlPath}`, mergedOptions);
@@ -58,4 +60,8 @@ export async function unwrapApiResponse<T>(response: ApiResponse<T>, transform?:
   const data = response.data as T;
 
   return transform ? transform(data) : data;
+}
+
+function isFormData(body: unknown): body is FormData {
+  return typeof FormData !== 'undefined' && body instanceof FormData;
 }

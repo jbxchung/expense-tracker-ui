@@ -15,6 +15,7 @@ import styles from './ImporterConfigurator.module.scss';
 interface ImportConfiguratorProps {
   importer?: Importer;
   onSave?: (config: Importer) => void;
+  availableFields: string[];
 }
 
 
