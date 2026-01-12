@@ -15,6 +15,7 @@ import Dropdown from 'components/Dropdown/Dropdown';
 import Input from 'components/Input/Input';
 
 import styles from './ImporterConfigurator.module.scss';
+import MultiValueInput from 'components/MultiValueInput/MultiValueInput';
 
 interface ImportRuleEditorProps {
   rule: FieldMappingRule;
@@ -80,9 +81,8 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       },
     }));
 
-  const handleStringMatchChanged = (input: string) => {
+  const handleStringMatchChanged = (input: string[]) => {
     const values = input
-      .split(',')
       .map(v => v.trim())
       .filter(Boolean);
 
@@ -105,17 +105,16 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
     });
   };
 
-  // TODO - replace with dedicated component to edit list of strings
-  const getStringMatcherDisplayText = () => {
+  const getStringMatcherValues = () => {
     switch (rule.condition.type) {
       case FieldMappingRuleConditionTypes.MATCHES:
-        return (rule.condition.exact ?? []).join(', ');
+        return rule.condition.exact ?? [];
       case FieldMappingRuleConditionTypes.STARTS_WITH:
-        return (rule.condition.startsWith ?? []).join(', ');
+        return rule.condition.startsWith ?? [];
       case FieldMappingRuleConditionTypes.INCLUDES:
-        return (rule.condition.includes ?? []).join(', ');
+        return rule.condition.includes ?? [];
       default:
-        return '';
+        return [];
     }
   };
 
@@ -144,9 +143,10 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       />
 
       {rule.condition.type !== FieldMappingRuleConditionTypes.EXISTS && (
-        <Input
-          value={getStringMatcherDisplayText()}
-          onChange={e => handleStringMatchChanged(e.target.value)}
+        <MultiValueInput
+          values={getStringMatcherValues()}
+          onChange={values => handleStringMatchChanged(values)}
+          placeholder="Enter a value to match"
         />
       )}
 
