@@ -52,6 +52,7 @@ const Importers: FC = () => {
             No importers found. Please create a new importer.
           </div>
         )}
+        <hr />
         {newImporter ?
           (
             <Accordion title="New Importer" defaultOpen>
@@ -69,7 +70,7 @@ const Importers: FC = () => {
               variant={ButtonVariants.PRIMARY}
               onClick={() => setNewImporter(DEFAULT_IMPORTER)}
             >
-              + Add New
+              Add New Importer
             </Button>
           )
         }

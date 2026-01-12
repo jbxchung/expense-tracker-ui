@@ -82,9 +82,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
     }));
 
   const handleStringMatchChanged = (input: string[]) => {
-    const values = input
-      .map(v => v.trim())
-      .filter(Boolean);
+    const values = input.filter(Boolean);
 
     updateRule(prev => {
       const condition: FieldMappingRuleCondition = { ...prev.condition };
@@ -146,7 +144,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
         <MultiValueInput
           values={getStringMatcherValues()}
           onChange={values => handleStringMatchChanged(values)}
-          placeholder="Enter a value to match"
+          placeholder="Add new match"
         />
       )}
 

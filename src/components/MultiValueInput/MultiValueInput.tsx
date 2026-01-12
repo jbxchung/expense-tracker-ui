@@ -44,6 +44,7 @@ const MultiValueInput: FC<MultiValueInputProps> = ({ values, onChange, placehold
         onKeyDown={e => {
           if (e.key === 'Enter') {
             addValue(e.currentTarget.value);
+            e.currentTarget.value = '';
           }
         }}
       />
