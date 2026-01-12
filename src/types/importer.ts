@@ -68,7 +68,8 @@ export interface Importer {
   id: string;
   name: string;
   description: string;
-  type: 'CSV';      // maybe consider adding more options in the future, like PDF
+  type: 'CSV';            // maybe consider adding more options in the future, like PDF
+  sourceFields: string[]; // list of available source fields from the uploaded file
   mapping: {
     amount: FieldMapping;
     date: FieldMapping;
@@ -87,15 +88,16 @@ export const DEFAULT_IMPORTER: Importer = {
   name: 'New Importer',
   type: 'CSV',
   description: 'New Importer Description',
+  sourceFields: [],
   mapping: {
-    amount: {
-      field: 'amount',
-      title: 'Amount',
-      rules: [],
-    },
     date: {
       field: 'date',
       title: 'Date',
+      rules: [],
+    },
+    amount: {
+      field: 'amount',
+      title: 'Amount',
       rules: [],
     },
     category: {

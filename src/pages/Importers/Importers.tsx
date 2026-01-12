@@ -43,7 +43,7 @@ const Importers: FC = () => {
           importers.map(importer => {
             return (
               <Accordion key={importer.id} title={importer.name}>
-                <ImporterConfigurator importer={importer} availableSourceFields={[]} />
+                <ImporterConfigurator importer={importer} />
               </Accordion>
             );
           })
@@ -60,7 +60,6 @@ const Importers: FC = () => {
                   console.log('saved importer:', e);
                   setNewImporter(null);
                 }}
-                availableSourceFields={[]}
               />
             </Accordion>
           )

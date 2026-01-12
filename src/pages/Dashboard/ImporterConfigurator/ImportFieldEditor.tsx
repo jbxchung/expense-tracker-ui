@@ -1,10 +1,11 @@
-import { type FC, useState } from 'react';
+import type { FC } from 'react';
 
-import { type FieldMapping, type FieldMappingRule } from 'types/importer';
+import { FieldMappingRuleActionTypes, FieldMappingRuleConditionTypes, type FieldMapping, type FieldMappingRule } from 'types/importer';
 
 import ImportRuleEditor from './ImportRuleEditor';
 
 import styles from './ImporterConfigurator.module.scss';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface ImportFieldEditorProps {
   fieldConfig: FieldMapping;
@@ -16,26 +17,44 @@ const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
   onChange,
   availableSourceFields
 }) => {
-  const [editableRules, setEditableRules] = useState(fieldConfig.rules);
+  const updateRules = (updater: (prev: FieldMappingRule[]) => FieldMappingRule[]) => {
+    onChange({
+      ...fieldConfig,
+      rules: updater(fieldConfig.rules),
+    });
+  };
 
   return (<>
     <div className={styles.importFieldEditor}>
-      {editableRules.map((rule, rIndex) => (
+      {fieldConfig.rules.map((rule, rIndex) => (
         <ImportRuleEditor
           key={rIndex}
           rule={rule}
-          onChange={(newRule: FieldMappingRule) => {
-            const newRules = [...editableRules];
-            newRules[rIndex] = newRule;
-            setEditableRules(newRules);
-            // onChange({
-            //   ...fieldConfig,
-            //   rules: newRules,
-            // });
-          }}
+          onChange={(newRule: FieldMappingRule) => updateRules(prev => prev.map((r, idx) => idx === rIndex ? newRule : r))}
           availableSourceFields={availableSourceFields}
         />
       ))}
+      <Button
+        className={styles.addNewRuleButton}
+        variant={ButtonVariants.GHOST}
+        onClick={() =>
+          updateRules(prev => [
+            ...prev,
+            {
+              condition: {
+                type: FieldMappingRuleConditionTypes.EXISTS,
+                column: availableSourceFields[0] ?? '',
+              },
+              action: {
+                type: FieldMappingRuleActionTypes.USE_COLUMN,
+                column: availableSourceFields[0] ?? '',
+              },
+            },
+          ])
+        }
+      >
+        + Add New Rule
+      </Button>
       {/* {editableRules.map((rule, rIndex) => (
         <div key={rIndex} className={styles.rule}>
           

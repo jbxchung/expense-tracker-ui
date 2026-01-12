@@ -1,120 +1,187 @@
-import { type FC, useState } from 'react';
+import { type FC } from 'react';
 
-import { FieldMappingRuleActionTypeLabels, FieldMappingRuleActionTypes, FieldMappingRuleConditionTypeLabels, FieldMappingRuleConditionTypes, type FieldMapping, type FieldMappingRule, type FieldMappingRuleActionType, type FieldMappingRuleConditionType } from 'types/importer';
+import {
+  FieldMappingRuleActionTypeLabels,
+  FieldMappingRuleActionTypes,
+  FieldMappingRuleConditionTypeLabels,
+  FieldMappingRuleConditionTypes,
+  type FieldMappingRule,
+  type FieldMappingRuleActionType,
+  type FieldMappingRuleCondition,
+  type FieldMappingRuleConditionType,
+} from 'types/importer';
+
 import Dropdown from 'components/Dropdown/Dropdown';
+import Input from 'components/Input/Input';
 
 import styles from './ImporterConfigurator.module.scss';
-import Input from 'components/Input/Input';
 
 interface ImportRuleEditorProps {
   rule: FieldMappingRule;
   onChange: (rule: FieldMappingRule) => void;
   availableSourceFields: string[];
 }
+
 const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
   rule,
   onChange,
-  availableSourceFields
+  availableSourceFields,
 }) => {
-  const [editableRule, setEditableRule] = useState(rule);
-
-  const handleRuleChanged = (newRule: FieldMappingRule) => {
-    onChange(newRule);
+  const updateRule = (updater: (prev: FieldMappingRule) => FieldMappingRule) => {
+    onChange(updater(rule));
   };
 
-  const handleConditionColumnChanged = (newConditionColumn: string) => {
-    const newRule = {
-      ...editableRule,
+  const handleConditionColumnChanged = (column: string) =>
+    updateRule(prev => ({
+      ...prev,
       condition: {
-        ...editableRule.condition,
-        column: newConditionColumn,
+        ...prev.condition,
+        column,
+      },
+    }));
+
+  const handleConditionTypeChanged = (type: FieldMappingRuleConditionType) =>
+    updateRule(prev => ({
+      ...prev,
+      condition: {
+        ...prev.condition,
+        type,
+        // clear matchers when switching types
+        exact: undefined,
+        startsWith: undefined,
+        includes: undefined,
+        regex: undefined,
+      },
+    }));
+
+  const handleActionTypeChanged = (type: FieldMappingRuleActionType) =>
+    updateRule(prev => ({
+      ...prev,
+      action: {
+        type,
+      },
+    }));
+
+  const handleActionColumnChanged = (column: string) =>
+    updateRule(prev => ({
+      ...prev,
+      action: {
+        ...prev.action,
+        column,
+      },
+    }));
+
+  const handleActionValueChanged = (value: string) =>
+    updateRule(prev => ({
+      ...prev,
+      action: {
+        ...prev.action,
+        value,
+      },
+    }));
+
+  const handleStringMatchChanged = (input: string) => {
+    const values = input
+      .split(',')
+      .map(v => v.trim())
+      .filter(Boolean);
+
+    updateRule(prev => {
+      const condition: FieldMappingRuleCondition = { ...prev.condition };
+
+      switch (condition.type) {
+        case FieldMappingRuleConditionTypes.MATCHES:
+          condition.exact = values;
+          break;
+        case FieldMappingRuleConditionTypes.STARTS_WITH:
+          condition.startsWith = values;
+          break;
+        case FieldMappingRuleConditionTypes.INCLUDES:
+          condition.includes = values;
+          break;
       }
+
+      return { ...prev, condition };
+    });
+  };
+
+  // TODO - replace with dedicated component to edit list of strings
+  const getStringMatcherDisplayText = () => {
+    switch (rule.condition.type) {
+      case FieldMappingRuleConditionTypes.MATCHES:
+        return (rule.condition.exact ?? []).join(', ');
+      case FieldMappingRuleConditionTypes.STARTS_WITH:
+        return (rule.condition.startsWith ?? []).join(', ');
+      case FieldMappingRuleConditionTypes.INCLUDES:
+        return (rule.condition.includes ?? []).join(', ');
+      default:
+        return '';
     }
-    setEditableRule(newRule);
   };
 
-  const handleConditionTypeChanged = (newConditionType: FieldMappingRuleConditionType) => {
-    const newRule = {
-      ...editableRule,
-      condition: {
-        ...editableRule.condition,
-        type: newConditionType,
-      }
-    };
-    setEditableRule(newRule);
-  };
-
-  const handleActionTypeChanged = (newActionType: FieldMappingRuleActionType) => {
-    const newRule = {
-      ...editableRule,
-      action: {
-        ...editableRule.action,
-        type: newActionType,
-      }
-    };
-    setEditableRule(newRule);
-  };
-
-  // for useColumn action
-  const handleActionColumnChanged = (newActionColumn: string) => {
-    const newRule = {
-      ...editableRule,
-      action: {
-        ...editableRule.action,
-        column: newActionColumn,
-      }
-    };
-    setEditableRule(newRule);
-  }
-  // for setValue action
-  const handleActionValueChanged = (newValue: string) => {
-    const newRule = {
-      ...editableRule,
-      action: {
-        ...editableRule.action,
-        value: newValue,
-      }
-    };
-    setEditableRule(newRule);
-  };
-
-  console.log(editableRule);
-
-  return (<>
+  return (
     <div className={styles.importRuleEditor}>
       <span>If</span>
+
       <Dropdown
-        options={availableSourceFields.map(field => ({ value: field, label: field }))}
-        onChange={newConditionColumn => handleConditionColumnChanged(newConditionColumn)}
-        value={editableRule.condition.column}
-          suppressArrow
+        options={availableSourceFields.map(field => ({
+          value: field,
+          label: field,
+        }))}
+        value={rule.condition.column}
+        onChange={handleConditionColumnChanged}
+        suppressArrow
       />
+
       <Dropdown
-        options={Object.values(FieldMappingRuleConditionTypes).map(type => ({ value: type, label: FieldMappingRuleConditionTypeLabels[type] }))}
-        onChange={newConditionType => handleConditionTypeChanged(newConditionType as FieldMappingRuleConditionType)}
-        value={editableRule.condition.type}
-          suppressArrow
+        options={Object.values(FieldMappingRuleConditionTypes).map(type => ({
+          value: type,
+          label: FieldMappingRuleConditionTypeLabels[type],
+        }))}
+        value={rule.condition.type}
+        onChange={t => handleConditionTypeChanged(t as FieldMappingRuleConditionType)}
+        suppressArrow
       />
+
+      {rule.condition.type !== FieldMappingRuleConditionTypes.EXISTS && (
+        <Input
+          value={getStringMatcherDisplayText()}
+          onChange={e => handleStringMatchChanged(e.target.value)}
+        />
+      )}
+
       <span>,</span>
+
       <Dropdown
-        options={Object.values(FieldMappingRuleActionTypes).map(type => ({ value: type, label: FieldMappingRuleActionTypeLabels[type] }))}
-        onChange={newActionType => handleActionTypeChanged(newActionType as FieldMappingRuleActionType)}
-        value={editableRule.action.type}
-          suppressArrow
+        options={Object.values(FieldMappingRuleActionTypes).map(type => ({
+          value: type,
+          label: FieldMappingRuleActionTypeLabels[type],
+        }))}
+        value={rule.action.type}
+        onChange={t => handleActionTypeChanged(t as FieldMappingRuleActionType)}
+        suppressArrow
       />
-      {editableRule.action.type === 'useColumn' && (
+
+      {rule.action.type === FieldMappingRuleActionTypes.USE_COLUMN && (
         <Dropdown
-          options={availableSourceFields.map(field => ({ value: field, label: field }))}
-          onChange={newActionColumn => handleActionColumnChanged(newActionColumn)}
-          value={editableRule.action.column}
+          options={availableSourceFields.map(field => ({
+            value: field,
+            label: field,
+          }))}
+          value={rule.action.column}
+          onChange={handleActionColumnChanged}
           suppressArrow
         />
       )}
-      {editableRule.action.type === 'setValue' && (
-        <Input value={editableRule.action.value || ''} onChange={e => handleActionValueChanged(e.target.value)} />
+
+      {rule.action.type === FieldMappingRuleActionTypes.SET_VALUE && (
+        <Input
+          value={rule.action.value ?? ''}
+          onChange={e => handleActionValueChanged(e.target.value)}
+        />
       )}
     </div>
-  </>);
+  );
 };
 
 export default ImportRuleEditor;

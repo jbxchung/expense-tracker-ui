@@ -20,7 +20,6 @@ const TransactionForm: FC = () => {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [previewLines, setPreviewLines] = useState<string[]>([]);
-  const [availableFields, setAvailableFields] = useState<string[]>([]);
 
   const { importers, /*isLoading, error*/ } = useImporters();
   const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
@@ -47,9 +46,6 @@ const TransactionForm: FC = () => {
 
     const preview = await readFirstLines(file, 4);
     setPreviewLines(preview);
-
-    const availableFields = await getHeadersFromCSV(file, ',');
-    setAvailableFields(availableFields);
   }
 
   const importerSelectionChanged = (importerId: string) => {
@@ -102,7 +98,7 @@ const TransactionForm: FC = () => {
       </div>
       {isEditing && 
       <div className={styles.importerEditor}>
-        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} availableSourceFields={availableFields} />
+        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} />
       </div>
       }
       <Button
