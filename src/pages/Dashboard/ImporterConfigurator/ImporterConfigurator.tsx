@@ -2,6 +2,7 @@ import { type FC, useRef, useState } from 'react';
 
 import { DEFAULT_IMPORTER, type FieldMapping, type Importer } from 'types/importer';
 import { useSaveImporter } from 'hooks/importers/useSaveImporter';
+import { useDeleteImporter } from 'hooks/importers/useDeleteImporter';
 import { getHeadersFromCSV } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -29,6 +30,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
 
   const [editableImporter, setEditableImporter] = useState<Importer>(importer);
   const { save: saveImporter, loading: saving } = useSaveImporter();
+  const { remove: deleteImporter, loading: deleting } = useDeleteImporter();
 
   const nameInputRef = useRef<InputHandle | null>(null);
 
@@ -54,7 +56,15 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
     }));
   }
 
-  const handleSubmit = async () => {
+  const handleDelete = async () => {
+    const confirmed = window.confirm(`Are you sure you want to delete importer "${importer.name}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    await deleteImporter(importer.id);
+    // onSave();
+  }
+
+  const handleSave = async () => {
     const nameValid = nameInputRef.current?.validate?.() ?? false;
     if (!nameValid) return;
 
@@ -155,18 +165,18 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
       )}
       
       <div className={styles.formButtonsContainer}>
-        {/* <div className={styles.formButtonsLeft}>
-        {onDelete && (
-          <Button variant={ButtonVariants.DANGER} onClick={onDelete} disabled={submitting}>
+        <div className={styles.formButtonsLeft}>
+        {handleDelete && (
+          <Button variant={ButtonVariants.DANGER} onClick={handleDelete} disabled={deleting || saving}>
             Delete
           </Button>
         )}
-        </div> */}
+        </div>
         <div className={styles.formButtonsRight}>
           {/* <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
             Cancel
           </Button> */}
-          <Button variant={ButtonVariants.PRIMARY} onClick={handleSubmit} disabled={saving}>
+          <Button variant={ButtonVariants.PRIMARY} onClick={handleSave} disabled={saving || deleting}>
             Save
           </Button>
         </div>
