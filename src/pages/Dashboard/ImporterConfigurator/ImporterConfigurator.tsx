@@ -113,12 +113,14 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
         onChange={e => updateImporter(prev => ({ ...prev, description: e.target.value }))}
       />
       <div className={styles.sourceFieldsContainer}>
-        <h4>Available Source Fields:</h4>
-        <div className={styles.uploadFile}>
-          <input type="file" onChange={handleFileUpload} ref={fileInput}/>
-          <Button variant={ButtonVariants.PRIMARY} onClick={() => fileInput.current?.click()}>Import from file</Button>
-          <span>{uploadedFile?.name}</span>
-        </div>
+        <h4>
+          Available Source Fields:
+          <div className={styles.uploadFile}>
+            <input type="file" onChange={handleFileUpload} ref={fileInput}/>
+            <Button variant={ButtonVariants.ICON} onClick={() => fileInput.current?.click()}>Import from file</Button>
+            <span>{uploadedFile?.name}</span>
+          </div>
+        </h4>
         <div className={styles.sourceFieldsList}>
           {editableImporter.sourceFields.map((field, index) => (
             <div key={index} className={styles.sourceFieldItem}>
