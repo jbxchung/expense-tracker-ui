@@ -17,3 +17,6 @@ export interface Category extends Tree {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// sentinel value for category filter
+export const UNKNOWN_CATEGORY = '__UNKNOWN__';

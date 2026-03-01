@@ -3,7 +3,7 @@ import DatePicker from 'components/DatePicker/DatePicker';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Input from 'components/Input/Input';
 
-import type { Category } from 'types/category';
+import { UNKNOWN_CATEGORY, type Category } from 'types/category';
 import type { EditableColumnDef } from 'types/table';
 import type { StagedTransaction } from 'types/transaction';
 
@@ -13,6 +13,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'date',
     header: 'Date',
+    enableColumnFilter: false,
     enableHiding: false,
     cell: ({ getValue }) => {
       const date = new Date(getValue<string>());
@@ -28,6 +29,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'amount',
     header: 'Amount',
+    enableColumnFilter: false,
     enableHiding: false,
     className: styles.amountColumn,
     cell: ({ getValue }) => {
@@ -66,6 +68,17 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'category',
     header: 'Category',
+    filterFn: (row, columnId, filterValue) => {
+      const value = row.getValue<string | undefined>(columnId);
+
+      console.log('filtering category', { value, filterValue });
+      if (filterValue === UNKNOWN_CATEGORY) {
+        return value === '';
+      }
+
+      return value === filterValue;
+    },
+    enableColumnFilter: true,
     enableHiding: false,
     cell: ({ getValue, table  }) => {
       const categoryId = getValue() as string;
@@ -87,6 +100,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'description',
     header: 'Description',
+    enableColumnFilter: false,
     enableHiding: false,
     cell: ({ getValue }) => getValue() ?? '',
     editCell: ({ getValue, setValue }) => (
@@ -99,6 +113,7 @@ export const TransactionTableColumns: EditableColumnDef<StagedTransaction>[] = [
   {
     accessorKey: 'originalDescription',
     header: 'Original Description',
+    enableColumnFilter: false,
     enableHiding: false,
     cell: ({ getValue }) => getValue() ?? '',
   },

@@ -3,8 +3,10 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
 
+import { UNKNOWN_CATEGORY } from 'types/category';
 import type { StagedTransaction } from 'types/transaction';
 import type { EditableColumnDef } from 'types/table';
 import { TransactionTableColumns } from './ColumnDefs';
@@ -12,6 +14,7 @@ import { useAccounts } from 'hooks/accounts/useAccounts';
 import { useCategoryList } from 'hooks/categories/useCategories';
 
 import styles from './StagedTransactionTable.module.scss';
+import Dropdown from 'components/Dropdown/Dropdown';
 
 type StagedTransactionTableProps = {
   data: StagedTransaction[];
@@ -52,6 +55,7 @@ export function StagedTransactionTable({ data, setData }: StagedTransactionTable
     data,
     columns: TransactionTableColumns as EditableColumnDef<StagedTransaction>[],
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     meta: {
       updateCellValue,
       accounts,
@@ -68,6 +72,18 @@ export function StagedTransactionTable({ data, setData }: StagedTransactionTable
               {hg.headers.map((header) => (
                 <th key={header.id}>
                   {flexRender(header.column.columnDef.header, header.getContext())}
+
+                  {header.column.getCanFilter() && (
+                    <Dropdown
+                      placeholder="Filter"
+                      options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown'  }, ...categories.map(category => ({
+                        value: category.id,
+                        label: category.name,
+                      }))]}
+                      value={(header.column.getFilterValue() ?? '') as string}
+                      onChange={(val) => header.column.setFilterValue(val || undefined)}
+                    />
+                  )}
                 </th>
               ))}
             </tr>
