@@ -11,6 +11,8 @@ import {
   type FieldMappingRuleConditionType,
 } from 'types/importer';
 
+import { useCategoryList } from 'hooks/categories/useCategories';
+
 import Dropdown from 'components/Dropdown/Dropdown';
 import Input from 'components/Input/Input';
 
@@ -21,13 +23,24 @@ interface ImportRuleEditorProps {
   rule: FieldMappingRule;
   onChange: (rule: FieldMappingRule) => void;
   availableSourceFields: string[];
+  isCategoryField: boolean;
 }
 
 const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
   rule,
   onChange,
   availableSourceFields,
+  isCategoryField,
 }) => {
+  const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategoryList();
+
+  if (categoriesLoading) {
+    return 'Loading categories...';
+  }
+  if (categoriesError) {
+    return 'Error loading categories';
+  }
+
   const updateRule = (updater: (prev: FieldMappingRule) => FieldMappingRule) => {
     onChange(updater(rule));
   };
@@ -173,10 +186,21 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       )}
 
       {rule.action.type === FieldMappingRuleActionTypes.SET_VALUE && (
-        <Input
-          value={rule.action.value ?? ''}
-          onChange={e => handleActionValueChanged(e.target.value)}
-        />
+        isCategoryField ? (
+          <Dropdown
+            options={categories.map(category => ({
+              value: category.id,
+              label: category.name,
+            }))}
+            value={rule.action.value}
+            onChange={handleActionValueChanged}
+          />
+        ) : (
+          <Input
+            value={rule.action.value ?? ''}
+            onChange={e => handleActionValueChanged(e.target.value)}
+          />
+        )
       )}
     </div>
   );

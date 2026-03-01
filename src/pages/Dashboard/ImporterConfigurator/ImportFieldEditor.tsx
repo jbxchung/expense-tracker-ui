@@ -32,6 +32,8 @@ const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
           rule={rule}
           onChange={(newRule: FieldMappingRule) => updateRules(prev => prev.map((r, idx) => idx === rIndex ? newRule : r))}
           availableSourceFields={availableSourceFields}
+          // special case - only Category field needs this
+          isCategoryField={fieldConfig.field === 'category'}
         />
       ))}
       <Button
