@@ -25,7 +25,10 @@
     height: 2rem;
     padding: 0 1rem;
     border-bottom: 1px solid var(--color-border);
+  }
 
+  th {
+    text-align: left;
   }
 
   // edit styles
