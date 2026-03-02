@@ -68,8 +68,12 @@
 
     .import-rule-editor {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 0.25rem;
+
+      .import-rule-dropdown {
+        flex: 0;
+      }
     }
 
     .rule {

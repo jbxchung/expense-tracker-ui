@@ -9,11 +9,12 @@
   align-items: center;
   background-color: var(--color-modal-bg);
   z-index: 9999;
-  overflow-y: auto;
 
   .modal {
     min-width: 450px;
+    max-height: 90%;
     z-index: 10000;
+    overflow-y: auto;
 
     .modal-header {
       margin-bottom: 1rem;

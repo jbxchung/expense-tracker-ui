@@ -134,6 +134,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       <span>If</span>
 
       <Dropdown
+        className={styles.importRuleDropdown}
         options={availableSourceFields.map(field => ({
           value: field,
           label: field,
@@ -144,6 +145,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       />
 
       <Dropdown
+        className={styles.importRuleDropdown}
         options={Object.values(FieldMappingRuleConditionTypes).map(type => ({
           value: type,
           label: FieldMappingRuleConditionTypeLabels[type],
@@ -164,6 +166,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       <span>,</span>
 
       <Dropdown
+        className={styles.importRuleDropdown}
         options={Object.values(FieldMappingRuleActionTypes).map(type => ({
           value: type,
           label: FieldMappingRuleActionTypeLabels[type],
@@ -175,6 +178,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
 
       {rule.action.type === FieldMappingRuleActionTypes.USE_COLUMN && (
         <Dropdown
+          className={styles.importRuleDropdown}
           options={availableSourceFields.map(field => ({
             value: field,
             label: field,
@@ -188,6 +192,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       {rule.action.type === FieldMappingRuleActionTypes.SET_VALUE && (
         isCategoryField ? (
           <Dropdown
+            className={styles.importRuleDropdown}
             options={categories.map(category => ({
               value: category.id,
               label: category.name,
