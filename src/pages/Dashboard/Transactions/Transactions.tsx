@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState, type FC } from 'react';
 import type { Account } from 'types/account';
 
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { useTransactions } from 'hooks/useTransactions';
+import { useTransactions } from 'hooks/transactions/useTransactions';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
@@ -116,7 +116,7 @@ const Transactions: FC<TransactionListProps> = ({
         closeOnOutsideClick={false}
         confirmOnClose
       >
-        <TransactionForm />
+        <TransactionForm onSuccess={() => setImportModalOpen(false)} />
       </Modal>
     </Card>
   );

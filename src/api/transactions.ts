@@ -1,5 +1,5 @@
 import type { ApiResponse } from 'types/api-response';
-import type { Transaction } from 'types/transaction';
+import type { StagedTransaction, Transaction } from 'types/transaction';
 import { mergeDateRange } from 'utils/dateUtils';
 import { fetchApi, unwrapApiResponse } from 'utils/fetchUtils';
 
@@ -63,26 +63,21 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
 }
 
 
-export async function saveTransactions(accountId: string, transactions: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>[]) {
-  const response: ApiResponse<Transaction[]> = await fetchApi(`${TRANSACTIONS_API_PATH}/bulk`, {
+export async function saveTransactions(accountId: string, transactions: StagedTransaction[]) {
+  const normalized = transactions.map(tx => ({
+    ...tx,
+    date:  tx.date ? new Date(tx.date).toISOString() : tx.date, // convert to timestamp if it's a Date object
+  }));
+
+  const response: ApiResponse<{ count: number }> = await fetchApi(`${TRANSACTIONS_API_PATH}/batch/${accountId}`, {
     method: 'POST',
-    body: JSON.stringify({ accountId, transactions }),
+    body: JSON.stringify(normalized),
   });
 
-  const savedTransactions = await unwrapApiResponse<Transaction[]>(response);
+  const result = await unwrapApiResponse<{ count: number }>(response);
 
-  // update cache
-  const existingCacheEntry = accountTransactionCache.get(accountId);
-  if (existingCacheEntry) {
-    accountTransactionCache.set(accountId, {
-      ...existingCacheEntry,
-      transactions: [...existingCacheEntry.transactions, ...savedTransactions],
-    });
-  } else {
-    accountTransactionCache.set(accountId, {
-      transactions: savedTransactions,
-    });
-  }
+  // invalidate cache for this account so next fetch gets fresh data
+  accountTransactionCache.delete(accountId);
 
-  return savedTransactions;
+  return result;
 }

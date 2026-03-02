@@ -3,8 +3,10 @@ import { useEffect, useRef, useState, type FC } from 'react';
 import { DEFAULT_IMPORTER } from 'types/importer';
 import type { StagedTransaction } from 'types/transaction';
 
+import { useAppContext } from 'contexts/app/AppContext';
 import { useImporters } from 'hooks/importers/useImporters';
 import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
+import { useSaveTransactions } from 'hooks/transactions/useSaveTransactions';
 import { readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -14,23 +16,34 @@ import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterC
 import { StagedTransactionTable } from 'pages/Dashboard/Transactions/StagedTransactionTable/StagedTransactionTable';
 
 import styles from './TransactionForm.module.scss';
+import type { Account } from 'types/account';
 
-const TransactionForm: FC = () => {
+interface TransactionFormProps {
+  onSuccess?: () => void;
+}
+
+const TransactionForm: FC<TransactionFormProps> = ({ onSuccess }) => {
   const fileInput = useRef<HTMLInputElement>(null);
+
+  const { accounts } = useAppContext();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [previewLines, setPreviewLines] = useState<string[]>([]);
-
-  const { importers, /*isLoading, error*/ } = useImporters();
-  const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('');
   const [selectedImporterId, setSelectedImporterId] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [stagedTransactions, setStagedTransactions] = useState<StagedTransaction[]>(importerExecutionResult ?? []);
+  const [stagedTransactions, setStagedTransactions] = useState<StagedTransaction[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const { importers } = useImporters();
+  const { execute: executeImporter, result: importerExecutionResult, loading: importerExecutionLoading, error: importerExecutionError } = useExecuteImporter();
+  const { save: saveTransactions, loading: saveLoading, error: saveError } = useSaveTransactions();
 
   // reset staged transactions on importer execution
   useEffect(() => {
     if (importerExecutionResult) {
       setStagedTransactions(importerExecutionResult);
+      setSuccessMessage(null);
     }
   }, [importerExecutionResult]);
 
@@ -46,7 +59,7 @@ const TransactionForm: FC = () => {
 
     const preview = await readFirstLines(file, 4);
     setPreviewLines(preview);
-  }
+  };
 
   const importerSelectionChanged = (importerId: string) => {
     setSelectedImporterId(importerId);
@@ -55,10 +68,28 @@ const TransactionForm: FC = () => {
     }
   };
 
+  const handleSave = async () => {
+    if (!selectedAccountId) return;
+
+    const result = await saveTransactions(selectedAccountId, stagedTransactions);
+    if (result) {
+      setSuccessMessage(`Successfully saved ${result.count} transaction${result.count === 1 ? '' : 's'}.`);
+      // reset form
+      setUploadedFile(null);
+      setPreviewLines([]);
+      setSelectedAccountId('');
+      setSelectedImporterId('');
+      setIsEditing(false);
+      setStagedTransactions([]);
+      if (fileInput.current) fileInput.current.value = '';
+      onSuccess?.();
+    }
+  };
+
   return (
     <div className={styles.transactionForm}>
       <div className={styles.uploadFile}>
-        <input type="file" onChange={handleFileUpload} ref={fileInput}/>
+        <input type="file" onChange={handleFileUpload} ref={fileInput} />
         <Button variant={ButtonVariants.PRIMARY} onClick={() => fileInput.current?.click()}>Upload File</Button>
         <span>{uploadedFile?.name}</span>
       </div>
@@ -73,6 +104,16 @@ const TransactionForm: FC = () => {
           </pre>
         </div>
       )}
+      <Dropdown
+        label="Account"
+        value={selectedAccountId}
+        onChange={setSelectedAccountId}
+        buttonStyleVariant={ButtonVariants.GHOST}
+        options={accounts.map((account: Account) => ({
+          label: account.name,
+          value: account.id,
+        }))}
+      />
       <div className={styles.importerSelector}>
         <Dropdown
           label="Importer"
@@ -84,7 +125,7 @@ const TransactionForm: FC = () => {
               label: importer.name,
               value: importer.id,
             })),
-            { label: 'Create New', value: DEFAULT_IMPORTER.id},
+            { label: 'Create New', value: DEFAULT_IMPORTER.id },
           ]}
         />
         <Button
@@ -93,13 +134,13 @@ const TransactionForm: FC = () => {
           disabled={!selectedImporterId}
           onClick={() => setIsEditing(!isEditing)}
         >
-          {isEditing ? 'Hide' : 'Show' } Editor
+          {isEditing ? 'Hide' : 'Show'} Editor
         </Button>
       </div>
-      {isEditing && 
-      <div className={styles.importerEditor}>
-        <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} />
-      </div>
+      {isEditing &&
+        <div className={styles.importerEditor}>
+          <ImporterConfigurator importer={importers.find(i => i.id === selectedImporterId)} />
+        </div>
       }
       <Button
         variant={ButtonVariants.PRIMARY}
@@ -112,18 +153,17 @@ const TransactionForm: FC = () => {
       {importerExecutionError && <div>Error executing importer: {importerExecutionError.message}</div>}
       {importerExecutionResult && (<>
         <div className={styles.importedTransactionsPreview}>
-          <StagedTransactionTable data={stagedTransactions} setData={setStagedTransactions}></StagedTransactionTable>
+          <StagedTransactionTable data={stagedTransactions} setData={setStagedTransactions} />
         </div>
         <Button
           variant={ButtonVariants.PRIMARY}
-          disabled={!importerExecutionResult}
-          onClick={() => {
-            alert('todo: save transactions');
-            console.log('todo: save transactions', stagedTransactions);
-          }}
+          disabled={!importerExecutionResult || !selectedAccountId || saveLoading}
+          onClick={handleSave}
         >
-          Finalize & Save
+          {saveLoading ? 'Saving...' : 'Finalize & Save'}
         </Button>
+        {saveError && <div>Error saving transactions: {saveError.message}</div>}
+        {successMessage && <div>{successMessage}</div>}
       </>)}
     </div>
   );
