@@ -1,8 +1,83 @@
 .multi-value-input {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-input-bg);
+  cursor: pointer;
+  user-select: none;
+  min-height: 2.25rem;
+
+  &:hover {
+    border-color: var(--color-border-hover, var(--color-border));
+  }
+
+  &.active {
+    outline: 2px solid var(--color-focus, var(--color-border));
+    outline-offset: -1px;
+  }
+
+  .trigger-placeholder {
+    font-size: 0.875rem;
+    color: var(--color-placeholder);
+  }
+
+  .trigger-summary {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trigger-icon {
+    font-size: 0.625rem;
+    color: var(--color-text-muted, var(--color-text));
+    flex-shrink: 0;
+  }
+}
+
+.modal {
+  position: absolute;
+  z-index: 9999;
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
   flex-direction: column;
   gap: 0.5rem;
-    
+  max-height: 320px;
+  animation: pop-in 0.15s ease;
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+.modal-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  max-height: 220px;
+
+  .empty-state {
+    font-size: 0.875rem;
+    color: var(--color-placeholder);
+    padding: 0.25rem 0;
+  }
+
   .chip {
     display: flex;
     align-items: center;
@@ -21,4 +96,9 @@
       }
     }
   }
+}
+
+.modal-input {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
 }
