@@ -19,12 +19,12 @@ import type {
   FlattenedNode,
   Projection,
   TreeNode,
-} from './types';
+} from '../types';
 import {
   flattenTree,
   rebuildTree,
   isValidDrop,
-} from './utils';
+} from '../utils';
 
 import DropIndicator from './DropIndicator';
 import SortableTreeNode from './SortableTreeNode';

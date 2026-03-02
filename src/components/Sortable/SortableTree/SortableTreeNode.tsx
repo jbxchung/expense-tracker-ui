@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 
-import type { TreeNode } from './types';
+import type { TreeNode } from '../types';
 
 import styles from './SortableTree.module.scss';
 
