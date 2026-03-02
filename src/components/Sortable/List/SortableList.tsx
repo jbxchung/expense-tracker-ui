@@ -47,25 +47,30 @@ const SortableList = <T extends TreeNode>({
 
   const handleDragMove = ({ active, over }: DragMoveEvent) => {
     pointerYRef.current = ((active.rect.current.translated?.top ?? 0) + active.rect.current.translated!.bottom) / 2;
-    if (!over) { setDropIndex(null); return; }
+    if (!over || active.id === over.id) { setDropIndex(null); return; }
 
+    const activeIndex = flattened.findIndex(f => f.id === String(active.id));
     const overIndex = flattened.findIndex(f => f.id === over.id);
-    if (overIndex === -1) { setDropIndex(null); return; }
+    if (activeIndex === -1 || overIndex === -1) { setDropIndex(null); return; }
 
     const overElement = nodeRefs.current.get(String(over.id));
     if (!overElement) { setDropIndex(null); return; }
 
     const rect = overElement.getBoundingClientRect();
     const isInUpperHalf = pointerYRef.current < rect.top + rect.height / 2;
+    const projected = isInUpperHalf ? overIndex : overIndex + 1;
 
-    setDropIndex(isInUpperHalf ? overIndex : overIndex + 1);
+    const isSamePosition = projected === activeIndex || projected === activeIndex + 1;
+    setDropIndex(isSamePosition ? null : projected);
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (over && active.id !== over.id) {
       const oldIndex = flattened.findIndex(f => f.id === active.id);
       const newIndex = flattened.findIndex(f => f.id === over.id);
-      onChange(arrayMove(items, oldIndex, newIndex));
+      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+        onChange(arrayMove(items, oldIndex, newIndex));
+      }
     }
     setActiveId(null);
     setDropIndex(null);
