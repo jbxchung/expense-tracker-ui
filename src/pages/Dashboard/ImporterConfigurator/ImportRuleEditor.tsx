@@ -18,10 +18,12 @@ import Input from 'components/Input/Input';
 
 import styles from './ImporterConfigurator.module.scss';
 import MultiValueInput from 'components/MultiValueInput/MultiValueInput';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 interface ImportRuleEditorProps {
   rule: FieldMappingRule;
   onChange: (rule: FieldMappingRule) => void;
+  onDelete: () => void;
   availableSourceFields: string[];
   isCategoryField: boolean;
 }
@@ -29,6 +31,7 @@ interface ImportRuleEditorProps {
 const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
   rule,
   onChange,
+  onDelete,
   availableSourceFields,
   isCategoryField,
 }) => {
@@ -207,6 +210,10 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
           />
         )
       )}
+
+      <Button variant={ButtonVariants.ICON} onClick={onDelete} className={styles.deleteRuleButton} title="Delete rule">
+        &times;
+      </Button>
     </div>
   );
 };

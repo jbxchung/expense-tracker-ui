@@ -13,6 +13,7 @@ import ImportFieldEditor from './ImportFieldEditor';
 
 import styles from './ImporterConfigurator.module.scss';
 import InlineEdit from 'components/InlineEdit/InlineEdit';
+import { deepEqual } from 'utils/objectUtils';
 
 
 interface ImportConfiguratorProps {
@@ -94,6 +95,8 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
       </Tabs.Tab>
     );
   });
+
+  const hasChanges = !deepEqual(importer, editableImporter);
 
   return (
     <div className={styles.importerConfiguratorForm}>
@@ -178,7 +181,7 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
           {/* <Button variant={ButtonVariants.SECONDARY} onClick={onCancel} disabled={submitting}>
             Cancel
           </Button> */}
-          <Button variant={ButtonVariants.PRIMARY} onClick={handleSave} disabled={saving || deleting}>
+          <Button variant={ButtonVariants.PRIMARY} onClick={handleSave} disabled={saving || deleting || !hasChanges}>
             Save
           </Button>
         </div>

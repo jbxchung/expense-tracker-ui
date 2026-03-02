@@ -31,6 +31,7 @@ const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
           key={rIndex}
           rule={rule}
           onChange={(newRule: FieldMappingRule) => updateRules(prev => prev.map((r, idx) => idx === rIndex ? newRule : r))}
+          onDelete={() => updateRules(prev => prev.filter((_, idx) => idx !== rIndex))}
           availableSourceFields={availableSourceFields}
           // special case - only Category field needs this
           isCategoryField={fieldConfig.field === 'category'}
