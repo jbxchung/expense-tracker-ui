@@ -1,75 +1,95 @@
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
 
-import { FieldMappingRuleActionTypes, FieldMappingRuleConditionTypes, type FieldMapping, type FieldMappingRule } from 'types/importer';
+import {
+  FieldMappingRuleActionTypes,
+  FieldMappingRuleConditionTypes,
+  type FieldMapping,
+  type FieldMappingRule,
+} from 'types/importer';
+
+import SortableList from 'components/Sortable/List/SortableList';
+import Button, { ButtonVariants } from 'components/Button/Button';
 
 import ImportRuleEditor from './ImportRuleEditor';
 
 import styles from './ImporterConfigurator.module.scss';
-import Button, { ButtonVariants } from 'components/Button/Button';
+
+// SortableList needs ids but we dont care to persist them
+type RuleWithId = FieldMappingRule & { id: string };
+
+const withIds = (rules: FieldMappingRule[]): RuleWithId[] =>
+  rules.map(rule => ({ ...rule, id: crypto.randomUUID() }));
+
+const withoutIds = (rules: RuleWithId[]): FieldMappingRule[] =>
+  rules.map(({ id: _, ...rule }) => rule);
 
 interface ImportFieldEditorProps {
   fieldConfig: FieldMapping;
   onChange: (config: FieldMapping) => void;
   availableSourceFields: string[];
 }
+
 const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
   fieldConfig,
   onChange,
-  availableSourceFields
+  availableSourceFields,
 }) => {
-  const updateRules = (updater: (prev: FieldMappingRule[]) => FieldMappingRule[]) => {
-    onChange({
-      ...fieldConfig,
-      rules: updater(fieldConfig.rules),
-    });
+  const [rules, setRules] = useState<RuleWithId[]>(() => withIds(fieldConfig.rules));
+
+  const handleRulesChange = (newRules: RuleWithId[]) => {
+    setRules(newRules);
+    onChange({ ...fieldConfig, rules: withoutIds(newRules) });
   };
 
-  return (<>
+  const handleRuleChange = (id: string, newRule: FieldMappingRule) => {
+    handleRulesChange(rules.map(r => r.id === id ? { ...newRule, id } : r));
+  };
+
+  const handleRuleDelete = (id: string) => {
+    handleRulesChange(rules.filter(r => r.id !== id));
+  };
+
+  const handleAddRule = () => {
+    handleRulesChange([
+      ...rules,
+      {
+        id: crypto.randomUUID(),
+        condition: {
+          type: FieldMappingRuleConditionTypes.EXISTS,
+          column: availableSourceFields[0] ?? '',
+        },
+        action: {
+          type: FieldMappingRuleActionTypes.USE_COLUMN,
+          column: availableSourceFields[0] ?? '',
+        },
+      },
+    ]);
+  };
+
+  return (
     <div className={styles.importFieldEditor}>
-      {fieldConfig.rules.map((rule, rIndex) => (
-        <ImportRuleEditor
-          key={rIndex}
-          rule={rule}
-          onChange={(newRule: FieldMappingRule) => updateRules(prev => prev.map((r, idx) => idx === rIndex ? newRule : r))}
-          onDelete={() => updateRules(prev => prev.filter((_, idx) => idx !== rIndex))}
-          availableSourceFields={availableSourceFields}
-          // special case - only Category field needs this
-          isCategoryField={fieldConfig.field === 'category'}
-        />
-      ))}
+      <SortableList
+        items={rules}
+        onChange={handleRulesChange}
+        renderItem={rule => (
+          <ImportRuleEditor
+            rule={rule}
+            onChange={newRule => handleRuleChange(rule.id, newRule)}
+            onDelete={() => handleRuleDelete(rule.id)}
+            availableSourceFields={availableSourceFields}
+            isCategoryField={fieldConfig.field === 'category'}
+          />
+        )}
+      />
       <Button
         className={styles.addNewRuleButton}
         variant={ButtonVariants.GHOST}
-        onClick={() =>
-          updateRules(prev => [
-            ...prev,
-            {
-              condition: {
-                type: FieldMappingRuleConditionTypes.EXISTS,
-                column: availableSourceFields[0] ?? '',
-              },
-              action: {
-                type: FieldMappingRuleActionTypes.USE_COLUMN,
-                column: availableSourceFields[0] ?? '',
-              },
-            },
-          ])
-        }
+        onClick={handleAddRule}
       >
         + Add New Rule
       </Button>
-      {/* {editableRules.map((rule, rIndex) => (
-        <div key={rIndex} className={styles.rule}>
-          
-          <pre>{JSON.stringify(rule, null, 4)}</pre>
-        </div>
-      ))} */}
     </div>
-    {/* <div className={styles.debug}>
-      <h4>DEBUG</h4>
-      <pre>{JSON.stringify(fieldConfig, null, 4)}</pre>
-    </div> */}
-  </>);
+  );
 };
 
 export default ImportFieldEditor;

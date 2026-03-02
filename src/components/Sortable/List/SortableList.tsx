@@ -14,8 +14,8 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-ki
 import type { FlattenedNode, TreeNode } from '../types';
 import { flattenTree } from '../utils';
 
-import DropIndicator from '../SortableTree/DropIndicator';
-import SortableTreeNode from '../SortableTree/SortableTreeNode';
+import DropIndicator from '../Tree/DropIndicator';
+import SortableTreeNode from '../Tree/SortableTreeNode';
 
 interface SortableListProps<T extends TreeNode> {
   items: T[];

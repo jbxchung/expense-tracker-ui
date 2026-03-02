@@ -5,7 +5,7 @@ import { useCategoryTree, useSaveCategoryTree } from 'hooks/categories/useCatego
 import { patchTree } from 'utils/treeUtils';
 
 import Card from 'components/Card/Card';
-import SortableTree from 'components/Sortable/SortableTree/SortableTree';
+import SortableTree from 'components/Sortable/Tree/SortableTree';
 
 import { createTempCategory, insertCategory, normalizeSortOrder, removeCategory } from 'utils/categoryUtils';
 
