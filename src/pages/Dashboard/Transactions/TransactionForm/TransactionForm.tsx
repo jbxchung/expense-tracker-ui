@@ -13,7 +13,7 @@ import Button, { ButtonVariants } from 'components/Button/Button';
 import Dropdown from 'components/Dropdown/Dropdown';
 
 import ImporterConfigurator from 'pages/Dashboard/ImporterConfigurator/ImporterConfigurator';
-import { StagedTransactionTable } from 'pages/Dashboard/Transactions/StagedTransactionTable/StagedTransactionTable';
+import { StagedTransactionTable } from 'pages/Dashboard/Transactions/TransactionTable/StagedTransactionTable';
 
 import styles from './TransactionForm.module.scss';
 import type { Account } from 'types/account';

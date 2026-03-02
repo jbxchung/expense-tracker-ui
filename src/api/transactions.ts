@@ -81,3 +81,23 @@ export async function saveTransactions(accountId: string, transactions: StagedTr
 
   return result;
 }
+
+export async function updateTransaction(transaction: Partial<Omit<Transaction, 'createdAt' | 'updatedAt'>> & { id: string }): Promise<Transaction> {
+  const response: ApiResponse<Transaction> = await fetchApi(`${TRANSACTIONS_API_PATH}/${transaction.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(transaction),
+  });
+
+  const updatedTransaction = await unwrapApiResponse<Transaction>(response);
+
+  // update cache entry in place
+  const cacheEntry = accountTransactionCache.get(updatedTransaction.accountId);
+  if (cacheEntry) {
+    accountTransactionCache.set(updatedTransaction.accountId, {
+      ...cacheEntry,
+      transactions: cacheEntry.transactions.map(tx => tx.id === updatedTransaction.id ? updatedTransaction : tx),
+    });
+  }
+
+  return updatedTransaction;
+}

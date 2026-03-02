@@ -15,6 +15,7 @@ import { UploadIcon } from 'icons/UploadIcon';
 import TransactionForm from './TransactionForm/TransactionForm';
 
 import styles from './Transactions.module.scss';
+import { LiveTransactionTable } from './TransactionTable/LiveTransactionTable';
 
 const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
 
@@ -105,9 +106,10 @@ const Transactions: FC<TransactionListProps> = ({
       {statusText ? <div>{statusText}</div>
         :
         // todo - make this a table in its own component
-        selectedAccounts.map(account => (
-          <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
-        ))
+        <LiveTransactionTable data={transactions} />
+        // selectedAccounts.map(account => (
+        //   <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
+        // ))
       }
       <Modal
         title="Import Transactions"
