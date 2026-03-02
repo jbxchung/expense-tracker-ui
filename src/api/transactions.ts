@@ -57,7 +57,7 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
 
   return accountIds.flatMap(accountId => (
     (accountTransactionCache.get(accountId)?.transactions ?? []).filter(tx =>
-      (!from || tx.date >= from) && (!to || tx.date <= to)
+      (!from || new Date(tx.date) >= from) && (!to || new Date(tx.date) <= to)
     )
   ));
 }

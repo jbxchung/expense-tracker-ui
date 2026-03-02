@@ -13,8 +13,9 @@ import { TransactionTableColumns } from './ColumnDefs';
 import { useAccounts } from 'hooks/accounts/useAccounts';
 import { useCategoryList } from 'hooks/categories/useCategories';
 
-import styles from './StagedTransactionTable.module.scss';
 import Dropdown from 'components/Dropdown/Dropdown';
+
+import styles from './StagedTransactionTable.module.scss';
 
 type StagedTransactionTableProps = {
   data: StagedTransaction[];
