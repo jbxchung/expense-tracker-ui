@@ -5,7 +5,7 @@ import type { StagedTransaction } from 'types/transaction';
 
 import { useImporters } from 'hooks/importers/useImporters';
 import { useExecuteImporter } from 'hooks/importers/useExecuteImporter';
-import { getHeadersFromCSV, readFirstLines } from 'utils/fileUtils';
+import { readFirstLines } from 'utils/fileUtils';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
 import Dropdown from 'components/Dropdown/Dropdown';
