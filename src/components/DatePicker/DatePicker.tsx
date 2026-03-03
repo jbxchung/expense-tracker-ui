@@ -106,6 +106,8 @@ const DatePicker: FC<DatePickerProps> = ({
           customInput={<Input placeholder='Select a date' />}
           selected={value}
           onChange={handleSingleChange}
+          portalId='root'
+          popperProps={{ strategy: 'fixed' }}
           isClearable
         />
       ) : (
@@ -115,6 +117,8 @@ const DatePicker: FC<DatePickerProps> = ({
           startDate={internalRange.from}
           endDate={internalRange.to}
           onChange={handleRangeChange}
+          portalId='root'
+          popperProps={{ strategy: 'fixed' }}
           isClearable
         />
       )}
