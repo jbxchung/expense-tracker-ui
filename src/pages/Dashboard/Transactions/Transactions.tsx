@@ -103,14 +103,11 @@ const Transactions: FC<TransactionListProps> = ({
           <UploadIcon />
         </Button>
       </div>
-      {statusText ? <div>{statusText}</div>
-        :
-        // todo - make this a table in its own component
+      {statusText ? (
+        <div>{statusText}</div>
+      ) : (
         <LiveTransactionTable data={transactions} />
-        // selectedAccounts.map(account => (
-        //   <div key={account.id}>TODO: show transactions for account: {account.name} from {dateRange.from?.toLocaleDateString()} to {dateRange.to?.toLocaleDateString()}</div>
-        // ))
-      }
+      )}
       <Modal
         title="Import Transactions"
         isOpen={importModalOpen}
