@@ -84,8 +84,12 @@ const DatePicker: FC<DatePickerProps> = ({
       to: to ? normalizeEnd(to) : null,
     };
     setInternalRange(newRange);
-    onChange(newRange);
-    changePreset(null);
+
+    // only fire event on complete range selection
+    if (newRange.from && newRange.to) {
+      onChange(newRange);
+      changePreset(null);
+    }
   };
 
   const handlePresetClick = (preset: { label: string; getRange: () => DateRange }) => {
