@@ -8,7 +8,7 @@ import type { StagedTransaction } from 'types/transaction';
 import { dateColumn, amountColumn, descriptionColumn, originalDescriptionColumn } from './base';
 
 const stagedCategoryColumn: EditableColumnDef<StagedTransaction> = {
-  accessorKey: 'category',
+  accessorKey: 'categoryId',
   header: 'Category',
   enableColumnFilter: true,
   enableHiding: false,

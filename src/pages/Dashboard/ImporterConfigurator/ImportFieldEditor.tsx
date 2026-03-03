@@ -1,6 +1,7 @@
 import { useState, type FC } from 'react';
 
 import {
+  DEFAULT_IMPORTER,
   FieldMappingRuleActionTypes,
   FieldMappingRuleConditionTypes,
   type FieldMapping,
@@ -77,7 +78,7 @@ const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
             onChange={newRule => handleRuleChange(rule.id, newRule)}
             onDelete={() => handleRuleDelete(rule.id)}
             availableSourceFields={availableSourceFields}
-            isCategoryField={fieldConfig.field === 'category'}
+            isCategoryField={fieldConfig.field === DEFAULT_IMPORTER.mapping.categoryId.field}
           />
         )}
       />

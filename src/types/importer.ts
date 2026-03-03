@@ -73,7 +73,7 @@ export interface Importer {
   mapping: {
     amount: FieldMapping;
     date: FieldMapping;
-    category: FieldMapping;
+    categoryId: FieldMapping;
     description: FieldMapping;
     originalDescription: FieldMapping;
   };
@@ -100,8 +100,8 @@ export const DEFAULT_IMPORTER: Importer = {
       title: 'Amount',
       rules: [],
     },
-    category: {
-      field: 'category',
+    categoryId: {
+      field: 'categoryId',
       title: 'Category',
       rules: []
     },
