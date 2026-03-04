@@ -106,6 +106,7 @@ const DatePicker: FC<DatePickerProps> = ({
   return (
     <div className={styles.datePickerWrapper}>
       {mode === DatePickerModes.SINGLE ? (
+        // TODO - custom month and year dropdown because builti select isnt easily styleable
         <ReactDatePicker
           customInput={<Input placeholder='Select a date' />}
           selected={value}
