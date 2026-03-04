@@ -8,6 +8,7 @@ import styles from './Dropdown.module.scss';
 export interface DropdownOption {
   label: string;
   value: string;
+  depth?: number; // optional for nested options
 }
 
 interface DropdownProps {
@@ -128,6 +129,7 @@ const Dropdown: FC<DropdownProps> = ({
               <li
                 key={option.value}
                 className={`${styles.option} ${i === highlightIndex ? styles.highlight : ''}`}
+                style={{ '--depth': option.depth ?? 0 } as React.CSSProperties}
                 onMouseEnter={() => setHighlightIndex(i)}
                 onClick={() => {
                   onChange?.(option.value);
