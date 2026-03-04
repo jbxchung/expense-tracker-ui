@@ -66,14 +66,13 @@
 .option {
   padding: 0.5rem 0.75rem;
   cursor: pointer;
+  // indent per tree depth
+  --indent: 1.5rem;
+  padding-left: calc(var(--depth) * var(--indent) + 0.75rem);
 
   &:hover {
     background: var(--color-primary-hover);
   }
-
-  // indent per tree depth
-  --indent: 1.5rem;
-  padding-left: calc(var(--depth) * var(--indent) + 0.75rem);
 }
 
 .highlight {

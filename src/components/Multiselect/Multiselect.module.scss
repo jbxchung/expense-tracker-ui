@@ -73,19 +73,6 @@
   }
 }
 
-._badge_nsmxp_71 {
-    position: absolute;
-    font-size: 0.65rem;
-    font-weight: bold;
-    /* background: var(--color-primary); */
-    color: var(--color-primary-text, #fff);
-    /* border-radius: 999px; */
-    /* padding: 0 0.3rem; */
-    /* line-height: 1.4; */
-    top: 0.1rem;
-    right: 0.1rem;
-    /* opacity: 0.5; */
-}
 .badge {
   position: absolute;
   top: 0.1rem;
@@ -160,7 +147,10 @@
   padding: 0.5rem 0.75rem;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background 0.15s;
+  
+  // indent per tree depth
+  --indent: 1.5rem;
+  padding-left: calc(var(--depth) * var(--indent) + 0.75rem);
 
   &:hover {
     background: var(--color-primary-hover);

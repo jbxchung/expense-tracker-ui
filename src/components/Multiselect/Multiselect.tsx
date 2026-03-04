@@ -8,6 +8,7 @@ import styles from './Multiselect.module.scss';
 export interface MultiselectOption {
   label: string;
   value: string;
+  depth?: number; // optional for nested options
 }
 
 interface MultiselectProps {
@@ -153,16 +154,17 @@ const Multiselect: FC<MultiselectProps> = ({
             {filteredOptions.length === 0 && (
               <li className={styles.empty}>No options</li>
             )}
-            {filteredOptions.map(opt => {
-              const selected = value.includes(opt.value);
+            {filteredOptions.map(option => {
+              const selected = value.includes(option.value);
               return (
                 <li
-                  key={opt.value}
+                  key={option.value}
                   className={`${styles.option} ${selected ? styles.selected : ''}`}
-                  onClick={() => toggleOption(opt.value)}
+                  style={{ '--depth': option.depth ?? 0 } as React.CSSProperties}
+                  onClick={() => toggleOption(option.value)}
                 >
                   <span className={styles.checkbox}>{selected ? '☑' : '☐'}</span>
-                  {opt.label}
+                  {option.label}
                 </li>
               );
             })}
