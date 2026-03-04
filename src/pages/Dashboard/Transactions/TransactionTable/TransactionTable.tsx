@@ -15,6 +15,7 @@ import type { Category } from 'types/category';
 import Dropdown from 'components/Dropdown/Dropdown';
 
 import styles from './TransactionTable.module.scss';
+import Multiselect from 'components/Multiselect/Multiselect';
 
 type TransactionTableProps<T> = {
   data: T[];
@@ -57,14 +58,23 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
                 <th key={header.id}>
                   {flexRender(header.column.columnDef.header, header.getContext())}
                   {header.column.getCanFilter() && (
-                    <Dropdown
-                      placeholder="Filter"
+                    // <Dropdown
+                    //   placeholder="Filter"
+                    //   options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
+                    //     value: category.id,
+                    //     label: category.name,
+                    //   }))]}
+                    //   value={(header.column.getFilterValue() ?? '') as string}
+                    //   onChange={(val) => header.column.setFilterValue(val || undefined)}
+                    // />
+                    <Multiselect
                       options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
                         value: category.id,
                         label: category.name,
                       }))]}
-                      value={(header.column.getFilterValue() ?? '') as string}
-                      onChange={(val) => header.column.setFilterValue(val || undefined)}
+                      value={(header.column.getFilterValue() ?? []) as string[]}
+                      onChange={val => header.column.setFilterValue(val.length ? val : undefined)}
+                      trigger={<span>⊟</span>}
                     />
                   )}
                 </th>
