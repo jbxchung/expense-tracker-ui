@@ -3,7 +3,7 @@ import DatePicker from 'components/DatePicker/DatePicker';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Input from 'components/Input/Input';
 
-import { UNKNOWN_CATEGORY, type Category } from 'types/category';
+import { UNKNOWN_CATEGORY, type FlattenedCategory } from 'types/category';
 import type { EditableColumnDef } from 'types/table';
 
 import { DescriptionEditCell } from './DescriptionEditCell';
@@ -62,7 +62,7 @@ export const categoryColumn = <T extends object>(): EditableColumnDef<T> => ({
     <Dropdown
       buttonStyleVariant={ButtonVariants.GHOST}
       value={getValue()}
-      options={table.options.meta!.categories!.map((c: Category) => ({ value: c.id, label: c.name }))}
+      options={table.options.meta!.categories!.map((c: FlattenedCategory) => ({ value: c.id, label: c.name, depth: c.depth }))}
       onChange={setValue}
     />
   ),

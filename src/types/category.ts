@@ -18,5 +18,9 @@ export interface Category extends Tree {
   updatedAt: Date;
 }
 
+export interface FlattenedCategory extends Category {
+  depth: number;
+}
+
 // sentinel value for category filter
 export const UNKNOWN_CATEGORY = '__UNKNOWN__';

@@ -10,7 +10,7 @@ import {
 import { UNKNOWN_CATEGORY } from 'types/category';
 import type { EditableColumnDef } from 'types/table';
 import type { Account } from 'types/account';
-import type { Category } from 'types/category';
+import type { FlattenedCategory } from 'types/category';
 
 import Multiselect from 'components/Multiselect/Multiselect';
 import { FilterIcon } from 'icons/FilterIcon';
@@ -21,7 +21,7 @@ type TransactionTableProps<T> = {
   data: T[];
   columns: EditableColumnDef<T>[];
   accounts?: Account[];
-  categories?: Category[];
+  categories?: FlattenedCategory[];
   onRowChange?: (index: number, columnId: keyof T, value: any) => void;
 };
 
@@ -68,6 +68,7 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
                             options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
                               value: category.id,
                               label: category.name,
+                              depth: category.depth,
                             }))]}
                             value={(header.column.getFilterValue() ?? []) as string[]}
                             onChange={val => header.column.setFilterValue(val.length ? val : undefined)}

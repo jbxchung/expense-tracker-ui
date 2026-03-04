@@ -1,7 +1,7 @@
 import type { ColumnDef, Table } from '@tanstack/react-table';
 
 import type { Account } from './account';
-import type { Category } from './category';
+import type { FlattenedCategory } from './category';
 
 // let us edit cells
 export type EditCellProps<TData> = {
@@ -28,6 +28,6 @@ declare module "@tanstack/react-table" {
     ) => void;
 
     accounts?: Account[];
-    categories?: Category[];
+    categories?: FlattenedCategory[];
   }
 }
