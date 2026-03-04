@@ -29,6 +29,21 @@
 
   th {
     text-align: left;
+
+    .header-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      
+      .filter-icon {
+        height: 1rem;
+
+        &.active {
+          fill: currentColor;
+        }
+      }
+    }
+
   }
 
   // edit styles

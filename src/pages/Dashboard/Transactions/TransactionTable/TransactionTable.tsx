@@ -12,10 +12,10 @@ import type { EditableColumnDef } from 'types/table';
 import type { Account } from 'types/account';
 import type { Category } from 'types/category';
 
-import Dropdown from 'components/Dropdown/Dropdown';
+import Multiselect from 'components/Multiselect/Multiselect';
+import { FilterIcon } from 'icons/FilterIcon';
 
 import styles from './TransactionTable.module.scss';
-import Multiselect from 'components/Multiselect/Multiselect';
 
 type TransactionTableProps<T> = {
   data: T[];
@@ -54,31 +54,31 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
         <thead>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
-              {hg.headers.map((header) => (
-                <th key={header.id}>
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                  {header.column.getCanFilter() && (
-                    // <Dropdown
-                    //   placeholder="Filter"
-                    //   options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
-                    //     value: category.id,
-                    //     label: category.name,
-                    //   }))]}
-                    //   value={(header.column.getFilterValue() ?? '') as string}
-                    //   onChange={(val) => header.column.setFilterValue(val || undefined)}
-                    // />
-                    <Multiselect
-                      options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
-                        value: category.id,
-                        label: category.name,
-                      }))]}
-                      value={(header.column.getFilterValue() ?? []) as string[]}
-                      onChange={val => header.column.setFilterValue(val.length ? val : undefined)}
-                      trigger={<span>⊟</span>}
-                    />
-                  )}
-                </th>
-              ))}
+              {hg.headers.map((header) => {
+                const filterValue = (header.column.getFilterValue() ?? []) as string[];
+                const isFiltered = filterValue.length > 0;
+
+                return (
+                  <th key={header.id}>
+                    <div className={styles.headerContent}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanFilter() && (
+                        <div className={styles.filterIcon}>
+                          <Multiselect
+                            options={[{ value: UNKNOWN_CATEGORY, label: 'Unknown' }, ...categories.map(category => ({
+                              value: category.id,
+                              label: category.name,
+                            }))]}
+                            value={(header.column.getFilterValue() ?? []) as string[]}
+                            onChange={val => header.column.setFilterValue(val.length ? val : undefined)}
+                            trigger={<FilterIcon className={styles.filterIcon + (isFiltered ? ' active' : '')} />}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           ))}
         </thead>

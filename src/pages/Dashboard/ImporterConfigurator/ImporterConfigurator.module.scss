@@ -67,10 +67,11 @@
 
     .import-rule-editor {
       flex: 1;
+      padding: 0.5rem;
       display: flex;
       align-items: center;
       gap: 0.25rem;
-      padding: 0.5rem;
+      flex-wrap: wrap;
 
       &:hover {
         background-color: var(--color-surface-hover);
