@@ -1,0 +1,17 @@
+.transaction-controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .transaction-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+
+    .title {
+      white-space: nowrap;
+    }
+  }
+}

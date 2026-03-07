@@ -2,15 +2,12 @@
   position: relative;
 
   .manage-accounts-button {
-    position: absolute;
-    right: 0;
-    top: -3rem;
+    margin-left: 1rem;
   }
 
   .account-selector-list {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 1rem;
     gap: 1rem;
 
     .account-list-item {

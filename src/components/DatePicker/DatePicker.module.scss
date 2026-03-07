@@ -1,11 +1,10 @@
-.datePickerWrapper {
+.date-picker-wrapper {
   display: flex;
   gap: 8px;
   font-family: sans-serif;
-  width: 100%;
 }
 
-.datePickerInput {
+.date-picker-input {
   width: 100%;
   padding: 6px 10px;
   border-radius: 4px;
@@ -40,7 +39,7 @@
   flex-wrap: wrap;
 }
 
-.presetButton {
+.preset-button {
   padding: 4px 8px;
   cursor: pointer;
   background-color: var(--color-surface-hover);

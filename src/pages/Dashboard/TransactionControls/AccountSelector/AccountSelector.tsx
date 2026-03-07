@@ -1,8 +1,8 @@
 import type { FC } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import type { Account } from 'types/account';
-import Button, { ButtonVariants } from 'components/Button/Button';
+// import Button, { ButtonVariants } from 'components/Button/Button';
 import Card from 'components/Card/Card';
 
 import styles from './AccountSelector.module.scss';
@@ -39,11 +39,11 @@ const AccountSelector: FC<AccountSelectorProps> = ({
 
   return (
     <div className={styles.accountSelector}>
-      <Link to="/accounts">
+      {/* <Link to="/accounts">
         <Button className={styles.manageAccountsButton} variant={ButtonVariants.GHOST} title="Manage Accounts">
           Manage
         </Button>
-      </Link>
+      </Link> */}
       <div className={styles.accountSelectorList}>
       {accounts.length ? (
         accounts.map(account => {

@@ -7,6 +7,8 @@ import DatePicker, { DatePickerModes, type DateRange } from 'components/DatePick
 import AccountSelector from './AccountSelector/AccountSelector';
 import { TRANSACTIONS_DATEPICKER_PRESETS } from './presets';
 
+import styles from './TransactionControls.module.scss'
+
 interface TransactionControlsProps {
   accounts: Account[];
   accountsLoading: boolean;
@@ -32,21 +34,29 @@ const TransactionControls: FC<TransactionControlsProps> = ({
 }) => {
   return (
     <Card title="Filters">
-      <AccountSelector
-        accounts={accounts}
-        isLoading={accountsLoading}
-        error={accountsError}
-        selectedIds={selectedAccountIds}
-        onToggle={onToggleAccount}
-      />
-      <DatePicker
-        mode={DatePickerModes.RANGE}
-        range={dateRange}
-        onChange={range => onDateRangeChanged(range as DateRange)}
-        presets={TRANSACTIONS_DATEPICKER_PRESETS}
-        selectedPresetIndex={selectedDatePresetIndex}
-        onPresetSelected={onPresetSelected}
-      />
+      <div className={styles.transactionControls}>
+        <div className={styles.transactionControl}>
+          <span className={styles.title}>Date range:</span>
+          <DatePicker
+            mode={DatePickerModes.RANGE}
+            range={dateRange}
+            onChange={range => onDateRangeChanged(range as DateRange)}
+            presets={TRANSACTIONS_DATEPICKER_PRESETS}
+            selectedPresetIndex={selectedDatePresetIndex}
+            onPresetSelected={onPresetSelected}
+          />
+        </div>
+        <div className={styles.transactionControl}>
+          <span className={styles.title}>Accounts:</span>
+          <AccountSelector
+            accounts={accounts}
+            isLoading={accountsLoading}
+            error={accountsError}
+            selectedIds={selectedAccountIds}
+            onToggle={onToggleAccount}
+          />
+        </div>
+      </div>
     </Card>
   );
 };
