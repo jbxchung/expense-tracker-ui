@@ -79,7 +79,6 @@ const Transactions: FC<TransactionListProps> = ({
   if (accountsLoading) statusText = 'Loading accounts...';
   if (isLoading) statusText = 'Loading transactions...';
   if (error) statusText = `Error loading transactions: ${error.message}`;
-  if (!transactions.length) statusText = 'No transactions found for the selected accounts and date range.';
 
   return (
     <Card title="Transactions">
