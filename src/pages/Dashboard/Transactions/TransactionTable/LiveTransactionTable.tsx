@@ -9,18 +9,21 @@ import { LiveTransactionColumns } from './columns/LiveTransactionColumns';
 
 type LiveTransactionTableProps = {
   data: Transaction[];
+  setData: React.Dispatch<React.SetStateAction<Transaction[]>>;
 };
 
 // wrapper to modify already-persisted transactions
-export function LiveTransactionTable({ data }: LiveTransactionTableProps) {
+export function LiveTransactionTable({ data, setData }: LiveTransactionTableProps) {
   const { accounts } = useAppContext();
   const { categories } = useCategoryList();
   const { update } = useUpdateTransaction();
 
-  const handleRowChange = (index: number, columnId: keyof Transaction, value: any) => {
+  const handleRowChange = async (index: number, columnId: keyof Transaction, value: any) => {
     const transaction = data[index];
-    console.log('Updating transaction', transaction.id, 'column', columnId, 'to value', value);
-    update({ id: transaction.id, [columnId]: value });
+    const updated = await update({ id: transaction.id, [columnId]: value });
+    if (updated) {
+      setData(prev => prev.map((tx, i) => i === index ? updated : tx));
+    }
   };
 
   return (

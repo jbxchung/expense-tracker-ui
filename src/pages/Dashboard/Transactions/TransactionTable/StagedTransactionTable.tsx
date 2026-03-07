@@ -19,7 +19,7 @@ export function StagedTransactionTable({ data, setData }: StagedTransactionTable
   const { categories } = useCategoryList();
 
   const handleRowChange = (index: number, columnId: keyof StagedTransaction, value: any) => {
-    setData(old => old.map((row, idx) => idx === index ? { ...row, [columnId]: value } : row));
+    setData(prev => prev.map((tx, i) => i === index ? { ...tx, [columnId]: value } : tx));
   };
 
   return (

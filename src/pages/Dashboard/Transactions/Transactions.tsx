@@ -68,7 +68,7 @@ const Transactions: FC<TransactionListProps> = ({
     }
   }, []);
 
-  const { transactions, isLoading, error } = useTransactions({
+  const { transactions, setTransactions, isLoading, error } = useTransactions({
     accountIds,
     from: dateRange.from!, to: dateRange.to!
   });
@@ -106,7 +106,7 @@ const Transactions: FC<TransactionListProps> = ({
       {statusText ? (
         <div>{statusText}</div>
       ) : (
-        <LiveTransactionTable data={transactions} />
+        <LiveTransactionTable data={transactions} setData={setTransactions}/>
       )}
       <Modal
         title="Import Transactions"

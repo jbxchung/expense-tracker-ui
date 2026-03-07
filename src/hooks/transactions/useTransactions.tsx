@@ -40,5 +40,6 @@ export const useTransactions = ({ accountIds, from, to }: UseTransactionsOptions
   // manual refresh
   const refresh = useCallback(() => fetchAndSet(true), [fetchAndSet]);
 
-  return { transactions, isLoading, error, refresh };
+  // expose setTransactions for manual updates (e.g. after editing a transaction)
+  return { transactions, setTransactions, isLoading, error, refresh };
 };

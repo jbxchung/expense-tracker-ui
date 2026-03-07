@@ -126,6 +126,16 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
               })}
             </tr>
           ))}
+          {table.getRowModel().rows.length === 0 && (
+            <tr>
+              <td colSpan={columns.length}>
+                {table.getState().columnFilters.length > 0
+                  ? 'No transactions match the current filters.'
+                  : 'No transactions found for the selected date range.'
+                }
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

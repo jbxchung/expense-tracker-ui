@@ -29,7 +29,6 @@ export function patchTree<T extends Tree>(
   return tree.map(node => {
     // merge updated properties but keep children as-is
     if (node.id === updatedNode.id) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [childrenKey]: _, ...restUpdated } = updatedNode;
       return { ...node, ...restUpdated } as T;
     }
