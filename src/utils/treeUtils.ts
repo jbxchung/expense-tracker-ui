@@ -5,15 +5,24 @@ export function flattenTree<T extends Tree> (
   nodes: Array<T & { [key: string]: any }>,
   childrenKey: string = 'children',
   depth = 0,
-): Array<T & { depth: number }> {
-  const result: Array<T & { depth: number }> = [];
+  ancestorIds: string[] = [],
+): Array<T & { depth: number; ancestorIds: string[]; descendantIds: string[] }> {
+  const result: Array<T & { depth: number; ancestorIds: string[], descendantIds: string[] }> = [];
 
   for (const item of nodes) {
     const { [childrenKey]: children, ...nodeWithoutChildren } = item;
-    result.push({ ...(nodeWithoutChildren as T), depth });
+    const entry = {
+      ...(nodeWithoutChildren as T),
+      depth,
+      ancestorIds,
+      descendantIds: [] as string[],
+    };
+    result.push(entry);
 
     if (children && Array.isArray(children) && children.length > 0) {
-      result.push(...flattenTree(children, childrenKey, depth + 1));
+      const childResults = flattenTree(children, childrenKey, depth + 1, [...ancestorIds, item.id]);
+      entry.descendantIds = childResults.map(child => child.id);
+      result.push(...childResults);
     }
   }
 

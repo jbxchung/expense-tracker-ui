@@ -69,6 +69,8 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
                               value: category.id,
                               label: category.name,
                               depth: category.depth,
+                              descendantIds: category.descendantIds,
+                              ancestorIds: category.ancestorIds,
                             }))]}
                             value={(header.column.getFilterValue() ?? []) as string[]}
                             onChange={val => header.column.setFilterValue(val.length ? val : undefined)}

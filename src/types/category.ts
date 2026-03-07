@@ -20,6 +20,8 @@ export interface Category extends Tree {
 
 export interface FlattenedCategory extends Category {
   depth: number;
+  ancestorIds: string[];
+  descendantIds: string[];
 }
 
 // sentinel value for category filter

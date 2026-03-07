@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type FC, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type FC, type ReactNode, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
 import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Button';
@@ -8,7 +8,23 @@ import styles from './Multiselect.module.scss';
 export interface MultiselectOption {
   label: string;
   value: string;
-  depth?: number; // optional for nested options
+  // to keep track of hierarchy / nesting
+  depth?: number;
+  descendantIds?: string[];
+  ancestorIds?: string[];
+}
+
+// derive partially selected ids from current selection and options
+function getPartialIds(selected: string[], options: MultiselectOption[]): Set<string> {
+  const partial = new Set<string>();
+  for (const opt of options) {
+    if (!opt.descendantIds?.length) continue;
+    const selectedDescendants = opt.descendantIds.filter(id => selected.includes(id));
+    if (selectedDescendants.length > 0 && selectedDescendants.length < opt.descendantIds.length) {
+      partial.add(opt.value);
+    }
+  }
+  return partial;
 }
 
 interface MultiselectProps {
@@ -41,12 +57,17 @@ const Multiselect: FC<MultiselectProps> = ({
   const searchRef = useRef<HTMLInputElement>(null);
 
   const isActive = value.length > 0;
+  
+  // derive partial ids for display
+  const partialIds = useMemo(() => getPartialIds(value, options), [value, options]);
 
+  // derive display label from selected values
   const selectedLabels = options
     .filter(opt => value.includes(opt.value))
     .map(opt => opt.label)
     .join(', ');
-
+  
+  // position panel and focus search input when opening
   useEffect(() => {
     if (open && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -90,10 +111,20 @@ const Multiselect: FC<MultiselectProps> = ({
     opt.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleOption = (optValue: string) => {
-    const next = value.includes(optValue)
-      ? value.filter(v => v !== optValue)
-      : [...value, optValue];
+  const toggleOption = (option: MultiselectOption) => {
+    const isSelected = value.includes(option.value);
+    let next = [...value];
+
+    if (isSelected) {
+      // deselect item and all descendants
+      const toRemove = new Set([option.value, ...(option.descendantIds ?? [])]);
+      next = next.filter(v => !toRemove.has(v));
+    } else {
+      // select item and all descendants
+      const toAdd = [option.value, ...(option.descendantIds ?? [])].filter(v => !next.includes(v));
+      next = [...next, ...toAdd];
+    }
+
     onChange(next);
   };
 
@@ -156,14 +187,17 @@ const Multiselect: FC<MultiselectProps> = ({
             )}
             {filteredOptions.map(option => {
               const selected = value.includes(option.value);
+              const partial = !selected && partialIds.has(option.value);
               return (
                 <li
                   key={option.value}
-                  className={`${styles.option} ${selected ? styles.selected : ''}`}
+                  className={`${styles.option} ${selected ? styles.selected : ''} ${partial ? styles.partial : ''}`}
                   style={{ '--depth': option.depth ?? 0 } as React.CSSProperties}
-                  onClick={() => toggleOption(option.value)}
+                  onClick={() => toggleOption(option)}
                 >
-                  <span className={styles.checkbox}>{selected ? '☑' : '☐'}</span>
+                  <span className={styles.checkbox}>
+                    {selected ? '☑' : partial ? '⊟' : '☐'}
+                  </span>
                   {option.label}
                 </li>
               );
