@@ -15,8 +15,8 @@ const accountColumn: EditableColumnDef<Transaction> = {
 };
 
 export const LiveTransactionColumns: EditableColumnDef<Transaction>[] = [
-  dateColumn<Transaction>(),
-  amountColumn<Transaction>(),
+  { ...dateColumn<Transaction>(), editCell: undefined },
+  { ...amountColumn<Transaction>(), editCell: undefined },
   accountColumn,
   categoryColumn<Transaction>(),
   descriptionColumn<Transaction>(),
