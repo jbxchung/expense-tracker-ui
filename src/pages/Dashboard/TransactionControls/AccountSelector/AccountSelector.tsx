@@ -38,7 +38,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
   }
 
   return (
-    <Card title="Accounts">
+    <div className={styles.accountSelector}>
       <Link to="/accounts">
         <Button className={styles.manageAccountsButton} variant={ButtonVariants.GHOST} title="Manage Accounts">
           Manage
@@ -65,7 +65,7 @@ const AccountSelector: FC<AccountSelectorProps> = ({
         </div>
       )}
       </div>
-    </Card>
+    </div>
   );
 };
 

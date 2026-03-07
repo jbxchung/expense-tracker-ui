@@ -1,36 +1,17 @@
-import { useState, useEffect, type FC } from 'react';
+import { useState, useEffect, type FC, useMemo } from 'react';
 
 import { useAppContext } from 'contexts/app/AppContext';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTransactions } from 'hooks/transactions/useTransactions';
 
-import DatePicker, { DatePickerModes, type DateRange } from 'components/DatePicker/DatePicker';
+import type { DateRange } from 'components/DatePicker/DatePicker';
 
-import AccountSelector from './AccountSelector/AccountSelector';
+import TransactionControls from './TransactionControls/TransactionControls';
+import { TRANSACTIONS_DATEPICKER_PRESETS } from './TransactionControls/presets';
 import Transactions from './Transactions/Transactions';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
 const STORED_SELECTED_DATE_PRESET_INDEX_KEY = 'selectedDatePresetIndex';
-
-const TRANSACTIONS_DATEPICKER_PRESETS = [
-  { label: "Last 7 Days", getRange: () => ({ from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), to: new Date() }) },
-  { label: "This Month", getRange: () => {
-    const now = new Date();
-    return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: new Date() };
-  }},
-  { label: "Last Month", getRange: () => {
-    const now = new Date();
-    return { from: new Date(now.getFullYear(), now.getMonth() - 1, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
-  }},
-  { label: "Last 3 Months", getRange: () => {
-    const now = new Date();
-    return { from: new Date(now.getFullYear(), now.getMonth() - 3, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
-  }},
-  { label: "YTD", getRange: () => {
-    const now = new Date();
-    return { from: new Date(now.getFullYear(), 0, 1), to: now };
-  }},
-];
 
 const Dashboard: FC = () => {
   const { accounts, accountsLoading, accountsError } = useAppContext();
@@ -54,9 +35,9 @@ const Dashboard: FC = () => {
 
   // date range selection / preset persistence
   const [selectedDatePresetIndex, setSelectedDatePresetIndex] = useLocalStorage<number>(STORED_SELECTED_DATE_PRESET_INDEX_KEY, 0);
-  const [dateRange, setDateRange] = useState<DateRange>(
-    () => TRANSACTIONS_DATEPICKER_PRESETS[selectedDatePresetIndex].getRange()
-  );
+  // memoize the default date range
+  const initialDateRange = useMemo(() => TRANSACTIONS_DATEPICKER_PRESETS[selectedDatePresetIndex].getRange(), [selectedDatePresetIndex]);
+  const [dateRange, setDateRange] = useState<DateRange>(initialDateRange);
 
   const onDateRangeChanged = (range: DateRange) => {
     if (range.from && range.to) setDateRange(range);
@@ -70,22 +51,16 @@ const Dashboard: FC = () => {
   });
 
   return (<>
-    <AccountSelector
+    <TransactionControls
       accounts={accounts}
-      isLoading={accountsLoading}
-      error={accountsError}
-      selectedIds={selectedAccountIds}
-      onToggle={toggleAccount}
-    />
-    <DatePicker
-      mode={DatePickerModes.RANGE}
-      range={dateRange}
-      onChange={range => onDateRangeChanged(range as DateRange)}
-      presets={TRANSACTIONS_DATEPICKER_PRESETS}
-      selectedPresetIndex={selectedDatePresetIndex}
-      onPresetSelected={preset => {
-        setSelectedDatePresetIndex(preset ? TRANSACTIONS_DATEPICKER_PRESETS.findIndex(p => p.label === preset.label) : 0);
-      }}
+      accountsLoading={accountsLoading}
+      accountsError={accountsError}
+      selectedAccountIds={selectedAccountIds}
+      onToggleAccount={toggleAccount}
+      dateRange={dateRange}
+      selectedDatePresetIndex={selectedDatePresetIndex}
+      onPresetSelected={preset => setSelectedDatePresetIndex(preset?.index ?? 0)}
+      onDateRangeChanged={onDateRangeChanged}
     />
     {/* charts card goes here later, receives transactions */}
     <Transactions

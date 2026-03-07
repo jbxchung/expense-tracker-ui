@@ -18,7 +18,8 @@ export const DatePickerModes = {
 } as const;
 export type DatePickerMode = typeof DatePickerModes[keyof typeof DatePickerModes];
 
-type DateRangePreset = {
+export type DateRangePreset = {
+  index: number;
   label: string;
   getRange: () => DateRange;
 }
@@ -92,7 +93,7 @@ const DatePicker: FC<DatePickerProps> = ({
     }
   };
 
-  const handlePresetClick = (preset: { label: string; getRange: () => DateRange }) => {
+  const handlePresetClick = (preset: DateRangePreset) => {
     const presetRange = preset.getRange();
     const normalizedRange: DateRange = {
       from: presetRange.from ? normalizeStart(presetRange.from) : null,
@@ -106,7 +107,7 @@ const DatePicker: FC<DatePickerProps> = ({
   return (
     <div className={styles.datePickerWrapper}>
       {mode === DatePickerModes.SINGLE ? (
-        // TODO - custom month and year dropdown because builti select isnt easily styleable
+        // TODO - custom month and year dropdown because builtin select isnt easily styleable
         <ReactDatePicker
           customInput={<Input placeholder='Select a date' />}
           selected={value}
