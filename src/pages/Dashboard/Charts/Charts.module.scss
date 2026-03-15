@@ -60,32 +60,3 @@
   color: var(--color-text-secondary);
   font-size: 0.875rem;
 }
-
-.tooltip {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  color: var(--color-text-primary);
-
-  .tooltip-title {
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-  
-  .tooltip-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.25rem;
-    margin-bottom: 0.25rem;
-
-    .positive {
-      color: var(--color-success);
-    }
-
-    .negative {
-      color: var(--color-error);
-    }
-  }
-}
