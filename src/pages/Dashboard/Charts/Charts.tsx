@@ -4,8 +4,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as BarTooltip,
 } from 'recharts';
 
-import type { Transaction } from 'types/transaction';
+import { type Account, AccountTypes } from 'types/account';
 import type { Category } from 'types/category';
+import type { Transaction } from 'types/transaction';
 
 import { useCategoryTree } from 'hooks/categories/useCategories';
 import { flattenTree } from 'utils/treeUtils';
@@ -20,7 +21,11 @@ type TimeBucket = 'daily' | 'weekly' | 'monthly';
 interface ChartsProps {
   transactions: Transaction[];
   dateRange: { from: Date; to: Date };
+  accounts: Account[];
 }
+
+// bar chart bucket types for grouping by account ID
+type SpendingByAccount = Record<string, number>;
 
 // auto-select bucket based on date range span
 function getDefaultBucket(from: Date, to: Date): TimeBucket {
@@ -55,7 +60,7 @@ const CHART_COLORS = [
   'var(--color-chart-8, #f97316)',
 ];
 
-const Charts: FC<ChartsProps> = ({ transactions, dateRange }) => {
+const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   const { categoryTree } = useCategoryTree();
 
   const flatCategories = useMemo(
@@ -70,13 +75,25 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange }) => {
   const [bucketOverride, setBucketOverride] = useState<TimeBucket | null>(null);
   const bucket = bucketOverride ?? getDefaultBucket(dateRange.from, dateRange.to);
 
-  // spending transactions only (negative amounts)
+  // spending transactions only
   const spendingTransactions = useMemo(
-    () => transactions.filter(tx => Number(tx.amount) < 0),
-    [transactions]
+    () => transactions.filter(tx => {
+      const account = accounts.find(a => a.id === tx.accountId);
+      if (!account) return false;
+      // if account type is credit, treat positive amounts as spending
+      return account.type === AccountTypes.CREDIT_CARD
+        ? Number(tx.amount) > 0
+        : Number(tx.amount) < 0;
+    }),
+    [accounts, transactions]
   );
 
-  // pie chart data — group by selected or top-level categories
+  const accountIds = useMemo(
+    () => [...new Set(spendingTransactions.map(tx => tx.accountId))],
+    [spendingTransactions]
+  );
+
+  // pie chart data - group by selected or top-level categories
   const pieData = useMemo(() => {
     const topLevelIds = flatCategories.filter(c => c.depth === 0).map(c => c.id);
 
@@ -111,18 +128,25 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange }) => {
     })).sort((a, b) => b.value - a.value);
   }, [spendingTransactions, flatCategories, selectedCategoryIds]);
 
-  // bar chart data — group by time bucket
+  // bar chart data - group by time bucket
   const barData = useMemo(() => {
-    const buckets = new Map<string, number>();
+    const sorted = [...spendingTransactions].sort((a, b) => (
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    ));
 
-    for (const tx of spendingTransactions) {
+    const buckets = new Map<string, SpendingByAccount>();
+
+    for (const tx of sorted) {
       const key = getBucketKey(new Date(tx.date), bucket);
-      buckets.set(key, (buckets.get(key) ?? 0) + Math.abs(Number(tx.amount)));
+      // buckets.set(key, (buckets.get(key) ?? 0) + Math.abs(Number(tx.amount)));
+      if (!buckets.has(key)) buckets.set(key, {});
+      const entry = buckets.get(key)!;
+      entry[tx.accountId] = (entry[tx.accountId] ?? 0) + Math.abs(Number(tx.amount));
     }
 
-    return Array.from(buckets.entries()).map(([date, amount]) => ({
+    return Array.from(buckets.entries()).map(([date, amounts]) => ({
       date,
-      amount: parseFloat(amount.toFixed(2)),
+      ...amounts,
     }));
   }, [spendingTransactions, bucket]);
 
@@ -199,8 +223,23 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange }) => {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
               <YAxis tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} tickFormatter={v => `$${v}`} />
-              <BarTooltip formatter={value => [`$${((value ?? 0) as number).toFixed(2)}`, 'Spending']} />
-              <Bar dataKey="amount" fill="var(--color-chart-1, #6366f1)" radius={[4, 4, 0, 0]} />
+              {/* <BarTooltip formatter={value => [`$${((value ?? 0) as number).toFixed(2)}`, 'Spending']} /> */}
+              <BarTooltip
+                formatter={(value, name) => {
+                  const account = accounts.find(a => a.id === name);
+                  return [`$${(value as number).toFixed(2)}`, account?.name ?? name];
+                }}
+              />
+              <Legend formatter={name => accounts.find(a => a.id === name)?.name ?? name} />
+              {accountIds.map((accountId, i) => (
+                <Bar
+                  key={accountId}
+                  dataKey={accountId}
+                  stackId="spending"
+                  fill={CHART_COLORS[i % CHART_COLORS.length]}
+                  radius={i === accountIds.length - 1 ? [4, 4, 0, 0] : undefined}
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         )}

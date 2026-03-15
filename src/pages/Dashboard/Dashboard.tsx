@@ -64,7 +64,7 @@ const Dashboard: FC = () => {
       onDateRangeChanged={onDateRangeChanged}
     />
     {/* charts card goes here later, receives transactions */}
-    <Charts transactions={transactions} dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
+    <Charts accounts={accounts} transactions={transactions} dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
     <Transactions
       accountsLoading={accountsLoading}
       isLoading={isLoading}
