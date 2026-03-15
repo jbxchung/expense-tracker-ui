@@ -1,7 +1,7 @@
 import { useMemo, useState, type FC } from 'react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as BarTooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
 
 import { type Account, AccountTypes } from 'types/account';
@@ -17,6 +17,7 @@ import MultiSelect from 'components/Multiselect/Multiselect';
 import PieTooltip from './Tooltips/PieTooltip';
 
 import styles from './Charts.module.scss';
+import BarTooltip from './Tooltips/BarTooltip';
 
 type TimeBucket = 'daily' | 'weekly' | 'monthly';
 
@@ -238,13 +239,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
               <YAxis tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} tickFormatter={v => `$${v}`} />
-              {/* <BarTooltip formatter={value => [`$${((value ?? 0) as number).toFixed(2)}`, 'Spending']} /> */}
-              <BarTooltip
-                formatter={(value, name) => {
-                  const account = accounts.find(a => a.id === name);
-                  return [`$${(value as number).toFixed(2)}`, account?.name ?? name];
-                }}
-              />
+              <Tooltip content={<BarTooltip accounts={accounts} />} />
               <Legend formatter={name => accounts.find(a => a.id === name)?.name ?? name} />
               {accountIds.map((accountId, i) => (
                 <Bar
