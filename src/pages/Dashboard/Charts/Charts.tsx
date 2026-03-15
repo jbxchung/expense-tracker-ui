@@ -81,41 +81,27 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   // selected category ids for pie drill-down — empty means top-level only
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
 
-  // bucket override — null means auto
+  // manual bucket select, null means auto
   const [bucketOverride, setBucketOverride] = useState<TimeBucket | null>(null);
   const bucket = bucketOverride ?? getDefaultBucket(dateRange.from, dateRange.to);
 
-  // normalize transactions for spending charts
-  const normalizedTransactions = transactions;
-  // const normalizedTransactions = useMemo(
-  //   () => transactions.filter(tx => {
-  //     const account = accounts.find(a => a.id === tx.accountId);
-  //     if (!account) return false;
-  //     // if account type is credit, treat positive amounts as spending
-  //     return account.type === AccountTypes.CREDIT_CARD
-  //       ? Number(tx.amount) > 0
-  //       : Number(tx.amount) < 0;
-  //   }),
-  //   [accounts, transactions]
-  // );
-
   const accountIds = useMemo(
-    () => [...new Set(normalizedTransactions.map(tx => tx.accountId))],
-    [normalizedTransactions]
+    () => [...new Set(transactions.map(tx => tx.accountId))],
+    [transactions]
   );
 
   // pie chart data - group by selected or top-level categories
   const pieData = useMemo(() => {
-    const topLevelIds = flatCategories.filter(c => c.depth === 0).map(c => c.id);
+    const topLevelCategoryIds = flatCategories.filter(c => c.depth === 0).map(c => c.id);
 
     // determine which category ids to group by
     const groupIds = selectedCategoryIds.length > 0
       ? selectedCategoryIds
-      : topLevelIds;
+      : topLevelCategoryIds;
 
     const totals = new Map<string, { net: number; positive: number; negative: number }>();
 
-    for (const tx of normalizedTransactions) {
+    for (const tx of transactions) {
       if (!tx.categoryId) continue;
 
       // find which group this transaction belongs to
@@ -152,11 +138,11 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       negativeTotal: parseFloat(entry.negative.toFixed(2)),
       fill: CHART_COLORS[i % CHART_COLORS.length],
     })).sort((a, b) => b.value - a.value);
-  }, [accounts, normalizedTransactions, flatCategories, selectedCategoryIds]);
+  }, [accounts, transactions, flatCategories, selectedCategoryIds]);
 
   // bar chart data - group by time bucket
   const barData = useMemo(() => {
-    const sorted = [...normalizedTransactions].sort((a, b) => (
+    const sorted = [...transactions].sort((a, b) => (
       new Date(a.date).getTime() - new Date(b.date).getTime()
     ));
 
@@ -174,7 +160,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       date,
       ...amounts,
     }));
-  }, [normalizedTransactions, bucket]);
+  }, [transactions, bucket]);
 
   const categoryOptions = useMemo(
     () => flatCategories.map(c => ({
