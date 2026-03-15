@@ -8,6 +8,7 @@ import type { DateRange } from 'components/DatePicker/DatePicker';
 
 import TransactionControls from './TransactionControls/TransactionControls';
 import { TRANSACTIONS_DATEPICKER_PRESETS } from './TransactionControls/presets';
+import Charts from './Charts/Charts';
 import Transactions from './Transactions/Transactions';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
@@ -63,6 +64,7 @@ const Dashboard: FC = () => {
       onDateRangeChanged={onDateRangeChanged}
     />
     {/* charts card goes here later, receives transactions */}
+    <Charts transactions={transactions} dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
     <Transactions
       accountsLoading={accountsLoading}
       isLoading={isLoading}
