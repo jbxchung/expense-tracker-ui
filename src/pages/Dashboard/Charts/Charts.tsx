@@ -131,8 +131,8 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
 
     return Array.from(totals.entries()).map(([id, entry], i) => ({
       name: flatCategories.find(c => c.id === id)?.name ?? id,
-      // pie chart should show absolute value of spending only
-      value: Math.abs(parseFloat(entry.negative.toFixed(2))),
+      // pie chart should show absolute value
+      value: Math.abs(parseFloat(entry.net.toFixed(2))),
       // show tooltip values
       net: parseFloat(entry.net.toFixed(2)),
       positiveTotal: parseFloat(entry.positive.toFixed(2)),
