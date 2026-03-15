@@ -51,6 +51,14 @@ function getBucketKey(date: Date, bucket: TimeBucket): string {
   return d.toLocaleDateString('default', { month: 'short', year: 'numeric' });
 }
 
+const normalizeAmount = (tx: Transaction, accounts: Account[]): number => {
+  const account = accounts.find(a => a.id === tx.accountId);
+  if (account?.type === AccountTypes.CREDIT_CARD) {
+    return -Number(tx.amount); // flip: positive charge becomes negative (spending)
+  }
+  return Number(tx.amount);
+};
+
 const CHART_COLORS = [
   'var(--color-chart-1, #6366f1)',
   'var(--color-chart-2, #f59e0b)',
@@ -77,22 +85,23 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   const [bucketOverride, setBucketOverride] = useState<TimeBucket | null>(null);
   const bucket = bucketOverride ?? getDefaultBucket(dateRange.from, dateRange.to);
 
-  // // spending transactions only
-  const spendingTransactions = useMemo(
-    () => transactions.filter(tx => {
-      const account = accounts.find(a => a.id === tx.accountId);
-      if (!account) return false;
-      // if account type is credit, treat positive amounts as spending
-      return account.type === AccountTypes.CREDIT_CARD
-        ? Number(tx.amount) > 0
-        : Number(tx.amount) < 0;
-    }),
-    [accounts, transactions]
-  );
+  // normalize transactions for spending charts
+  const normalizedTransactions = transactions;
+  // const normalizedTransactions = useMemo(
+  //   () => transactions.filter(tx => {
+  //     const account = accounts.find(a => a.id === tx.accountId);
+  //     if (!account) return false;
+  //     // if account type is credit, treat positive amounts as spending
+  //     return account.type === AccountTypes.CREDIT_CARD
+  //       ? Number(tx.amount) > 0
+  //       : Number(tx.amount) < 0;
+  //   }),
+  //   [accounts, transactions]
+  // );
 
   const accountIds = useMemo(
-    () => [...new Set(spendingTransactions.map(tx => tx.accountId))],
-    [spendingTransactions]
+    () => [...new Set(normalizedTransactions.map(tx => tx.accountId))],
+    [normalizedTransactions]
   );
 
   // pie chart data - group by selected or top-level categories
@@ -106,7 +115,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
 
     const totals = new Map<string, { net: number; positive: number; negative: number }>();
 
-    for (const tx of spendingTransactions) {
+    for (const tx of normalizedTransactions) {
       if (!tx.categoryId) continue;
 
       // find which group this transaction belongs to
@@ -123,7 +132,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
           totals.set(groupId, { net: 0, positive: 0, negative: 0 });
         }
         const entry = totals.get(groupId)!;
-        const amount = Number(tx.amount);
+        const amount = normalizeAmount(tx, accounts);
         entry.net += amount;
         if (amount > 0) {
           entry.positive += amount;
@@ -135,17 +144,19 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
 
     return Array.from(totals.entries()).map(([id, entry], i) => ({
       name: flatCategories.find(c => c.id === id)?.name ?? id,
-      value: Math.abs(parseFloat(entry.net.toFixed(2))), // absolute for pie rendering
-      net: parseFloat(entry.net.toFixed(2)),   // actual net value for tooltip
+      // pie chart should show absolute value of spending only
+      value: Math.abs(parseFloat(entry.negative.toFixed(2))),
+      // show tooltip values
+      net: parseFloat(entry.net.toFixed(2)),
       positiveTotal: parseFloat(entry.positive.toFixed(2)),
       negativeTotal: parseFloat(entry.negative.toFixed(2)),
       fill: CHART_COLORS[i % CHART_COLORS.length],
     })).sort((a, b) => b.value - a.value);
-  }, [spendingTransactions, flatCategories, selectedCategoryIds]);
+  }, [accounts, normalizedTransactions, flatCategories, selectedCategoryIds]);
 
   // bar chart data - group by time bucket
   const barData = useMemo(() => {
-    const sorted = [...spendingTransactions].sort((a, b) => (
+    const sorted = [...normalizedTransactions].sort((a, b) => (
       new Date(a.date).getTime() - new Date(b.date).getTime()
     ));
 
@@ -163,7 +174,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       date,
       ...amounts,
     }));
-  }, [spendingTransactions, bucket]);
+  }, [normalizedTransactions, bucket]);
 
   const categoryOptions = useMemo(
     () => flatCategories.map(c => ({
@@ -208,7 +219,6 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              {/* <PieTooltip formatter={(value) => `$${((value ?? 0) as number).toFixed(2)}`} /> */}
               <PieTooltip content={<PieTooltipContent />} />
               <Legend />
             </PieChart>
