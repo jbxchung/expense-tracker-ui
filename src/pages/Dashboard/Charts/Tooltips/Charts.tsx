@@ -14,7 +14,7 @@ import { flattenTree } from 'utils/treeUtils';
 import Card from 'components/Card/Card';
 import MultiSelect from 'components/Multiselect/Multiselect';
 
-import { PieTooltipContent } from './PieTooltipContent';
+import { PieTooltipContent } from '../PieTooltipContent';
 
 import styles from './Charts.module.scss';
 
@@ -137,7 +137,9 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       positiveTotal: parseFloat(entry.positive.toFixed(2)),
       negativeTotal: parseFloat(entry.negative.toFixed(2)),
       fill: CHART_COLORS[i % CHART_COLORS.length],
-    })).sort((a, b) => b.value - a.value);
+    }))
+    .filter(entry => entry.net < 0) // only include categories with net spending
+    .sort((a, b) => b.value - a.value);
   }, [accounts, transactions, flatCategories, selectedCategoryIds]);
 
   // bar chart data - group by time bucket

@@ -8,7 +8,7 @@ import type { DateRange } from 'components/DatePicker/DatePicker';
 
 import TransactionControls from './TransactionControls/TransactionControls';
 import { TRANSACTIONS_DATEPICKER_PRESETS } from './TransactionControls/presets';
-import Charts from './Charts/Charts';
+import Charts from './Charts/Tooltips/Charts';
 import Transactions from './Transactions/Transactions';
 
 const STORED_SELECTED_ACCOUNTS_KEY = 'selectedAccountIds';
