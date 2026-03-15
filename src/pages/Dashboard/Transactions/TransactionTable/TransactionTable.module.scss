@@ -66,6 +66,10 @@
 }
 
 // column-specific styles
-.amountColumn {
+.account-column {
+  white-space: nowrap;
+}
+
+.amount-column {
   text-align: right;
 }

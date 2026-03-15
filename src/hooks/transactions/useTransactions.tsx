@@ -24,7 +24,7 @@ export const useTransactions = ({ accountIds, from, to }: UseTransactionsOptions
     setError(null);
     try {
       const txs = await fetchTransactions(accountIds, from, to, skipCache);
-      setTransactions(txs);
+      setTransactions([...txs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (e) {
       setError(e as Error);
     } finally {
