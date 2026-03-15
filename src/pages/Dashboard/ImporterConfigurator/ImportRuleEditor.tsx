@@ -6,6 +6,7 @@ import {
   FieldMappingRuleConditionTypeLabels,
   FieldMappingRuleConditionTypes,
   type FieldMappingRule,
+  type FieldMappingRuleAction,
   type FieldMappingRuleActionType,
   type FieldMappingRuleCondition,
   type FieldMappingRuleConditionType,
@@ -19,12 +20,14 @@ import Input from 'components/Input/Input';
 import styles from './ImporterConfigurator.module.scss';
 import MultiValueInput from 'components/MultiValueInput/MultiValueInput';
 import Button, { ButtonVariants } from 'components/Button/Button';
+import Checkbox from 'components/Checkbox/Checkbox';
 
 interface ImportRuleEditorProps {
   rule: FieldMappingRule;
   onChange: (rule: FieldMappingRule) => void;
   onDelete: () => void;
   availableSourceFields: string[];
+  isAmountField: boolean;
   isCategoryField: boolean;
 }
 
@@ -33,6 +36,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
   onChange,
   onDelete,
   availableSourceFields,
+  isAmountField,
   isCategoryField,
 }) => {
   const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategoryList();
@@ -55,7 +59,8 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
         ...prev.condition,
         column,
       },
-    }));
+    })
+  );
 
   const handleConditionTypeChanged = (type: FieldMappingRuleConditionType) =>
     updateRule(prev => ({
@@ -69,7 +74,8 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
         includes: undefined,
         regex: undefined,
       },
-    }));
+    })
+  );
 
   const handleActionTypeChanged = (type: FieldMappingRuleActionType) =>
     updateRule(prev => ({
@@ -77,25 +83,18 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
       action: {
         type,
       },
-    }));
+    })
+  );
 
-  const handleActionColumnChanged = (column: string) =>
+  const handleActionChanged = (update: Partial<FieldMappingRuleAction>) =>
     updateRule(prev => ({
       ...prev,
       action: {
         ...prev.action,
-        column,
+        ...update,
       },
-    }));
-
-  const handleActionValueChanged = (value: string) =>
-    updateRule(prev => ({
-      ...prev,
-      action: {
-        ...prev.action,
-        value,
-      },
-    }));
+    })
+  );
 
   const handleStringMatchChanged = (input: string[]) => {
     const values = input.filter(Boolean);
@@ -179,7 +178,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
         suppressArrow
       />
 
-      {rule.action.type === FieldMappingRuleActionTypes.USE_COLUMN && (
+      {rule.action.type === FieldMappingRuleActionTypes.USE_COLUMN && (<>
         <Dropdown
           className={styles.importRuleDropdown}
           options={availableSourceFields.map(field => ({
@@ -187,9 +186,19 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
             label: field,
           }))}
           value={rule.action.column}
-          onChange={handleActionColumnChanged}
+          onChange={column => handleActionChanged({ column })}
           suppressArrow
         />
+        {isAmountField && (
+          <Checkbox
+            label="Negate"
+            title="Credit Card transactions should have positive charges and negative payments"
+            className={styles.negateCheckbox}
+            value={rule.action.negate ?? false}
+            onChange={value => handleActionChanged({ negate: value })}
+          />
+        )}
+      </>
       )}
 
       {rule.action.type === FieldMappingRuleActionTypes.SET_VALUE && (
@@ -201,12 +210,12 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
               label: category.name,
             }))}
             value={rule.action.value}
-            onChange={handleActionValueChanged}
+            onChange={value => handleActionChanged({ value })}
           />
         ) : (
           <Input
             value={rule.action.value ?? ''}
-            onChange={e => handleActionValueChanged(e.target.value)}
+            onChange={e => handleActionChanged({ value: e.target.value })}
           />
         )
       )}

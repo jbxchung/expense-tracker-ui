@@ -78,6 +78,7 @@ const ImportFieldEditor: FC<ImportFieldEditorProps> = ({
             onChange={newRule => handleRuleChange(rule.id, newRule)}
             onDelete={() => handleRuleDelete(rule.id)}
             availableSourceFields={availableSourceFields}
+            isAmountField={fieldConfig.field === DEFAULT_IMPORTER.mapping.amount.field}
             isCategoryField={fieldConfig.field === DEFAULT_IMPORTER.mapping.categoryId.field}
           />
         )}

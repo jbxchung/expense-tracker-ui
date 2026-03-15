@@ -38,7 +38,8 @@ export type FieldMappingRuleAction = {
   type: 'useColumn' | 'setValue';
   column?: string;
   value?: string;
-  // transform?: 'uppercase' | 'lowercase' | 'trim';
+  negate?: boolean;                                   // for numeric fields e.g. amount
+  // transform?: 'uppercase' | 'lowercase' | 'trim';  // todo - string transformations?
 }
 export const FieldMappingRuleActionTypes = {
   USE_COLUMN: 'useColumn',

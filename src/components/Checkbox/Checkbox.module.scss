@@ -1,0 +1,19 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  user-select: none;
+  color: var(--color-text-primary);
+
+  &:hover .checkbox {
+    color: var(--color-primary);
+  }
+}
+
+.checkbox {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-primary);
+}
