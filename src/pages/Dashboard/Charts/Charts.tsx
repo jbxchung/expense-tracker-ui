@@ -14,6 +14,8 @@ import { flattenTree } from 'utils/treeUtils';
 import Card from 'components/Card/Card';
 import MultiSelect from 'components/Multiselect/Multiselect';
 
+import { PieTooltipContent } from './PieTooltipContent';
+
 import styles from './Charts.module.scss';
 
 type TimeBucket = 'daily' | 'weekly' | 'monthly';
@@ -75,7 +77,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   const [bucketOverride, setBucketOverride] = useState<TimeBucket | null>(null);
   const bucket = bucketOverride ?? getDefaultBucket(dateRange.from, dateRange.to);
 
-  // spending transactions only
+  // // spending transactions only
   const spendingTransactions = useMemo(
     () => transactions.filter(tx => {
       const account = accounts.find(a => a.id === tx.accountId);
@@ -102,11 +104,10 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       ? selectedCategoryIds
       : topLevelIds;
 
-    const totals = new Map<string, number>();
+    const totals = new Map<string, { net: number; positive: number; negative: number }>();
 
     for (const tx of spendingTransactions) {
       if (!tx.categoryId) continue;
-      const amount = Math.abs(Number(tx.amount));
 
       // find which group this transaction belongs to
       const cat = flatCategories.find(c => c.id === tx.categoryId);
@@ -118,13 +119,27 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
       );
 
       if (groupId) {
-        totals.set(groupId, (totals.get(groupId) ?? 0) + amount);
+        if (!totals.has(groupId)) {
+          totals.set(groupId, { net: 0, positive: 0, negative: 0 });
+        }
+        const entry = totals.get(groupId)!;
+        const amount = Number(tx.amount);
+        entry.net += amount;
+        if (amount > 0) {
+          entry.positive += amount;
+        } else {
+          entry.negative += amount;
+        }
       }
     }
 
-    return Array.from(totals.entries()).map(([id, value]) => ({
+    return Array.from(totals.entries()).map(([id, entry], i) => ({
       name: flatCategories.find(c => c.id === id)?.name ?? id,
-      value: parseFloat(value.toFixed(2)),
+      value: Math.abs(parseFloat(entry.net.toFixed(2))), // absolute for pie rendering
+      net: parseFloat(entry.net.toFixed(2)),   // actual net value for tooltip
+      positiveTotal: parseFloat(entry.positive.toFixed(2)),
+      negativeTotal: parseFloat(entry.negative.toFixed(2)),
+      fill: CHART_COLORS[i % CHART_COLORS.length],
     })).sort((a, b) => b.value - a.value);
   }, [spendingTransactions, flatCategories, selectedCategoryIds]);
 
@@ -187,12 +202,14 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
                 outerRadius={100}
                 label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
+                isAnimationActive={false}
               >
                 {pieData.map((_, i) => (
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              <PieTooltip formatter={(value) => `$${((value ?? 0) as number).toFixed(2)}`} />
+              {/* <PieTooltip formatter={(value) => `$${((value ?? 0) as number).toFixed(2)}`} /> */}
+              <PieTooltip content={<PieTooltipContent />} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
