@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -26,15 +26,21 @@ type TransactionTableProps<T> = {
 };
 
 export function TransactionTable<T>({ data, columns, accounts = [], categories = [], onRowChange }: TransactionTableProps<T>) {
-  const [hoveredCell, setHoveredCell] = React.useState<{ rowIndex: number; columnId: string } | null>(null);
-  const [editingCell, setEditingCell] = React.useState<{ rowIndex: number; columnId: string } | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<{ rowIndex: number; columnId: string } | null>(null);
+  const [editingCell, setEditingCell] = useState<{ rowIndex: number; columnId: string } | null>(null);
 
-  const updateCellValue = React.useCallback(
+  const updateCellValue = useCallback(
     (rowIndex: number, columnId: keyof T, value: any) => {
       onRowChange?.(rowIndex, columnId, value);
     },
     [onRowChange]
   );
+
+  const nonSpendingCategoryIds = useMemo(() => new Set(
+    categories
+      .filter(c => c.excludeFromReports)
+      .flatMap(c => [c.id, ...(c.descendantIds ?? [])])
+  ), [categories]);
 
   const table = useReactTable({
     data,
@@ -87,7 +93,10 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr
+              key={row.id}
+              className={nonSpendingCategoryIds.has((row.original as any).categoryId) ? styles.balancedCategory : ''}
+            >
               {row.getVisibleCells().map((cell) => {
                 const col = cell.column.columnDef as EditableColumnDef<T>;
                 const isHovered = hoveredCell?.rowIndex === row.index && hoveredCell?.columnId === cell.column.id;

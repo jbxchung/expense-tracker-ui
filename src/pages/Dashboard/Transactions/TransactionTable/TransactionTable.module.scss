@@ -50,6 +50,11 @@
 
   }
 
+  tr.balanced-category {
+    color: var(--color-text-secondary);
+    background-color: var(--color-secondary-disabled);
+  }
+
   // edit styles
   td.editing {
     padding: 0;
