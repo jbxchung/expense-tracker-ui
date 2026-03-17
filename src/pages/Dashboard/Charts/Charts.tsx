@@ -15,9 +15,9 @@ import Card from 'components/Card/Card';
 import MultiSelect from 'components/Multiselect/Multiselect';
 
 import PieTooltip from './Tooltips/PieTooltip';
+import BarTooltip from './Tooltips/BarTooltip';
 
 import styles from './Charts.module.scss';
-import BarTooltip from './Tooltips/BarTooltip';
 
 type TimeBucket = 'daily' | 'weekly' | 'monthly';
 
@@ -27,10 +27,8 @@ interface ChartsProps {
   accounts: Account[];
 }
 
-// bar chart bucket types for grouping by account ID
 type SpendingByAccount = Record<string, number>;
 
-// auto-select bucket based on date range span
 function getDefaultBucket(from: Date, to: Date): TimeBucket {
   const days = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
   if (days <= 14) return 'daily';
@@ -44,7 +42,6 @@ function getBucketKey(date: Date, bucket: TimeBucket): string {
     return d.toLocaleDateString('default', { month: 'short', day: 'numeric' });
   }
   if (bucket === 'weekly') {
-    // start of week
     const day = d.getDay();
     d.setDate(d.getDate() - day);
     return d.toLocaleDateString('default', { month: 'short', day: 'numeric' });
@@ -55,7 +52,7 @@ function getBucketKey(date: Date, bucket: TimeBucket): string {
 const normalizeAmount = (tx: Transaction, accounts: Account[]): number => {
   const account = accounts.find(a => a.id === tx.accountId);
   if (account?.type === AccountTypes.CREDIT_CARD) {
-    return -Number(tx.amount); // flip: positive charge becomes negative (spending)
+    return -Number(tx.amount);
   }
   return Number(tx.amount);
 };
@@ -79,7 +76,14 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
     [categoryTree]
   );
 
-  // selected category ids for pie drill-down — empty means top-level only
+  // category ids excluded from reports, including all descendants
+  const excludedCategoryIds = useMemo(() => new Set(
+    flatCategories
+      .filter(c => c.excludeFromReports)
+      .flatMap(c => [c.id, ...c.descendantIds])
+  ), [flatCategories]);
+
+  // selected category ids for pie drill-down, empty means top-level only
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
 
   // manual bucket select, null means auto
@@ -95,7 +99,6 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   const pieData = useMemo(() => {
     const topLevelCategoryIds = flatCategories.filter(c => c.depth === 0).map(c => c.id);
 
-    // determine which category ids to group by
     const groupIds = selectedCategoryIds.length > 0
       ? selectedCategoryIds
       : topLevelCategoryIds;
@@ -104,12 +107,11 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
 
     for (const tx of transactions) {
       if (!tx.categoryId) continue;
+      if (excludedCategoryIds.has(tx.categoryId)) continue;
 
-      // find which group this transaction belongs to
       const cat = flatCategories.find(c => c.id === tx.categoryId);
       if (!cat) continue;
 
-      // check if tx.categoryId is a descendant of any group id
       const groupId = groupIds.find(id =>
         id === tx.categoryId || cat.ancestorIds.includes(id)
       );
@@ -131,49 +133,54 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
 
     return Array.from(totals.entries()).map(([id, entry], i) => ({
       name: flatCategories.find(c => c.id === id)?.name ?? id,
-      // pie chart should show absolute value
       value: Math.abs(parseFloat(entry.net.toFixed(2))),
-      // show tooltip values
       net: parseFloat(entry.net.toFixed(2)),
       positiveTotal: parseFloat(entry.positive.toFixed(2)),
       negativeTotal: parseFloat(entry.negative.toFixed(2)),
       fill: CHART_COLORS[i % CHART_COLORS.length],
     }))
-    .filter(entry => entry.net < 0) // only include categories with net spending
+    .filter(entry => entry.net < 0)
     .sort((a, b) => b.value - a.value);
-  }, [accounts, transactions, flatCategories, selectedCategoryIds]);
+  }, [accounts, transactions, flatCategories, selectedCategoryIds, excludedCategoryIds]);
 
-  // bar chart data - group by time bucket
+  // bar chart data - group by time bucket and account, excluding excluded categories
   const barData = useMemo(() => {
-    const sorted = [...transactions].sort((a, b) => (
+    const sorted = [...transactions].sort((a, b) =>
       new Date(a.date).getTime() - new Date(b.date).getTime()
-    ));
+    );
 
     const buckets = new Map<string, SpendingByAccount>();
 
     for (const tx of sorted) {
+      if (!tx.categoryId) continue;
+      if (excludedCategoryIds.has(tx.categoryId)) continue;
+
+      const amount = normalizeAmount(tx, accounts);
+      if (amount >= 0) continue;
+
       const key = getBucketKey(new Date(tx.date), bucket);
-      // buckets.set(key, (buckets.get(key) ?? 0) + Math.abs(Number(tx.amount)));
       if (!buckets.has(key)) buckets.set(key, {});
       const entry = buckets.get(key)!;
-      entry[tx.accountId] = (entry[tx.accountId] ?? 0) + Math.abs(Number(tx.amount));
+      entry[tx.accountId] = (entry[tx.accountId] ?? 0) + Math.abs(amount);
     }
 
     return Array.from(buckets.entries()).map(([date, amounts]) => ({
       date,
       ...amounts,
     }));
-  }, [transactions, bucket]);
+  }, [accounts, transactions, bucket, excludedCategoryIds]);
 
   const categoryOptions = useMemo(
-    () => flatCategories.map(c => ({
-      value: c.id,
-      label: c.name,
-      depth: c.depth,
-      descendantIds: c.descendantIds,
-      ancestorIds: c.ancestorIds,
-    })),
-    [flatCategories]
+    () => flatCategories
+      .filter(c => !excludedCategoryIds.has(c.id))
+      .map(c => ({
+        value: c.id,
+        label: c.name,
+        depth: c.depth,
+        descendantIds: c.descendantIds,
+        ancestorIds: c.ancestorIds,
+      })),
+    [flatCategories, excludedCategoryIds]
   );
 
   return (

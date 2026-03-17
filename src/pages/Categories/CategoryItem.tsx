@@ -44,8 +44,8 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit, onAddChild, onD
       </div>
       <Checkbox
         className={styles.excludeFromReports}
-        label="Exclude from reports"
-        title="Exclude this category and its transactions from all reports and charts (useful for balancing payments and account transfers)"
+        label="Non-Spending"
+        title="Exclude this category and its transactions from spending reports and charts (useful for balancing payments and account transfers)"
         value={category.excludeFromReports}
         onChange={excludeFromReports => onEdit({ ...category, excludeFromReports })}
       />
