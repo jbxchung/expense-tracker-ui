@@ -37,13 +37,11 @@ const AccountSelector: FC<AccountSelectorProps> = ({
     );
   }
 
+  // sort accounts alphabetically by name
+  accounts.sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className={styles.accountSelector}>
-      {/* <Link to="/accounts">
-        <Button className={styles.manageAccountsButton} variant={ButtonVariants.GHOST} title="Manage Accounts">
-          Manage
-        </Button>
-      </Link> */}
       <div className={styles.accountSelectorList}>
       {accounts.length ? (
         accounts.map(account => {
