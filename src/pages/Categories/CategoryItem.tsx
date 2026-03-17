@@ -9,6 +9,7 @@ import { AddChildIcon } from 'icons/AddChildIcon';
 import { TrashIcon } from 'icons/TrashIcon';
 
 import styles from './Categories.module.scss';
+import Checkbox from 'components/Checkbox/Checkbox';
 
 interface CategoryItemProps {
   category: Category;
@@ -41,6 +42,13 @@ const CategoryItem: FC<CategoryItemProps> = ({ category, onEdit, onAddChild, onD
           placeholder='Add a description'
         />
       </div>
+      <Checkbox
+        className={styles.excludeFromReports}
+        label="Exclude from reports"
+        title="Exclude this category and its transactions from all reports and charts (useful for balancing payments and account transfers)"
+        value={category.excludeFromReports}
+        onChange={excludeFromReports => onEdit({ ...category, excludeFromReports })}
+      />
       <div className={styles.categoryActions}>
         <Button
           title="Add Subcategory"

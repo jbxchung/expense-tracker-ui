@@ -5,6 +5,7 @@ export interface Category extends Tree {
   id: string;
   name: string;
   description?: string;
+  excludeFromReports: boolean;
 
   userId?: string;
 
