@@ -6,9 +6,7 @@ import { IMPORTERS_API_PATH, getImporters } from 'api/importers';
 export const useImporters = () => {
   const { data, error, mutate, isLoading } = useSWR<Importer[], Error>(IMPORTERS_API_PATH, getImporters);
 
-  const sortedImporters = data?.sort((a, b) =>
-    (b.updatedAt?.getTime() ?? 0) - (a.updatedAt?.getTime() ?? 0)
-  );
+  const sortedImporters = data?.sort((a, b) => a.name.localeCompare(b.name));
 
   return {
     importers: sortedImporters ?? [],
