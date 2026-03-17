@@ -6,6 +6,7 @@ html, body, #root {
   font-family: Calibri, Helvetica, Arial, sans-serif;
   // color: colors.$page-default-text;
   color: var(--color-text-primary);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .container {
