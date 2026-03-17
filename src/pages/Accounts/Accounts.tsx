@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 
-import type { Account } from 'types/account';
+import { type Account, AccountTypes } from 'types/account';
 import { useAppContext } from 'contexts/app/AppContext';
 
 import Button, { ButtonVariants } from 'components/Button/Button';
@@ -31,35 +31,59 @@ const Accounts: FC = () => {
       </Card>
     );
   }
+  if (accounts.length === 0) {
+    return (
+      <div>
+        No accounts found. Please add a new account.
+      </div>
+    );
+  }
+
+  // group accounts by type and display in name order
+  const checkingAccounts = accounts.filter(a => a.type === AccountTypes.CHECKING).sort((a, b) => a.name.localeCompare(b.name));
+  const creditCardAccounts = accounts.filter(a => a.type === AccountTypes.CREDIT_CARD).sort((a, b) => a.name.localeCompare(b.name));
+  const savingsAccounts = accounts.filter(a => a.type === AccountTypes.SAVINGS).sort((a, b) => a.name.localeCompare(b.name));
+
+  const renderAccount = (account: Account) => (
+    <div key={account.id} title={account.id} className={styles.accountListItem}>
+      <span className={styles.accountName}>
+        {account.name}
+        <span className={styles.accountType}>
+          {account.type}
+        </span>
+      </span>
+      <div className={styles.accountActions}>
+        <Button variant={ButtonVariants.GHOST} onClick={(e) => {
+          e.stopPropagation();
+          setEditingAccount(account);
+        }}>
+          Edit
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <Card title="Accounts">
-      {accounts.length ? (
-        accounts.map(account => {
-          return (
-            <div key={account.id} title={account.id} className={styles.accountListItem}>
-              <span className={styles.accountName}>
-                {account.name}
-                <span className={styles.accountType}>
-                  {account.type}
-                </span>
-              </span>
-              <div className={styles.accountActions}>
-                <Button variant={ButtonVariants.GHOST} onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingAccount(account);
-                }}>
-                  Edit
-                </Button>
-              </div>
-            </div>
-          );
-        })
-      ) : (
-        <div>
-          No accounts found. Please add a new account.
-        </div>
-      )}
+      {checkingAccounts.length ? (
+        <>
+          <h3>Checking</h3>
+          {checkingAccounts.map(renderAccount)}
+        </>
+      ) : null}
+      {creditCardAccounts.length ? (
+        <>
+          <h3>Credit Cards</h3>
+          {creditCardAccounts.map(renderAccount)}
+        </>
+      ) : null}
+      {savingsAccounts.length ? (
+        <>
+          <h3>Savings</h3>
+          {savingsAccounts.map(renderAccount)}
+        </>
+      ) : null}
+      <hr />
       <Button
         variant={ButtonVariants.PRIMARY}
         className={styles.accountListItem}
