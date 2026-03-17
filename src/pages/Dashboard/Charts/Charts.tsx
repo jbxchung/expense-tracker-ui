@@ -1,6 +1,6 @@
 import { useMemo, useState, type FC } from 'react';
 import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Tooltip, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
 
@@ -210,11 +210,7 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
                 label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 labelLine={false}
                 isAnimationActive={false}
-              >
-                {pieData.map((_, i) => (
-                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                ))}
-              </Pie>
+              />
               <Tooltip content={<PieTooltip />} />
               <Legend />
             </PieChart>
