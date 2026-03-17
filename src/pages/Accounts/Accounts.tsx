@@ -39,7 +39,7 @@ const Accounts: FC = () => {
     );
   }
 
-  // group accounts by type and display in name order
+  // group accounts by type and display in alphabetical order
   const checkingAccounts = accounts.filter(a => a.type === AccountTypes.CHECKING).sort((a, b) => a.name.localeCompare(b.name));
   const creditCardAccounts = accounts.filter(a => a.type === AccountTypes.CREDIT_CARD).sort((a, b) => a.name.localeCompare(b.name));
   const savingsAccounts = accounts.filter(a => a.type === AccountTypes.SAVINGS).sort((a, b) => a.name.localeCompare(b.name));
@@ -48,8 +48,8 @@ const Accounts: FC = () => {
     <div key={account.id} title={account.id} className={styles.accountListItem}>
       <span className={styles.accountName}>
         {account.name}
-        <span className={styles.accountType}>
-          {account.type}
+        <span className={styles.lastUpdated}>
+          Last Updated {account.updatedAt ? new Date(account.updatedAt).toLocaleDateString() : 'N/A'}
         </span>
       </span>
       <div className={styles.accountActions}>
