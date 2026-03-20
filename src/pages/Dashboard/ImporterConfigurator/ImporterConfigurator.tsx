@@ -69,7 +69,6 @@ const ImporterConfigurator: FC<ImportConfiguratorProps> = ({
     const nameValid = nameInputRef.current?.validate?.() ?? false;
     if (!nameValid) return;
 
-    console.log('saving importer:', editableImporter);
     await saveImporter(editableImporter);
     
     if (onSave) {

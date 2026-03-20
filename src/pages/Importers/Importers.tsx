@@ -58,7 +58,6 @@ const Importers: FC = () => {
             <Accordion title="New Importer" defaultOpen>
               <ImporterConfigurator
                 onSave={(e) => {
-                  console.log('saved importer:', e);
                   setNewImporter(null);
                 }}
               />
