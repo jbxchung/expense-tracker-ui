@@ -208,6 +208,7 @@ const ImportRuleEditor: FC<ImportRuleEditorProps> = ({
             options={categories.map(category => ({
               value: category.id,
               label: category.name,
+              depth: category.depth,
             }))}
             value={rule.action.value}
             onChange={value => handleActionChanged({ value })}
