@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+RUN find src/contexts -type f
 RUN npm run build
 
 FROM nginx:alpine
