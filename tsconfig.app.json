@@ -26,9 +26,6 @@
 
     // map all imports under src
     "baseUrl": "./src",
-    "paths": {
-      "*": ["*"]
-    }
   },
   "include": ["src"]
 }
