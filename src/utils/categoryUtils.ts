@@ -21,6 +21,7 @@ export function createTempCategory(parentId: string | null): Category {
     id: crypto.randomUUID(),
     createdAt: new Date(),
     updatedAt: new Date(),
+    excludeFromReports: false,
   };
 }
 
