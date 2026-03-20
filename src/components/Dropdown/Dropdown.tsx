@@ -5,6 +5,8 @@ import Button, { ButtonVariants, type ButtonVariant } from 'components/Button/Bu
 
 import styles from './Dropdown.module.scss';
 
+const MENU_MAX_HEIGHT = Number(styles.menuMaxHeight) || 400;
+
 export interface DropdownOption {
   label: string;
   value: string;
@@ -44,8 +46,15 @@ const Dropdown: FC<DropdownProps> = ({
   useEffect(() => {
     if (open && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+
+      // render above the trigger if there isn't enough space below
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const top = spaceBelow >= MENU_MAX_HEIGHT
+        ? rect.bottom + window.scrollY
+        : Math.max(rect.top - MENU_MAX_HEIGHT, 0) + window.scrollY;
+
       setPosition({
-        top: rect.bottom + window.scrollY,
+        top,
         left: rect.left + window.scrollX,
         width: rect.width,
       });
