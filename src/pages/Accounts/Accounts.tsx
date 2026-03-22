@@ -48,9 +48,11 @@ const Accounts: FC = () => {
     <div key={account.id} title={account.id} className={styles.accountListItem}>
       <span className={styles.accountName}>
         {account.name}
-        <span className={styles.lastUpdated}>
-          Last Updated {account.updatedAt ? new Date(account.updatedAt).toLocaleDateString() : 'N/A'}
-        </span>
+        {account.imports?.length > 0 && (
+          <span className={styles.lastUpdated}>
+            Last updated with {account.imports[0].transactionCount} transactions from '{account.imports[0].fileName || 'Unknown File'}' on {new Date(account.imports[0].createdAt).toLocaleDateString()}
+          </span>
+        )}
       </span>
       <div className={styles.accountActions}>
         <Button variant={ButtonVariants.GHOST} onClick={(e) => {

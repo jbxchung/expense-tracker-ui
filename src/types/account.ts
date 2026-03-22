@@ -1,8 +1,11 @@
+import type { Import } from "./import";
+
 export interface Account {
   id: string;
   name: string;
   type: AccountType;
   userId: string;
+  imports: Import[];
   createdAt: string;
   updatedAt: string;
 };
