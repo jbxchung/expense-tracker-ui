@@ -5,6 +5,7 @@
   background: var(--color-surface);
   color: var(--color-text-primary);
   z-index: 2;
+  box-shadow: 0 2px 4px var(--color-dropdown-shadow);
 
   .header-left {
     padding: 0.5rem;

@@ -29,6 +29,7 @@ const Transactions: FC<TransactionsProps> = ({
   setTransactions,
 }) => {
   const [importModalOpen, setImportModalOpen] = useState(false);
+  const [manageBatch, setManageBatch] = useState(false);
 
   let loadingStatus = null;
   if (accountsLoading || isLoading) {
@@ -39,6 +40,13 @@ const Transactions: FC<TransactionsProps> = ({
   return (
     <Card title="Transactions">
       <div className={styles.transactionHeaderRow}>
+        <Button
+          variant={ButtonVariants.GHOST}
+          title="Batch manage transactions"
+          onClick={() => setManageBatch(!manageBatch)}
+        >
+          Manage
+        </Button>
         <Button
           className={styles.importButton}
           title="Import Transactions"
@@ -51,6 +59,7 @@ const Transactions: FC<TransactionsProps> = ({
       {loadingStatus ? (
         <div>{loadingStatus}</div>
       ) : (
+        // TODO - pass manageBatch through to show selection checkboxes and delete buttons in the table
         <LiveTransactionTable data={transactions} setData={setTransactions} />
       )}
       <Modal
