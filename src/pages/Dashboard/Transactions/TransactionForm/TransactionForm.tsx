@@ -71,7 +71,12 @@ const TransactionForm: FC<TransactionFormProps> = ({ onSuccess }) => {
   const handleSave = async () => {
     if (!selectedAccountId) return;
 
-    const result = await saveTransactions(selectedAccountId, stagedTransactions);
+    const result = await saveTransactions(
+      selectedAccountId,
+      stagedTransactions,
+      uploadedFile?.name,
+      selectedImporterId === DEFAULT_IMPORTER.id ? undefined : selectedImporterId
+    );
     if (result) {
       setSuccessMessage(`Successfully saved ${result.count} transaction${result.count === 1 ? '' : 's'}.`);
       // reset form

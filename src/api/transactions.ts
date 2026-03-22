@@ -63,7 +63,12 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
 }
 
 
-export async function saveTransactions(accountId: string, transactions: StagedTransaction[]) {
+export async function saveTransactions(
+  accountId: string,
+  transactions: StagedTransaction[],
+  fileName?: string,
+  importerId?: string
+): Promise<{ count: number }> {
   const normalized = transactions.map(tx => ({
     ...tx,
     date:  tx.date ? new Date(tx.date).toISOString() : tx.date, // convert to timestamp if it's a Date object
@@ -71,7 +76,7 @@ export async function saveTransactions(accountId: string, transactions: StagedTr
 
   const response: ApiResponse<{ count: number }> = await fetchApi(`${TRANSACTIONS_API_PATH}/batch/${accountId}`, {
     method: 'POST',
-    body: JSON.stringify(normalized),
+    body: JSON.stringify({ transactions: normalized, fileName, importerId }),
   });
 
   const result = await unwrapApiResponse<{ count: number }>(response);
