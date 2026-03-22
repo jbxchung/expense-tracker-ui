@@ -11,6 +11,7 @@ import TransactionForm from './TransactionForm/TransactionForm';
 import { LiveTransactionTable } from './TransactionTable/LiveTransactionTable';
 
 import styles from './Transactions.module.scss';
+import Spinner from 'components/Spinner/Spinner';
 
 interface TransactionsProps {
   accountsLoading: boolean;
@@ -29,10 +30,11 @@ const Transactions: FC<TransactionsProps> = ({
 }) => {
   const [importModalOpen, setImportModalOpen] = useState(false);
 
-  let statusText = null;
-  if (accountsLoading) statusText = 'Loading accounts...';
-  if (isLoading) statusText = 'Loading transactions...';
-  if (error) statusText = `Error loading transactions: ${error.message}`;
+  let loadingStatus = null;
+  if (accountsLoading || isLoading) {
+    loadingStatus = <Spinner />;
+  }
+  if (error) loadingStatus = `Error loading transactions: ${error.message}`;
 
   return (
     <Card title="Transactions">
@@ -46,8 +48,8 @@ const Transactions: FC<TransactionsProps> = ({
           <UploadIcon />
         </Button>
       </div>
-      {statusText ? (
-        <div>{statusText}</div>
+      {loadingStatus ? (
+        <div>{loadingStatus}</div>
       ) : (
         <LiveTransactionTable data={transactions} setData={setTransactions} />
       )}

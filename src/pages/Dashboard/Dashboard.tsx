@@ -45,7 +45,7 @@ const Dashboard: FC = () => {
   };
 
   // transaction retrieval for selected accounts and date range
-  const { transactions, setTransactions, isLoading, error } = useTransactions({
+  const { transactions, setTransactions, isLoading: transactionsLoading, error } = useTransactions({
     accountIds: selectedAccountIds,
     from: dateRange.from!,
     to: dateRange.to!,
@@ -64,10 +64,16 @@ const Dashboard: FC = () => {
       onDateRangeChanged={onDateRangeChanged}
     />
     {/* charts card goes here later, receives transactions */}
-    <Charts accounts={accounts} transactions={transactions} dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
+    <Charts
+      accounts={accounts}
+      accountsLoading={accountsLoading}
+      transactions={transactions}
+      transactionsLoading={transactionsLoading}
+      dateRange={{ from: dateRange.from!, to: dateRange.to! }}
+    />
     <Transactions
       accountsLoading={accountsLoading}
-      isLoading={isLoading}
+      isLoading={transactionsLoading}
       error={error}
       transactions={transactions}
       setTransactions={setTransactions}

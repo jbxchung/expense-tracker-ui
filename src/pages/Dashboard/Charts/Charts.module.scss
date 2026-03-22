@@ -1,3 +1,10 @@
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
 .charts-grid {
   padding: 0 2rem;    // account for cards inside
   display: flex;

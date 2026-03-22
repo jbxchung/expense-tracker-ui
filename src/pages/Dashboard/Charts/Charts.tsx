@@ -18,13 +18,16 @@ import PieTooltip from './Tooltips/PieTooltip';
 import BarTooltip from './Tooltips/BarTooltip';
 
 import styles from './Charts.module.scss';
+import Spinner from 'components/Spinner/Spinner';
 
 type TimeBucket = 'daily' | 'weekly' | 'monthly';
 
 interface ChartsProps {
-  transactions: Transaction[];
-  dateRange: { from: Date; to: Date };
   accounts: Account[];
+  accountsLoading: boolean;
+  transactions: Transaction[];
+  transactionsLoading: boolean;
+  dateRange: { from: Date; to: Date };
 }
 
 type SpendingByAccount = Record<string, number>;
@@ -68,7 +71,7 @@ const CHART_COLORS = [
   'var(--color-chart-8, #f97316)',
 ];
 
-const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
+const Charts: FC<ChartsProps> = ({ accounts, accountsLoading, transactions, transactionsLoading, dateRange }) => {
   const { categoryTree } = useCategoryTree();
 
   const flatCategories = useMemo(
@@ -186,76 +189,89 @@ const Charts: FC<ChartsProps> = ({ transactions, dateRange, accounts }) => {
   return (
     <div className={styles.chartsGrid}>
       <Card title="Spending by Category">
-        <div className={styles.chartControls}>
-          <MultiSelect
-            options={categoryOptions}
-            value={selectedCategoryIds}
-            onChange={setSelectedCategoryIds}
-            placeholder="Top-level categories"
-            label="Break down by"
-          />
-        </div>
-        {pieData.length === 0 ? (
-          <div className={styles.empty}>No spending data for this period.</div>
-        ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                labelLine={false}
-                isAnimationActive={false}
-              />
-              <Tooltip content={<PieTooltip />} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+        {(accountsLoading || transactionsLoading) ? (
+          <div className={styles.loading}>
+            <Spinner />
+          </div>
+        ) : (<>
+          <div className={styles.chartControls}>
+            <MultiSelect
+              options={categoryOptions}
+              value={selectedCategoryIds}
+              onChange={setSelectedCategoryIds}
+              placeholder="Top-level categories"
+              label="Break down by"
+            />
+          </div>
+          {pieData.length === 0 ? (
+            <div className={styles.empty}>No spending data for this period.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                  labelLine={false}
+                  isAnimationActive={false}
+                />
+                <Tooltip content={<PieTooltip />} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+          </>
         )}
       </Card>
 
       <Card title="Spending Over Time">
-        <div className={styles.chartControls}>
-          {(['daily', 'weekly', 'monthly'] as TimeBucket[]).map(b => (
-            <button
-              key={b}
-              className={`${styles.bucketButton} ${bucket === b ? styles.active : ''}`}
-              onClick={() => setBucketOverride(prev => prev === b ? null : b)}
-              title={bucketOverride === b ? 'Click to reset to auto' : `Group by ${b}`}
-            >
-              {b.charAt(0).toUpperCase() + b.slice(1)}
-              {bucketOverride === null && bucket === b && (
-                <span className={styles.autoBadge}>auto</span>
-              )}
-            </button>
-          ))}
-        </div>
-        {barData.length === 0 ? (
-          <div className={styles.empty}>No spending data for this period.</div>
-        ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
-              <YAxis tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} tickFormatter={v => `$${v}`} />
-              <Tooltip content={<BarTooltip accounts={accounts} />} />
-              <Legend formatter={name => accounts.find(a => a.id === name)?.name ?? name} />
-              {accountIds.map((accountId, i) => (
-                <Bar
-                  key={accountId}
-                  dataKey={accountId}
-                  stackId="spending"
-                  fill={CHART_COLORS[i % CHART_COLORS.length]}
-                  radius={i === accountIds.length - 1 ? [4, 4, 0, 0] : undefined}
-                />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+        {(accountsLoading || transactionsLoading) ? (
+          <div className={styles.loading}>
+            <Spinner />
+          </div>
+        ) : (<>
+          <div className={styles.chartControls}>
+            {(['daily', 'weekly', 'monthly'] as TimeBucket[]).map(b => (
+              <button
+                key={b}
+                className={`${styles.bucketButton} ${bucket === b ? styles.active : ''}`}
+                onClick={() => setBucketOverride(prev => prev === b ? null : b)}
+                title={bucketOverride === b ? 'Click to reset to auto' : `Group by ${b}`}
+              >
+                {b.charAt(0).toUpperCase() + b.slice(1)}
+                {bucketOverride === null && bucket === b && (
+                  <span className={styles.autoBadge}>auto</span>
+                )}
+              </button>
+            ))}
+          </div>
+          {barData.length === 0 ? (
+            <div className={styles.empty}>No spending data for this period.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={barData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} />
+                <YAxis tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }} tickFormatter={v => `$${v}`} />
+                <Tooltip content={<BarTooltip accounts={accounts} />} />
+                <Legend formatter={name => accounts.find(a => a.id === name)?.name ?? name} />
+                {accountIds.map((accountId, i) => (
+                  <Bar
+                    key={accountId}
+                    dataKey={accountId}
+                    stackId="spending"
+                    fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    radius={i === accountIds.length - 1 ? [4, 4, 0, 0] : undefined}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </>)}
       </Card>
     </div>
   );
