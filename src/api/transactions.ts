@@ -62,7 +62,6 @@ export async function fetchTransactions(accountIds: string[], from?: Date, to?: 
   ));
 }
 
-
 export async function saveTransactions(
   accountId: string,
   transactions: StagedTransaction[],
@@ -105,4 +104,24 @@ export async function updateTransaction(transaction: Partial<Omit<Transaction, '
   }
 
   return updatedTransaction;
+}
+
+export async function deleteTransaction(id: string): Promise<Transaction> {
+  const response: ApiResponse<Transaction> = await fetchApi(
+    `${TRANSACTIONS_API_PATH}/${id}`,
+    { method: 'DELETE' }
+  );
+
+  const deleted = await unwrapApiResponse<Transaction>(response);
+
+  // remove from cache
+  const cacheEntry = accountTransactionCache.get(deleted.accountId);
+  if (cacheEntry) {
+    accountTransactionCache.set(deleted.accountId, {
+      ...cacheEntry,
+      transactions: cacheEntry.transactions.filter(tx => tx.id !== deleted.id),
+    });
+  }
+
+  return deleted;
 }

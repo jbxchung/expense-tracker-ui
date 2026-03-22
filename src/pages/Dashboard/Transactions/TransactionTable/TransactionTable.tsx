@@ -16,6 +16,8 @@ import Multiselect from 'components/Multiselect/Multiselect';
 import { FilterIcon } from 'icons/FilterIcon';
 
 import styles from './TransactionTable.module.scss';
+import Button, { ButtonVariants } from 'components/Button/Button';
+import { TrashIcon } from 'icons/TrashIcon';
 
 type TransactionTableProps<T> = {
   data: T[];
@@ -23,9 +25,10 @@ type TransactionTableProps<T> = {
   accounts?: Account[];
   categories?: FlattenedCategory[];
   onRowChange?: (index: number, columnId: keyof T, value: any) => void;
+  onRowDelete?: (index: number) => void;
 };
 
-export function TransactionTable<T>({ data, columns, accounts = [], categories = [], onRowChange }: TransactionTableProps<T>) {
+export function TransactionTable<T>({ data, columns, accounts = [], categories = [], onRowChange, onRowDelete }: TransactionTableProps<T>) {
   const [hoveredCell, setHoveredCell] = useState<{ rowIndex: number; columnId: string } | null>(null);
   const [editingCell, setEditingCell] = useState<{ rowIndex: number; columnId: string } | null>(null);
 
@@ -88,6 +91,7 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
                   </th>
                 );
               })}
+              {onRowDelete && <th className={styles.deleteCell} />} {/* empty header for delete column */}
             </tr>
           ))}
         </thead>
@@ -135,6 +139,18 @@ export function TransactionTable<T>({ data, columns, accounts = [], categories =
                   </td>
                 );
               })}
+              {onRowDelete && (
+                <td className={styles.deleteCell}>
+                  <Button
+                    className={styles.deleteIcon}
+                    variant={ButtonVariants.ICON}
+                    onClick={() => onRowDelete(row.index)}
+                    title="Delete transaction"
+                  >
+                    <TrashIcon />
+                  </Button>
+                </td>
+              )}
             </tr>
           ))}
           {table.getRowModel().rows.length === 0 && (

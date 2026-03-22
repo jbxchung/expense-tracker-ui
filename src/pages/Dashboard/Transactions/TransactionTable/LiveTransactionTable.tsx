@@ -3,6 +3,7 @@ import type { Transaction } from 'types/transaction';
 import { useAppContext } from 'contexts/app/AppContext';
 import { useCategoryList } from 'hooks/categories/useCategories';
 import { useUpdateTransaction } from 'hooks/transactions/useUpdateTransaction';
+import { useDeleteTransaction } from 'hooks/transactions/useDeleteTransaction';
 
 import { TransactionTable } from './TransactionTable';
 import { LiveTransactionColumns } from './columns/LiveTransactionColumns';
@@ -17,6 +18,15 @@ export function LiveTransactionTable({ data, setData }: LiveTransactionTableProp
   const { accounts } = useAppContext();
   const { categories } = useCategoryList();
   const { update } = useUpdateTransaction();
+  const { remove } = useDeleteTransaction();
+
+  const handleRowDelete = async (index: number) => {
+    const transaction = data[index];
+    const deleted = await remove(transaction.id);
+    if (deleted) {
+      setData(prev => prev.filter(tx => tx.id !== deleted.id));
+    }
+  };
 
   const handleRowChange = async (index: number, columnId: keyof Transaction, value: any) => {
     const transaction = data[index];
@@ -33,6 +43,7 @@ export function LiveTransactionTable({ data, setData }: LiveTransactionTableProp
       accounts={accounts}
       categories={categories}
       onRowChange={handleRowChange}
+      onRowDelete={handleRowDelete}
     />
   );
 }

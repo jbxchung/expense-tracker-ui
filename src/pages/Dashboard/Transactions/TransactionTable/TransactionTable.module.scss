@@ -23,6 +23,10 @@
     z-index: 1;
   }
 
+  tr {
+    position: relative;
+  }
+
   td, th {
     position: relative;
     height: 2rem;
@@ -68,13 +72,30 @@
     width: 100%;
     box-sizing: border-box;
   }
-}
 
-// column-specific styles
-.account-column {
-  white-space: nowrap;
-}
+  // column-specific styles
+  .account-column {
+    white-space: nowrap;
+  }
 
-.amount-column {
-  text-align: right;
+  .amount-column {
+    text-align: right;
+  }
+
+  .delete-cell {
+    padding: 0;
+    width: 2rem;
+    padding: 0 0.25rem;
+    text-align: center;
+
+    .delete-icon {
+      color: var(--color-error);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }
