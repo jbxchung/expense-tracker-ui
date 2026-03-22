@@ -22,12 +22,13 @@ export function LiveTransactionTable({ data, setData }: LiveTransactionTableProp
 
   const handleRowDelete = async (index: number) => {
     const transaction = data[index];
+    const account = accounts.find(a => a.id === transaction.accountId);
 
     const confirmed = window.confirm(`Are you sure you want to delete this transaction for ${
       Number(transaction.amount).toFixed(2)
     } on ${
       new Date(transaction.date).toLocaleDateString()
-    }? This is irreversible.`);
+    } in ${account!.name}? This is irreversible.`);
     if (!confirmed) return;
 
     const deleted = await remove(transaction.id);
